@@ -1,0 +1,3 @@
+SCALESIZE = 4  # 缩放比例
+BOXSIZE = 16  # 每个黑白块的单边像素数
+STEP = BOXSIZE/SCALESIZE
