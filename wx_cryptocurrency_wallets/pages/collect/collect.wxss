@@ -1,0 +1,28 @@
+/* pages/collect/collect.wxss */
+
+.pic-list{
+  margin: 0 auto;
+  margin-bottom: 120rpx;
+  padding: 100rpx; 
+  background-color: rgb(245, 245, 245);
+  border-radius: 10%;
+}
+
+.pic-item {
+  margin: 10rpx auto;
+}
+
+.pic-abs {
+  margin: 10rpx;
+  padding: 10rpx 0;
+  height: 60rpx;
+  line-height: 60rpx;
+}
+
+.pic-remove {
+  margin: 0 20rpx;
+  padding: 0;
+  height: 60rpx;
+  vertical-align: middle;
+  border-style: "solid";
+}
