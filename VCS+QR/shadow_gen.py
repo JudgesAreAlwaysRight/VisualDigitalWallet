@@ -5,12 +5,12 @@ from global_var import *
 
 
 # 生成二维码
-def qrcode_gen():
-    qr_maker = qrcode.QRCode(version=5, error_correction=qrcode.constants.ERROR_CORRECT_M, box_size=BOXSIZE, border=0)
+def qrcodeGenerate():
+    qr_maker = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_M, box_size=BOXSIZE, border=0)
     qr_maker.add_data("secret")
     qr_maker.make(fit=True)
     img = qr_maker.make_image()
-    img.save("test.png")
+    img.save(r"./imgs/test.png")
 
 
 # 图片预处理
@@ -32,7 +32,7 @@ def preprocess(path):
 
 
 # 创建空白图
-def build_blank_image(x, y):
+def genBlankImg(x, y):
     orix = int(x / SCALESIZE)
     oriy = int(y / SCALESIZE)
 
@@ -73,21 +73,23 @@ def expand(orix, oriy, binary, split1, split2):
     for i in range(0, orix, 4):
         for j in range(0, oriy, 4):
             pixelConverge(split1, split2, binary, i, j)
-    split1 = cv2.resize(split1, (oriy, orix))
-    split2 = cv2.resize(split2, (oriy, orix))
+    # split1 = cv2.resize(split1, (oriy, orix))
+    # split2 = cv2.resize(split2, (oriy, orix))
     cv2.imshow("bin: ", binary)
     cv2.imshow("split1: ", split1)
     cv2.imshow("split2: ", split2)
+    cv2.imwrite(SPLITA, split1)
+    cv2.imwrite(SPLITB, split2)
     return split1, split2
 
 
 # 合并
-def merge(split1, split2, orix, oriy):
+def merge(split1, split2, newx, newy):
     # 利用异或进行合并
     merged = cv2.bitwise_xor(split1, split2)
     # 异或合并会反色，此处进行二次反色以还原图像
-    for i in range(orix):
-        for j in range(oriy):
+    for i in range(newx):
+        for j in range(newy):
             for k in range(3):
                 merged[i, j, k] = 255 - merged[i, j, k]
     cv2.imshow("result: ", merged)
@@ -95,8 +97,8 @@ def merge(split1, split2, orix, oriy):
 
 
 if __name__ == '__main__':
-    qrcode_gen()
-    length, width, binary_img = preprocess('test.png')
-    oril, oriw, split01, split02, newl, neww, merged0 = build_blank_image(length, width)
+    qrcodeGenerate()
+    length, width, binary_img = preprocess('./imgs/test.png')
+    oril, oriw, split01, split02, newl, neww, merged0 = genBlankImg(length, width)
     split01, split02 = expand(oril, oriw, binary_img, split01, split02)
-    merge(split01, split02, oril, oriw)
+    merge(split01, split02, newl, neww)
