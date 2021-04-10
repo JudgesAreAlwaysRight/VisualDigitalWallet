@@ -3,7 +3,9 @@
     "pages/index/index",
     "pages/logs/logs",
     "pages/collect/collect",
-    "pages/scatter/scatter"
+    "pages/scatter/scatter",
+    "pages/accounts/accounts",
+    "pages/panel/panel"
   ],
   "window": {
     "backgroundTextStyle": "dark",

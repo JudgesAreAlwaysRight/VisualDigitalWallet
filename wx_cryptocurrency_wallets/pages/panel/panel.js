@@ -1,34 +1,32 @@
-// pages/collect/collect.js
+// pages/panel/panel.js
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    picList: [
-      {
-        abs: "分存图片概述1",
-        data: 0x1234
-      },
-      {
-        abs: "分存图片概述2",
-        data: 0x1234
-      }
-    ],
-    accName: "",
-    addr: 0x0,
-    key: 0x0
+
+  },
+
+  /**
+   * 事件响应
+   */
+  bindCollectTap() {
+    wx.navigateTo({
+      url: '../collect/collect'
+    })
+  },
+  bindScatterTap() {
+    wx.navigateTo({
+      url: '../scatter/scatter'
+    })
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    this.setData({
-      accName: options.accName,
-      addr: options.addr,
-      key: options.key
-    })
+
   },
 
   /**
@@ -78,13 +76,5 @@ Page({
    */
   onShareAppMessage: function () {
 
-  },
-
-  bindScanTap: function () {
-    wx.scanCode({
-      success(res) {
-        console.log(res)
-      }
-    })
   }
 })

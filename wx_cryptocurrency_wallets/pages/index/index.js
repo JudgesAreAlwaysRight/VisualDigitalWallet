@@ -10,19 +10,14 @@ Page({
   },
 
   // 事件处理函数
+  bindAccountsTap() {
+    wx.navigateTo({
+      url: '../accounts/accounts'
+    })
+  },
   bindViewTap() {
     wx.navigateTo({
       url: '../logs/logs'
-    })
-  },
-  bindCollectTap() {
-    wx.navigateTo({
-      url: '../collect/collect'
-    })
-  },
-  bindScatterTap() {
-    wx.navigateTo({
-      url: '../scatter/scatter'
     })
   }
 })

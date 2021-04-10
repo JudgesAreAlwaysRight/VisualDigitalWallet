@@ -1,0 +1,50 @@
+/* pages/accounts/accounts.wxss */
+
+.accounts-list {
+  background-color: #eee;
+  margin: 20rpx;
+  padding: 15rpx;
+  border-radius: 15rpx;
+  width: 600rpx;
+  text-align: left;
+}
+
+.accounts-list-title {
+  text-align: left;
+  margin: 20rpx;
+  padding: 15rpx;
+}
+
+.accounts-list-item {
+  background-color: #fff;
+  border-radius: 20rpx;
+  margin: 20rpx;
+  padding: 20rpx;
+  height: 40rpx;
+  /* width: 400rpx; */
+}
+
+.fix-left {
+  margin-right: 10rpx;
+  float: left;
+  text-align: left;
+}
+
+.fix-right {
+  margin-left: 10rpx;
+  float: right;
+  text-align: right;
+}
+
+.float-button {
+    position: fixed;
+    bottom: 8%;
+    right: 8%;
+    z-index: 888;
+    background: #74e066;
+    width: 80px;
+    height: 80px;
+    border-radius: 40px;
+    box-shadow: 2px 2px 2px #888888;
+    opacity:0.7 ;
+}

@@ -1,34 +1,42 @@
-// pages/collect/collect.js
+// pages/accounts/accounts.js
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    picList: [
+    accounts: [
       {
-        abs: "分存图片概述1",
-        data: 0x1234
+        name: "测试1",
+        unit: "BTC",
+        addr: 0x0001,
+        key: 0x01234,
+        amount: 0.0001
       },
       {
-        abs: "分存图片概述2",
-        data: 0x1234
+        name: "测试2",
+        unit: "ETH",
+        addr: 0x0002,
+        key: 0x012345,
+        amount: 0.01
       }
-    ],
-    accName: "",
-    addr: 0x0,
-    key: 0x0
+    ]
   },
 
+  bindAccountTap: function (event) {
+    console.log(event)
+    wx.navigateTo({
+      url: '../collect/collect?',
+    })
+  },
+  addAccount: function (event) {
+
+  },
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    this.setData({
-      accName: options.accName,
-      addr: options.addr,
-      key: options.key
-    })
+
   },
 
   /**
@@ -78,13 +86,5 @@ Page({
    */
   onShareAppMessage: function () {
 
-  },
-
-  bindScanTap: function () {
-    wx.scanCode({
-      success(res) {
-        console.log(res)
-      }
-    })
   }
 })

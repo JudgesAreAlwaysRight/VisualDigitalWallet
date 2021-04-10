@@ -1,5 +1,11 @@
 <!--pages/collect/collect.wxml-->
 <view class="container">
+  <view class="info-container">
+  <text>{{accName}}</text>
+  <text>{{addr}}</text>
+  <button class="main-page-button" bindtap="bindScanTap" type="default" plain="true">扫描分存图片</button>
+  <button class="main-page-button" bindtap="bindBluetoothTap" type="default" plain="true">蓝牙获取分存图片</button>
+  </view>
 
   <view class="pic-list">
     <view class="pic-item" wx:for="{{picList}}" wx:for-item="item">
@@ -7,8 +13,5 @@
       <button class="pic-remove" type="warn" size="mini">移除</button>
     </view>
   </view>
-
-  <button class="main-page-button" bindtap="bindCollectTap" type="default" plain="true">扫描分存图片</button>
-  <button class="main-page-button" bindtap="bindCollectTap" type="default" plain="true">蓝牙获取分存图片</button>
 
 </view>

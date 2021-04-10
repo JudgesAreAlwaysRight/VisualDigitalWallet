@@ -1,0 +1,8 @@
+/* pages/panel/panel.wxss */
+.operating-options {
+  margin-top: 100rpx;
+}
+
+.main-page-button {
+  margin: 20px;
+}

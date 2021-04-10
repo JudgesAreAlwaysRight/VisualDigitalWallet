@@ -2,6 +2,7 @@
 
 .program-info {
   margin: 0 auto;
+  margin-top: 100rpx;
   padding: 80rpx;
   width: 400rpx;
   height: 300rpx;
