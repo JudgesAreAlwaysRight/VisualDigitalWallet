@@ -16,10 +16,11 @@ import random
 """
 address = 'C:/Users/49393/Desktop/GraphOP/'
 img = cv2.imread(r'C:\Users\49393\Desktop\GraphOP\test1.png', 1)
-gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-# 二值化处理
-bin = cv2.adaptiveThreshold(~gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 35, -5)
-
+# gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+# # # 二值化处理
+# bin = cv2.adaptiveThreshold(~gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 35, -5)
+bin = img
+# cv2.imwrite(address+"Binary1.png", bin)
 x, y = img.shape[0:2]
 
 # 创建用于分存的s0,s1
@@ -109,9 +110,11 @@ def decode(merge, m, d, alpha):
             count = count / 3
             # print(count)
             if count >= d:
-                qr[ix, jy] = 255
-            elif count <= d - int(alpha*m*m):
                 qr[ix, jy] = 0
+            # elif count <= d - int(alpha*m*m):
+            elif count < d:
+                qr[ix, jy] = 255
+
 
     return qr
 
@@ -134,13 +137,16 @@ if __name__ == "__main__":
     for i in range(x):
         # 原图的纵轴
         for j in range(y):
-            if bin[i, j] == 0:
+            # print(bin[i, j])
+            # print("any %d" % j, bin[i, j].any())
+            # print("all %d" % j, bin[i, j].all())
+            if bin[i, j].all() == False:
                 # 每一张分存图
                 for c in range(n):
                     for o in range(len(s0[0])):
                         split[c][lenm*i + floor(o/lenm), lenm*j + o % lenm] = (1 - s1[c][o]) * 255
 
-            if bin[i, j] == 255:
+            if bin[i, j].all() == True:
                 for c in range(n):
                     for o in range(len(s0[0])):
                         split[c][lenm*i + floor(o/lenm), lenm*j + o % lenm] = (1 - s0[c][o]) * 255
@@ -174,7 +180,7 @@ if __name__ == "__main__":
 
 
     d = m-n+k
-    alpha = 1/m
+    alpha = (n/2)/m
 
     qr = decode(merge, lenm, d, alpha)
     cv2.imwrite(address+"res.png", qr)
