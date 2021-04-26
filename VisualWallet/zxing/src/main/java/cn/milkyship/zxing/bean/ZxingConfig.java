@@ -1,6 +1,6 @@
 package cn.milkyship.zxing.bean;
 
-import android.support.annotation.ColorRes;
+import androidx.annotation.ColorRes;
 
 import cn.milkyship.zxing.R;
 
