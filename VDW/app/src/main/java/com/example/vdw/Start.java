@@ -17,19 +17,16 @@ public class Start extends AppCompatActivity {
         Thread myThread = new Thread()  //子线程
         {
             @Override
-            public void run()
-            {
-                try
-                {
-                    sleep(1000);
-                    Intent it = new Intent(getApplication(),Main.class);
-                    startActivity(it);
-                    finish();
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+            public void run() {
+            try {
+                sleep(1000);
+                Intent it = new Intent(getApplication(),Main.class);
+                startActivity(it);
+                finish();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
             }
         };
         myThread.start();
