@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.yzq.zxinglibrary.camera;
+package cn.milkyship.zxing.camera;
 
 import android.content.Context;
 import android.graphics.Point;

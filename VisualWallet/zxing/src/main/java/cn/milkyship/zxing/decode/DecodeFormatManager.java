@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.yzq.zxinglibrary.decode;
+package cn.milkyship.zxing.decode;
 
 import android.content.Intent;
 import android.net.Uri;
 
 import com.google.zxing.BarcodeFormat;
-import com.yzq.zxinglibrary.android.Intents;
+import cn.milkyship.zxing.android.Intents;
 
 import java.util.Arrays;
 import java.util.EnumSet;

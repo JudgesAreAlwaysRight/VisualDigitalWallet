@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.yzq.zxinglibrary.android;
+package cn.milkyship.zxing.android;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

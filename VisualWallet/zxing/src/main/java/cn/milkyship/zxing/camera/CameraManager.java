@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.yzq.zxinglibrary.camera;
+package cn.milkyship.zxing.camera;
 
 import android.content.Context;
 import android.graphics.Point;
@@ -26,10 +26,10 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 
 import com.google.zxing.PlanarYUVLuminanceSource;
-import com.yzq.zxinglibrary.R;
-import com.yzq.zxinglibrary.android.CaptureActivityHandler;
-import com.yzq.zxinglibrary.bean.ZxingConfig;
-import com.yzq.zxinglibrary.common.Constant;
+import cn.milkyship.zxing.R;
+import cn.milkyship.zxing.android.CaptureActivityHandler;
+import cn.milkyship.zxing.bean.ZxingConfig;
+import cn.milkyship.zxing.common.Constant;
 
 import java.io.IOException;
 

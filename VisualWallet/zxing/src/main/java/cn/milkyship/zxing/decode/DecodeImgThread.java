@@ -1,4 +1,4 @@
-package com.yzq.zxinglibrary.decode;
+package cn.milkyship.zxing.decode;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

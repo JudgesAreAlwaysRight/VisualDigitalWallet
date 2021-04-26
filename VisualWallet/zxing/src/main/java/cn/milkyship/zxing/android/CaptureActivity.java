@@ -1,4 +1,4 @@
-package com.yzq.zxinglibrary.android;
+package cn.milkyship.zxing.android;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -22,14 +22,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.Result;
-import com.yzq.zxinglibrary.R;
-import com.yzq.zxinglibrary.bean.ZxingConfig;
-import com.yzq.zxinglibrary.camera.CameraManager;
-import com.yzq.zxinglibrary.common.Constant;
-import com.yzq.zxinglibrary.decode.DecodeImgCallback;
-import com.yzq.zxinglibrary.decode.DecodeImgThread;
-import com.yzq.zxinglibrary.decode.ImageUtil;
-import com.yzq.zxinglibrary.view.ViewfinderView;
+import cn.milkyship.zxing.R;
+import cn.milkyship.zxing.bean.ZxingConfig;
+import cn.milkyship.zxing.camera.CameraManager;
+import cn.milkyship.zxing.common.Constant;
+import cn.milkyship.zxing.decode.DecodeImgCallback;
+import cn.milkyship.zxing.decode.DecodeImgThread;
+import cn.milkyship.zxing.decode.ImageUtil;
+import cn.milkyship.zxing.view.ViewfinderView;
 
 import java.io.IOException;
 

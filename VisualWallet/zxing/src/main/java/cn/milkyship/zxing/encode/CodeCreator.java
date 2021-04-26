@@ -1,4 +1,4 @@
-package com.yzq.zxinglibrary.encode;
+package cn.milkyship.zxing.encode;
 
 import android.graphics.Bitmap;
 import android.graphics.Matrix;

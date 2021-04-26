@@ -1,5 +1,5 @@
 
-package com.yzq.zxinglibrary.view;
+package cn.milkyship.zxing.view;
 
 
 import android.animation.ValueAnimator;
@@ -17,9 +17,9 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
 import com.google.zxing.ResultPoint;
-import com.yzq.zxinglibrary.R;
-import com.yzq.zxinglibrary.bean.ZxingConfig;
-import com.yzq.zxinglibrary.camera.CameraManager;
+import cn.milkyship.zxing.R;
+import cn.milkyship.zxing.bean.ZxingConfig;
+import cn.milkyship.zxing.camera.CameraManager;
 
 import java.util.ArrayList;
 import java.util.List;

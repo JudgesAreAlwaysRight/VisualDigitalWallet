@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.yzq.zxinglibrary.decode;
+package cn.milkyship.zxing.decode;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -22,7 +22,7 @@ import android.os.Looper;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.ResultPointCallback;
-import com.yzq.zxinglibrary.android.CaptureActivity;
+import cn.milkyship.zxing.android.CaptureActivity;
 
 import java.util.Hashtable;
 import java.util.Vector;

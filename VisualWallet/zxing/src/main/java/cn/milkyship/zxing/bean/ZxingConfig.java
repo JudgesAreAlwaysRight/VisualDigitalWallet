@@ -1,8 +1,8 @@
-package com.yzq.zxinglibrary.bean;
+package cn.milkyship.zxing.bean;
 
 import android.support.annotation.ColorRes;
 
-import com.yzq.zxinglibrary.R;
+import cn.milkyship.zxing.R;
 
 import java.io.Serializable;
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.yzq.zxinglibrary.android;
+package cn.milkyship.zxing.android;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -22,10 +22,10 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.google.zxing.Result;
-import com.yzq.zxinglibrary.camera.CameraManager;
-import com.yzq.zxinglibrary.common.Constant;
-import com.yzq.zxinglibrary.decode.DecodeThread;
-import com.yzq.zxinglibrary.view.ViewfinderResultPointCallback;
+import cn.milkyship.zxing.camera.CameraManager;
+import cn.milkyship.zxing.common.Constant;
+import cn.milkyship.zxing.decode.DecodeThread;
+import cn.milkyship.zxing.view.ViewfinderResultPointCallback;
 
 /**
  * This class handles all the messaging which comprises the state machine for

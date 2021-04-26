@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.yzq.zxinglibrary.android;
+package cn.milkyship.zxing.android;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -25,7 +25,7 @@ import android.media.MediaPlayer;
 import android.os.Vibrator;
 import android.util.Log;
 
-import com.yzq.zxinglibrary.R;
+import cn.milkyship.zxing.R;
 
 import java.io.Closeable;
 import java.io.IOException;

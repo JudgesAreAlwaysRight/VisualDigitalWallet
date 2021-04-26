@@ -1,4 +1,4 @@
-package com.yzq.zxinglibrary.common;
+package cn.milkyship.zxing.common;
 
 /**
  * Created by yzq on 2017/7/20.

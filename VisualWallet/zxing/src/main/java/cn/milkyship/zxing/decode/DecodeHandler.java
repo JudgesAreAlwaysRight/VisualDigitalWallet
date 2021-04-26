@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.yzq.zxinglibrary.decode;
+package cn.milkyship.zxing.decode;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -27,8 +27,8 @@ import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
-import com.yzq.zxinglibrary.android.CaptureActivity;
-import com.yzq.zxinglibrary.common.Constant;
+import cn.milkyship.zxing.android.CaptureActivity;
+import cn.milkyship.zxing.common.Constant;
 
 import java.util.Map;
 

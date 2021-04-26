@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.yzq.zxinglibrary.android;
+package cn.milkyship.zxing.android;
 
 /**
  * This class provides the constants to use when sending an Intent to Barcode Scanner.

@@ -14,7 +14,7 @@
 ********************************End of Head************************************\
 */
 
-package com.yzq.zxinglibrary.decode;
+package cn.milkyship.zxing.decode;
 
 import android.annotation.TargetApi;
 import android.content.ContentUris;

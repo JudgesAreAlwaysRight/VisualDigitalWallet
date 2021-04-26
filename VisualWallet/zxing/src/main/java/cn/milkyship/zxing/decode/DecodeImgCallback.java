@@ -1,4 +1,4 @@
-package com.yzq.zxinglibrary.decode;
+package cn.milkyship.zxing.decode;
 
 import com.google.zxing.Result;
 
