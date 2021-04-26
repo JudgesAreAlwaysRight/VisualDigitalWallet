@@ -33,7 +33,6 @@ import cn.milkyship.zxing.view.ViewfinderView;
 
 import java.io.IOException;
 
-
 /**
  * @author: yzq
  * @date: 2017/10/26 15:22
@@ -203,8 +202,6 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         intent.putExtra(Constant.CODED_CONTENT, rawResult.getText());
         setResult(RESULT_OK, intent);
         this.finish();
-
-
     }
 
 
@@ -237,7 +234,6 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
 
         beepManager.updatePrefs();
         inactivityTimer.onResume();
-
     }
 
     private void initCamera(SurfaceHolder surfaceHolder) {
@@ -285,7 +281,6 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         cameraManager.closeDriver();
 
         if (!hasSurface) {
-
             surfaceHolder.removeCallback(this);
         }
         super.onPause();
@@ -306,21 +301,16 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         }
     }
 
-
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         hasSurface = false;
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width,
-                               int height) {
-
-    }
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
 
     @Override
     public void onClick(View view) {
-
         int id = view.getId();
         if (id == R.id.flashLightLayout) {
             /*切换闪光灯*/
@@ -334,10 +324,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         } else if (id == R.id.backIv) {
             finish();
         }
-
-
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -345,7 +332,6 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
 
         if (requestCode == Constant.REQUEST_IMAGE && resultCode == RESULT_OK) {
             String path = ImageUtil.getImageAbsolutePath(this, data.getData());
-
 
             new DecodeImgThread(path, new DecodeImgCallback() {
                 @Override
@@ -358,10 +344,6 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
                     Toast.makeText(CaptureActivity.this, R.string.scan_failed_tip, Toast.LENGTH_SHORT).show();
                 }
             }).run();
-
-
         }
     }
-
-
 }

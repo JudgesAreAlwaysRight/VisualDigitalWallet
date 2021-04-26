@@ -32,11 +32,6 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     api files('libs/core-3.4.1.jar')
 
-    compileOnly "com.android.support:appcompat-v7:30.0.0"
-    compileOnly "com.android.support:design:30.0.0"
-    compileOnly "com.android.support:support-v4:30.0.0"
-    compileOnly "com.android.support:support-vector-drawable:30.0.0"
-
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'
     testImplementation 'junit:junit:4.+'

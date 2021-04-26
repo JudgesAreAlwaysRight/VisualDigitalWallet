@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ContentUris;
 import android.content.Intent;
@@ -18,25 +19,40 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class Collect extends AppCompatActivity {
+import com.yanzhenjie.permission.Action;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.Permission;
+import cn.milkyship.zxing.android.CaptureActivity;
+import cn.milkyship.zxing.bean.ZxingConfig;
+import cn.milkyship.zxing.common.Constant;
+import cn.milkyship.zxing.encode.CodeCreator;
+
+import java.util.List;
+
+public class Collect extends AppCompatActivity implements View.OnClickListener {
 
     private Button local;
     private Button scan;
-    private Button blueteeth;
+    private Button bluetooth;
+
+    private TextView tempTextView ;
 
     private ImageView imageView;
 
-    public static final int TAKE_CAMERA = 101;
-    public static final int PICK_PHOTO = 102;
+    private static final int TAKE_CAMERA = 101;
+    private static final int PICK_PHOTO = 102;
+    private static final int REQUEST_CODE_SCAN = 111;
 
     private Uri imageUri;
 
-    @Nullable
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -44,28 +60,68 @@ public class Collect extends AppCompatActivity {
         getSupportActionBar().hide();//标题栏隐藏
 
         local = (Button)findViewById(R.id.local);
+        local.setOnClickListener(this);
         scan = (Button)findViewById(R.id.scan);
-        blueteeth = (Button)findViewById(R.id.blueteeth);
+        scan.setOnClickListener(this);
+        bluetooth = (Button)findViewById(R.id.bluetooth);
+        bluetooth.setOnClickListener(this);
+
+        tempTextView = (TextView)findViewById(R.id.textView2);
 
         imageView = (ImageView) findViewById(R.id.image_show);
-
-        local.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //动态申请获取访问 读写磁盘的权限
-                if (ContextCompat.checkSelfPermission(Collect.this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(Collect.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 102);
-                } else {
-                    //打开相册
-                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                    //Intent.ACTION_GET_CONTENT = "android.intent.action.GET_CONTENT"
-                    intent.setType("image/*");
-                    startActivityForResult(intent, PICK_PHOTO); // 打开相册
-                }
-            }
-        });
     }
+
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public void onClick(View v) {
+        Log.i("Collect click", v.toString());
+        switch (v.getId()) {
+            case R.id.local:
+                /*打开相册*/
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(intent, Constant.REQUEST_IMAGE);
+                break;
+            case R.id.scan:
+                AndPermission.with(this)
+                        .permission(Permission.CAMERA)
+                        .onGranted(new Action() {
+                            @Override
+                            public void onAction(List<String> permissions) {
+                                Intent intent = new Intent(Collect.this, CaptureActivity.class);
+                                ZxingConfig config = new ZxingConfig();//可选的配置类
+                                //config.setPlayBeep(false);//是否播放扫描声音 默认为true
+                                //config.setShake(false);//是否震动  默认为true
+                                config.setDecodeBarCode(false);//是否扫描条形码 默认为true
+                                //config.setReactColor(R.color.colorAccent);//设置扫描框四个角的颜色 默认为白色
+                                //config.setFrameLineColor(R.color.colorAccent);//设置扫描框边框颜色 默认无色
+                                //config.setScanLineColor(R.color.colorAccent);//设置扫描线的颜色 默认白色
+                                //config.setFullScreenScan(false);//是否全屏扫描  默认为true 设为false则只会在扫描框中扫描
+                                intent.putExtra(Constant.INTENT_ZXING_CONFIG, config);
+                                startActivityForResult(intent, REQUEST_CODE_SCAN);
+                            }
+                        })
+                        .onDenied(new Action() {
+                            @Override
+                            public void onAction(List<String> permissions) {
+                                Uri packageURI = Uri.parse("package:" + getPackageName());
+                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageURI);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                                startActivity(intent);
+
+                                Toast.makeText(Collect.this, "没有权限无法扫描呦", Toast.LENGTH_LONG).show();
+                            }
+                        }).start();
+                break;
+            case R.id.bluetooth:
+                break;
+            default:
+                Toast.makeText(Collect.this, "无效点击输入源", Toast.LENGTH_LONG).show();
+        }
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -81,7 +137,12 @@ public class Collect extends AppCompatActivity {
                         handleImageBeforeKitKat(data);
                     }
                 }
-
+                break;
+            case REQUEST_CODE_SCAN:
+                if (resultCode == RESULT_OK && data != null) {
+                    String content = data.getStringExtra(Constant.CODED_CONTENT);
+                    tempTextView.setText(content);
+                }
                 break;
             default:
                 break;
