@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/collect_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="30dp"
+        android:layout_margin="10dp"
+        android:text="私钥解锁">
+    </TextView>
+
+    <RelativeLayout
+        android:id="@+id/modes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/collect_title">
+
+        <Button
+            android:id="@+id/local"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_toLeftOf="@id/scan"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/buttom_press"
+            android:text="本地上传"
+            android:textSize="20dp">
+        </Button>
+
+        <Button
+            android:id="@+id/scan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/buttom_press"
+            android:text="相机扫描"
+            android:textSize="20dp">
+        </Button>
+
+        <Button
+            android:id="@+id/blueteeth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_toRightOf="@id/scan"
+            android:background="@drawable/buttom_press"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:text="蓝牙传输"
+            android:textSize="20dp">
+        </Button>
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/image_show"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_below="@id/modes"
+        android:layout_margin="6dp"
+/>
+
+
+</RelativeLayout>
