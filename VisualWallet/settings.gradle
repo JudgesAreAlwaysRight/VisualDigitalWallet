@@ -1,3 +1,4 @@
 include ':zxing'
+include ':lzxing'
 include ':app'
 rootProject.name = "VisualWallet"
