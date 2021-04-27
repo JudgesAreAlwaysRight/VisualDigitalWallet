@@ -62,12 +62,11 @@ public class DecodeImgThread extends Thread {
         Result rawResult = null;
         try {
             rawResult = multiFormatReader.decodeWithState(new BinaryBitmap(new HybridBinarizer(new BitmapLuminanceSource(scanBitmap))));
-
             Log.i("解析结果", rawResult.getText());
 
         } catch (Exception e) {
             e.printStackTrace();
-            //  Log.i("解析的图片结果","失败");
+              Log.i("解析的图片结果","失败");
         }
 
         if (rawResult != null) {

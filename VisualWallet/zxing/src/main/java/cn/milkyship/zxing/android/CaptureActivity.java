@@ -32,6 +32,7 @@ import cn.milkyship.zxing.decode.ImageUtil;
 import cn.milkyship.zxing.view.ViewfinderView;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * @author: yzq
@@ -87,15 +88,12 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         // 保持Activity处于唤醒状态
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.setStatusBarColor(Color.BLACK);
-        }
+        window.setStatusBarColor(Color.BLACK);
 
         /*先获取配置信息*/
         try {
             config = (ZxingConfig) getIntent().getExtras().get(Constant.INTENT_ZXING_CONFIG);
         } catch (Exception e) {
-
             Log.i("config", e.toString());
         }
 
@@ -103,9 +101,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
             config = new ZxingConfig();
         }
 
-
         setContentView(R.layout.activity_capture);
-
 
         initView();
 
@@ -115,10 +111,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         beepManager = new BeepManager(this);
         beepManager.setPlayBeep(config.isPlayBeep());
         beepManager.setVibrate(config.isShake());
-
-
     }
-
 
     private void initView() {
         previewView = findViewById(R.id.preview_view);
@@ -126,7 +119,6 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
 
         viewfinderView = findViewById(R.id.viewfinder_view);
         viewfinderView.setZxingConfig(config);
-
 
         backIv = findViewById(R.id.backIv);
         backIv.setOnClickListener(this);
@@ -140,11 +132,9 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         albumLayout.setOnClickListener(this);
         bottomLayout = findViewById(R.id.bottomLayout);
 
-
         switchVisibility(bottomLayout, config.isShowbottomLayout());
         switchVisibility(flashLightLayout, config.isShowFlashLight());
         switchVisibility(albumLayout, config.isShowAlbum());
-
 
         /*有闪光灯就显示手电筒按钮  否则不显示*/
         if (isSupportCameraLedFlash(getPackageManager())) {
@@ -152,9 +142,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         } else {
             flashLightLayout.setVisibility(View.GONE);
         }
-
     }
-
 
     /**
      * @param pm
@@ -186,7 +174,6 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
             flashLightIv.setImageResource(R.drawable.ic_close);
             flashLightTv.setText(R.string.open_flash);
         }
-
     }
 
     /**
@@ -200,6 +187,14 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
 
         Intent intent = getIntent();
         intent.putExtra(Constant.CODED_CONTENT, rawResult.getText());
+
+        Log.i("raw data", rawResult.getText());
+        Log.i("raw data", Arrays.toString(rawResult.getRawBytes()));
+        Log.i("raw data", String.valueOf(rawResult.getNumBits()));
+        Log.i("raw data", Arrays.toString(rawResult.getResultPoints()));
+        Log.i("raw data", String.valueOf(rawResult.getBarcodeFormat()));
+        Log.i("raw data", String.valueOf(rawResult.getTimestamp()));
+
         setResult(RESULT_OK, intent);
         this.finish();
     }

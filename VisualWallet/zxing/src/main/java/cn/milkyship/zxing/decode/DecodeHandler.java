@@ -19,13 +19,16 @@ package cn.milkyship.zxing.decode;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.MultiFormatReader;
+import com.google.zxing.NotFoundException;
 import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
+import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 import cn.milkyship.zxing.android.CaptureActivity;
 import cn.milkyship.zxing.common.Constant;
@@ -53,7 +56,6 @@ public final class DecodeHandler extends Handler {
         }
         switch (message.what) {
             case Constant.DECODE:
-
                 decode((byte[]) message.obj, message.arg1, message.arg2);
                 break;
             case Constant.QUIT:
@@ -69,6 +71,7 @@ public final class DecodeHandler extends Handler {
      */
     private void decode(byte[] data, int width, int height) {
 
+        BinaryBitmap bitmap = null;
         Result rawResult = null;
 
         byte[] rotatedData = new byte[data.length];
@@ -87,24 +90,32 @@ public final class DecodeHandler extends Handler {
 
 
         if (source != null) {
-            BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-
+            bitmap = new BinaryBitmap(new HybridBinarizer(source));
             try {
                 rawResult = multiFormatReader.decodeWithState(bitmap);
             } catch (ReaderException re) {
-
                 //Log.i("解码异常",re.toString());
             } finally {
                 multiFormatReader.reset();
             }
         }
 
-
-
         Handler handler = activity.getHandler();
         if (rawResult != null) {
 
             if (handler != null) {
+
+                // fixit:
+                try {
+                    BitMatrix bitMatrix = bitmap.getBlackMatrix();
+                    Log.i("bitmap", String.valueOf(bitMatrix));
+                    Log.i("bitmap", String.valueOf(bitMatrix.getWidth()));
+                    Log.i("bitmap", String.valueOf(bitMatrix.getHeight()));
+                } catch (NotFoundException e) {
+                    e.printStackTrace();
+                }
+
+
                 Message message = Message.obtain(handler,
                         Constant.DECODE_SUCCEEDED, rawResult);
                 message.sendToTarget();
