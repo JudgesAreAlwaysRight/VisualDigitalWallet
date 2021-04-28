@@ -4,6 +4,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -26,6 +28,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.visualwallet.adapter.showinfo_adapter;
 import com.google.zxing.Result;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
@@ -48,6 +51,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
     private Button bluetooth;
     private Button collectK;
     private TextView tempTextView;
+    private RecyclerView showinfo;
 
     private ImageView imageView;
 
@@ -78,6 +82,10 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         bluetooth.setOnClickListener(this);
         collectK = (Button) findViewById(R.id.collectK);
         collectK.setOnClickListener(this);
+
+        showinfo = (RecyclerView)findViewById(R.id.showinfo);
+        showinfo.setLayoutManager(new LinearLayoutManager(Collect.this));
+        showinfo.setAdapter(new showinfo_adapter(Collect.this));
 
         tempTextView = (TextView) findViewById(R.id.textView2);
 
@@ -207,7 +215,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
             default:
                 break;
         }
-        
+
         if(count == k)
         {
             collectK.setVisibility(View.VISIBLE);

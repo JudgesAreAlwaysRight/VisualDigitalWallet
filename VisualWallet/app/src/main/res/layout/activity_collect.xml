@@ -63,18 +63,19 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="-95dp" />
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="167dp"
-        android:layout_height="33dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="121dp"
-        android:layout_marginTop="183dp"
-        android:layout_marginEnd="124dp"
-        android:text="TextView" />
 
+    
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/showinfo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/modes"
+        android:layout_above="@id/collectK"
+        android:layout_margin="30dp">
+
+    </androidx.recyclerview.widget.RecyclerView>
+    
+    
     <Button
         android:id="@+id/collectK"
         android:layout_width="match_parent"
