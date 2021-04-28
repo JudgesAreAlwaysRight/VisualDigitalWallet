@@ -18,7 +18,7 @@ public class Constant {
     public static final int FLASH_CLOSE = 9;
     public static final int REQUEST_IMAGE = 10;
     public static final String CODED_CONTENT = "codedContent";
-    public static final String CODED_BITMAP = "codedBitmap";
+    public static final String CODED_POINT_MATRIX = "codedPointMatrix";
 
 
     /*传递的zxingconfing*/

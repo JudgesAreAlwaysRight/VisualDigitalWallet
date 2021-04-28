@@ -39,6 +39,8 @@ public final class DecoderResult {
   private final int structuredAppendSequenceNumber;
   private final int symbologyModifier;
 
+  private BitMatrix pointMatrix;
+
   public DecoderResult(byte[] rawBytes,
                        String text,
                        List<byte[]> byteSegments,
@@ -173,4 +175,11 @@ public final class DecoderResult {
     return symbologyModifier;
   }
 
+  public BitMatrix getPointMatrix() {
+    return pointMatrix;
+  }
+
+  public void setPointMatrix(BitMatrix pointMatrix) {
+    this.pointMatrix = pointMatrix;
+  }
 }

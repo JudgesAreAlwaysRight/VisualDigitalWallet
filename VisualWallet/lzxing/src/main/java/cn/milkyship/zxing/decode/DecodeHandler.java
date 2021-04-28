@@ -33,6 +33,10 @@ import com.google.zxing.common.HybridBinarizer;
 import cn.milkyship.zxing.android.CaptureActivity;
 import cn.milkyship.zxing.common.Constant;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Map;
 
 public final class DecodeHandler extends Handler {
@@ -105,16 +109,10 @@ public final class DecodeHandler extends Handler {
 
             if (handler != null) {
 
-                // fixit:
-                try {
-                    BitMatrix bitMatrix = bitmap.getBlackMatrix();
-                    Log.i("bitmap", String.valueOf(bitMatrix));
-                    Log.i("bitmap", String.valueOf(bitMatrix.getWidth()));
-                    Log.i("bitmap", String.valueOf(bitMatrix.getHeight()));
-                } catch (NotFoundException e) {
-                    e.printStackTrace();
-                }
-
+                // TODO: remove log code
+                BitMatrix pointMatrix = rawResult.getPointMatrix();
+                Log.i("decodeHandler", String.format("%d,%d", pointMatrix.getHeight(), pointMatrix.getWidth()));
+//                Log.i("pointMatrix", " \n" + pointMatrix.toString("#", " "));
 
                 Message message = Message.obtain(handler,
                         Constant.DECODE_SUCCEEDED, rawResult);

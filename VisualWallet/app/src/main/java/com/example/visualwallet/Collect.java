@@ -15,10 +15,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -31,6 +28,7 @@ import com.google.zxing.Result;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
+
 import cn.milkyship.zxing.android.CaptureActivity;
 import cn.milkyship.zxing.bean.ZxingConfig;
 import cn.milkyship.zxing.common.Constant;
@@ -38,7 +36,7 @@ import cn.milkyship.zxing.decode.DecodeImgCallback;
 import cn.milkyship.zxing.decode.DecodeImgThread;
 import cn.milkyship.zxing.decode.ImageUtil;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Collect extends AppCompatActivity implements View.OnClickListener {
@@ -47,7 +45,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
     private Button scan;
     private Button bluetooth;
 
-    private TextView tempTextView ;
+    private TextView tempTextView;
 
     private ImageView imageView;
 
@@ -57,22 +55,28 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
 
     private Uri imageUri;
 
+    private List<String> splitInfo;
+    private List<String> splitMat;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collect);
         getSupportActionBar().hide();//标题栏隐藏
 
-        local = (Button)findViewById(R.id.local);
+        local = (Button) findViewById(R.id.local);
         local.setOnClickListener(this);
-        scan = (Button)findViewById(R.id.scan);
+        scan = (Button) findViewById(R.id.scan);
         scan.setOnClickListener(this);
-        bluetooth = (Button)findViewById(R.id.bluetooth);
+        bluetooth = (Button) findViewById(R.id.bluetooth);
         bluetooth.setOnClickListener(this);
 
-        tempTextView = (TextView)findViewById(R.id.textView2);
+        tempTextView = (TextView) findViewById(R.id.textView2);
 
         imageView = (ImageView) findViewById(R.id.image_show);
+
+        splitInfo = new ArrayList<String>();
+        splitMat = new ArrayList<String>();
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -161,6 +165,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                             Log.i("local pic scan result", result.getText());
                             tempTextView.setText(result.getText());
                         }
+
                         @Override
                         public void onImageDecodeFailed() {
                             Toast.makeText(Collect.this, cn.milkyship.zxing.R.string.scan_failed_tip, Toast.LENGTH_SHORT).show();
@@ -171,33 +176,21 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
             case REQUEST_CODE_SCAN:
                 if (resultCode == RESULT_OK && data != null) {
                     String content = data.getStringExtra(Constant.CODED_CONTENT);
+                    String pointMatrix = data.getStringExtra(Constant.CODED_POINT_MATRIX);
+
+                    splitInfo.add(content);
+                    splitMat.add(pointMatrix);
+
+                    // TODO: 刷新页面recycleview?
                     tempTextView.setText(content);
+
+                    // todo:remove log code
+                    Log.i("point matrix size", String.valueOf(pointMatrix.length()));
+                    Log.i("point matrix", " \n" + pointMatrix.replace("1", "#").replace("0", " "));
                 }
                 break;
             default:
                 break;
-        }
-    }
-
-    private String getImagePath(Uri uri, String selection) {
-        String path = null;
-        // 通过Uri和selection来获取真实的图片路径
-        Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-            }
-            cursor.close();
-        }
-        return path;
-    }
-
-    private void displayImage(String imagePath) {
-        if (imagePath != null) {
-            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-            imageView.setImageBitmap(bitmap);
-        } else {
-            Toast.makeText(this, "获取图片失败", Toast.LENGTH_SHORT).show();
         }
     }
 }

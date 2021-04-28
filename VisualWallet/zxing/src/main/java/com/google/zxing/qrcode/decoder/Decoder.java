@@ -16,6 +16,8 @@
 
 package com.google.zxing.qrcode.decoder;
 
+import android.util.Log;
+
 import com.google.zxing.ChecksumException;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.FormatException;
@@ -76,12 +78,18 @@ public final class Decoder {
   public DecoderResult decode(BitMatrix bits, Map<DecodeHintType,?> hints)
       throws FormatException, ChecksumException {
 
+    BitMatrix rawBits = bits.clone();
+
     // Construct a parser and read version, error-correction level
     BitMatrixParser parser = new BitMatrixParser(bits);
     FormatException fe = null;
     ChecksumException ce = null;
     try {
-      return decode(parser, hints);
+      DecoderResult decoderResult = decode(parser, hints);
+      decoderResult.setPointMatrix(rawBits);
+      Log.i("decode return size", String.format("%dx%d", rawBits.getWidth(), rawBits.getHeight()));
+//      Log.i("rawBits", " \n" + rawBits.toString("#", " "));
+      return decoderResult;
     } catch (FormatException e) {
       fe = e;
     } catch (ChecksumException e) {
@@ -115,6 +123,8 @@ public final class Decoder {
 
       // Success! Notify the caller that the code was mirrored.
       result.setOther(new QRCodeDecoderMetaData(true));
+
+      result.setPointMatrix(bits);
 
       return result;
 

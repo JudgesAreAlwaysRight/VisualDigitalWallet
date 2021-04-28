@@ -16,6 +16,8 @@
 
 package com.google.zxing;
 
+import com.google.zxing.common.BitMatrix;
+
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -33,6 +35,8 @@ public final class Result {
   private final BarcodeFormat format;
   private Map<ResultMetadataType,Object> resultMetadata;
   private final long timestamp;
+
+  private BitMatrix pointMatrix;
 
   public Result(String text,
                 byte[] rawBytes,
@@ -63,6 +67,26 @@ public final class Result {
     this.format = format;
     this.resultMetadata = null;
     this.timestamp = timestamp;
+    this.pointMatrix = null;
+  }
+
+  public Result(String text,
+                byte[] rawBytes,
+                ResultPoint[] resultPoints,
+                BarcodeFormat format,
+                BitMatrix pointMatrix) {
+    this.text = text;
+    this.rawBytes = rawBytes;
+    this.numBits = rawBytes == null ? 0 : 8 * rawBytes.length;
+    this.resultPoints = resultPoints;
+    this.format = format;
+    this.resultMetadata = null;
+    this.timestamp = System.currentTimeMillis();
+    this.pointMatrix = pointMatrix;
+  }
+
+  public BitMatrix getPointMatrix() {
+    return pointMatrix;
   }
 
   /**

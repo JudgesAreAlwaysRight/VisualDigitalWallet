@@ -511,4 +511,14 @@ public final class BitMatrix implements Cloneable {
     return new BitMatrix(width, height, rowSize, bits.clone());
   }
 
+//  public boolean[][] getBits() {
+//    boolean[][] b = new boolean[height][width];
+//    for (int y = 0; y < height; y++) {
+//      for (int x = 0; x < width; x++) {
+//        b[y][x] = get(x, y);
+//      }
+//    }
+//    return b;
+//  }
+
 }

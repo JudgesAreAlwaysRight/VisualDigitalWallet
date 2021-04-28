@@ -16,6 +16,8 @@
 
 package com.google.zxing.qrcode;
 
+import android.util.Log;
+
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ChecksumException;
@@ -84,7 +86,13 @@ public class QRCodeReader implements Reader {
       ((QRCodeDecoderMetaData) decoderResult.getOther()).applyMirroredCorrection(points);
     }
 
-    Result result = new Result(decoderResult.getText(), decoderResult.getRawBytes(), points, BarcodeFormat.QR_CODE);
+    BitMatrix pointMatrix = decoderResult.getPointMatrix();
+
+    //todo:remove log code
+    Log.i("reader mat size", String.format("%dx%d", pointMatrix.getWidth(), pointMatrix.getHeight()));
+//    Log.i("pointMatrix", " \n" + pointMatrix.toString("#", " "));
+
+    Result result = new Result(decoderResult.getText(), decoderResult.getRawBytes(), points, BarcodeFormat.QR_CODE, pointMatrix);
     List<byte[]> byteSegments = decoderResult.getByteSegments();
     if (byteSegments != null) {
       result.putMetadata(ResultMetadataType.BYTE_SEGMENTS, byteSegments);
