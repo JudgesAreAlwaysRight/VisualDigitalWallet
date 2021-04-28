@@ -75,5 +75,16 @@
         android:layout_marginEnd="124dp"
         android:text="TextView" />
 
+    <Button
+        android:id="@+id/collectK"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="提交"
+        android:textSize="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="50dp"
+        android:visibility="gone">
+
+    </Button>
 
 </RelativeLayout>

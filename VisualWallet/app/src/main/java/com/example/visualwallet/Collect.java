@@ -21,6 +21,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,7 +46,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
     private Button local;
     private Button scan;
     private Button bluetooth;
-
+    private Button collectK;
     private TextView tempTextView;
 
     private ImageView imageView;
@@ -58,6 +60,10 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
     private List<String> splitInfo;
     private List<String> splitMat;
 
+    // new 计数器
+    int k = 2;
+    int count = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +76,8 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         scan.setOnClickListener(this);
         bluetooth = (Button) findViewById(R.id.bluetooth);
         bluetooth.setOnClickListener(this);
+        collectK = (Button) findViewById(R.id.collectK);
+        collectK.setOnClickListener(this);
 
         tempTextView = (TextView) findViewById(R.id.textView2);
 
@@ -77,6 +85,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
 
         splitInfo = new ArrayList<String>();
         splitMat = new ArrayList<String>();
+
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -144,6 +153,9 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                 break;
             case R.id.bluetooth:
                 break;
+            case R.id.collectK:
+                // TODO: 点击后提交内容
+                break;
             default:
                 Toast.makeText(Collect.this, "无效点击输入源", Toast.LENGTH_LONG).show();
         }
@@ -152,6 +164,8 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+
         super.onActivityResult(requestCode, resultCode, data);
         Log.i("collect activity result", String.valueOf(requestCode));
         switch (requestCode) {
@@ -163,6 +177,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                         @Override
                         public void onImageDecodeSuccess(Result result) {
                             Log.i("local pic scan result", result.getText());
+                            count++;
                             tempTextView.setText(result.getText());
                         }
 
@@ -180,7 +195,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
 
                     splitInfo.add(content);
                     splitMat.add(pointMatrix);
-
+                    count++;
                     // TODO: 刷新页面recycleview?
                     tempTextView.setText(content);
 
@@ -191,6 +206,11 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                 break;
             default:
                 break;
+        }
+        
+        if(count == k)
+        {
+            collectK.setVisibility(View.VISIBLE);
         }
     }
 }
