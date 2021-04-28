@@ -1,0 +1,9 @@
+ES = 1  # enlarge_scale: 分存图放大倍数
+TARGET = r"qr/kn/imgs/test.png"
+CARRIERPATH = r"qr/kn/imgs/carrier"
+KEYPATH = r"qr/kn/imgs/key"
+RETSPLITPATH = r"qr/kn/imgs/ret"
+ADDRESS = r"qr/kn/imgs/"
+BTCLOGO = r"qr/kn/imgs/template/btc.png"
+ETHLOGO = r"qr/kn/imgs/template/eth.png"
+ETHDOTLOGO = r"qr/kn/imgs/template/eth_dot.png"
