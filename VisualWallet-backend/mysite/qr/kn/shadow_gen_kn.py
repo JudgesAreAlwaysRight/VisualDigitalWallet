@@ -228,14 +228,14 @@ def validate(result, skhash):
         valid.update(validateSK.encode("utf8"))
         validmd5 = valid.hexdigest()
         if skhash == validmd5:
-            # print("Validation Passed!")
-            return 1
+            flag = 1
+            return validateSK, flag
         else:
-            # print("Wrong SK!")
-            return 0
+            flag = 0
+            return "", flag
     else:
-        # print("Validation failed!")
-        return -1
+        flag = -1
+        return "", flag
 
 
 def apiFirst(msg, k, n, carriermsg, logo, boxsize, currecy, wallet):

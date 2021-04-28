@@ -9,7 +9,7 @@ import json
 import numpy as np
 
 
-def testGet(request):
+def genSplit(request):
     if request.method == 'POST':  # 当提交表单时
         # 判断是否传参
         postBody = request.body
@@ -50,8 +50,20 @@ def testGet(request):
             index = idx.id
             res = {'id': index, 'split': res}
             res = json.dumps(res)
-        elif flag == "validQR":
-            postBody = request.body
+        else:
+            res = "Wrong Request Flag!"
+        return HttpResponse(res)
+    else:
+        return HttpResponse('transfer fail!')
+
+
+def validate(request):
+    if request.method == 'POST':  # 当提交表单时
+        # 判断是否传参
+        postBody = request.body
+        skinfo = json.loads(postBody)
+        flag = skinfo['reqFlag']
+        if flag == "validQR":
             info = json.loads(postBody)
             index = info['id']
             splitNo = info['index']
@@ -76,7 +88,11 @@ def testGet(request):
                         carrier_matrix.append(carryFetch(target.carry3))
                         if coeN == 5:
                             carrier_matrix.append(carryFetch(target.carry4))
-            res = api2(skhash, splitNo, data_matrix, carrier_matrix, length, width, c1, c2, c3)
+            sk, text = api2(skhash, splitNo, data_matrix, carrier_matrix, length, width, c1, c2, c3)
+            res = {"secretKey": sk, "flag": text}
+            res = json.dumps(res)
+        else:
+            res = "Wrong Request Flag!"
         return HttpResponse(res)
     else:
-        return HttpResponse('transfer fail!')
+        return HttpResponse('transfer failed!')

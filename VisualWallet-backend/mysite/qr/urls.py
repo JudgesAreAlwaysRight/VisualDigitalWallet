@@ -6,5 +6,6 @@ from . import views
 app_name = "qr"
 urlpatterns = [
     # path('', views.IndexView.as_view(), name='index'),
-    path('test/', views.testGet, name='testget'),
+    path('generate/', views.genSplit, name='genSplit'),
+    path('validate/', views.validate, name='validate'),
 ]
