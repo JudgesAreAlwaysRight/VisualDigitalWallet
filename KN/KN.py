@@ -119,7 +119,7 @@ def decode(merge, m, d, alpha):
     return qr
 
 if __name__ == "__main__":
-    k, n = eval(input("Set K, N(max 5) for your QR code: "))
+    k, n = 2, 3
     s0, s1, m = makes(k, n)
     lenm = int(sqrt(m))
     # 每个像素扩充成lenm*lenm
