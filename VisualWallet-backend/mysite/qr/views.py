@@ -13,7 +13,7 @@ def genSplit(request):
     if request.method == 'POST':  # 当提交表单时
         # 判断是否传参
         postBody = request.body
-        skinfo = json.loads(postBody)
+        skinfo = json.loads(postBody.decode('utf-8'))
         flag = skinfo['reqFlag']
         if flag == "genSplit":
             sk = skinfo['secretKey']
@@ -61,10 +61,10 @@ def validate(request):
     if request.method == 'POST':  # 当提交表单时
         # 判断是否传参
         postBody = request.body
-        skinfo = json.loads(postBody)
+        skinfo = json.loads(postBody.decode('utf-8'))
         flag = skinfo['reqFlag']
         if flag == "validQR":
-            info = json.loads(postBody)
+            info = json.loads(postBody.decode('utf-8'))
             index = info['id']
             splitNo = info['index']
             data_matrix = info['keys']
