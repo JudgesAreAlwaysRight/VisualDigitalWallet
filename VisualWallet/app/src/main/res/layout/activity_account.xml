@@ -9,9 +9,10 @@
         android:id="@+id/account_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:textSize="30sp"
+        android:textColor="#000"
+        android:textSize="40dp"
         android:text = "账户详情" />
 
     <RelativeLayout
@@ -39,6 +40,8 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/account_address01"
             android:text="mtZ9wAKCvpSzsHSuYFrHvDTZb2rvkMVTqV"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:textSize="25sp">
 
         </TextView>
@@ -114,7 +117,8 @@
         android:background="@drawable/buttom_press"
         android:text="获取私钥"
         android:textSize="30dp"
-
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="80dp">
         <!--        android:onClick="show"-->
