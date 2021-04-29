@@ -64,9 +64,8 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
     private List<String> splitInfo;
     private List<String> splitMat;
 
-    // new 计数器
-    int k = 2;
-    int count = 0;
+    // TODO: K 应当存储在数据库中
+    private final int k = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,7 +161,8 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
             case R.id.bluetooth:
                 break;
             case R.id.collectK:
-                // TODO: 点击后提交内容
+                // 提交内容到服务器计算Collect
+
                 break;
             default:
                 Toast.makeText(Collect.this, "无效点击输入源", Toast.LENGTH_LONG).show();
@@ -172,10 +172,10 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-
-
         super.onActivityResult(requestCode, resultCode, data);
+
         Log.i("collect activity result", String.valueOf(requestCode));
+
         switch (requestCode) {
             case Constant.REQUEST_IMAGE:
                 if (resultCode == RESULT_OK) {
@@ -185,8 +185,8 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                         @Override
                         public void onImageDecodeSuccess(Result result) {
                             Log.i("local pic scan result", result.getText());
-                            count++;
                             tempTextView.setText(result.getText());
+                            // TODO: 相册扫码成功，向recycleview添加对象，对应处理
                         }
 
                         @Override
@@ -203,7 +203,6 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
 
                     splitInfo.add(content);
                     splitMat.add(pointMatrix);
-                    count++;
                     // TODO: 刷新页面recycleview?
                     tempTextView.setText(content);
 
@@ -215,9 +214,8 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
             default:
                 break;
         }
-
-        if(count == k)
-        {
+        
+        if(splitInfo.size() == k) {
             collectK.setVisibility(View.VISIBLE);
         }
     }

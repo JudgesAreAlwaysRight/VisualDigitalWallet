@@ -9,6 +9,7 @@ public class Constant {
     public static final String protocol = "http";
     public static final String domain = "vw.milkyship.cn";
     public static final String port = "8000";
-    public static final int connectTimeout = 3000;
-    public static final int readTimeout = 3000;
+    public static final String projectRoot = "/qr";
+    public static int connectTimeout = 3000;
+    public static int readTimeout = 3000;
 }
