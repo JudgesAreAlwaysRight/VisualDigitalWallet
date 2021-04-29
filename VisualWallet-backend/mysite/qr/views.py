@@ -7,6 +7,7 @@ import hashlib
 from qr.kn.shadow_gen_kn import api1, api2, carryStore, carryFetch
 import json
 import numpy as np
+import cv2
 
 
 def genSplit(request):
