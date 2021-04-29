@@ -262,7 +262,9 @@ def apiFirst(msg, k, n, carriermsg, logo, boxsize, currecy, wallet):
         l, w = key_list[i].shape[0:2]
         l, w = l//boxsize, w//boxsize
         key_list[i] = cv2.resize(key_list[i], (l, w))
-        cv2.imwrite(KEYPATH + str(i) + ".png", key_list[i])
+        key_list[i] = cv2.cvtColor(key_list[i], cv2.COLOR_BGR2GRAY)
+        _, key_list[i] = cv2.threshold(key_list[i], 125, 1, cv2.THRESH_BINARY)
+        # cv2.imwrite(KEYPATH + str(i) + ".png", key_list[i])
         # gray = cv2.cvtColor(key_list[i], cv2.COLOR_BGR2GRAY)
         # transfer_list.append(cv2.adaptiveThreshold(~gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 35, -5))
     ax0 = n
@@ -277,6 +279,10 @@ def apiFirst(msg, k, n, carriermsg, logo, boxsize, currecy, wallet):
 def apiSecond(skhash, split_no, mat, carrier, x, y, d, alpha, lenm):
     split = []
     for i in split_no:
+        mat[i] = mat[i] * 255
+        mat[i] = cv2.cvtColor(mat[i], cv2.COLOR_GRAY2BGR)
+        print(mat[i].shape)
+        print(mat[i])
         res = retrieveSplit(mat[i], carrier[i], x, y)
         split.append(res)
     qr = mergeSplit(split, x, y, d, alpha, lenm)
