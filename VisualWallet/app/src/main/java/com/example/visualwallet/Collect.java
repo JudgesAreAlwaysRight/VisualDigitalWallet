@@ -1,34 +1,33 @@
 package com.example.visualwallet;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.content.ContentUris;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.visualwallet.adapter.showinfo_adapter;
+import com.example.visualwallet.net.CollectRequest;
+import com.example.visualwallet.net.NetCallback;
 import com.google.zxing.Result;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
@@ -43,6 +42,7 @@ import cn.milkyship.zxing.decode.ImageUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Collect extends AppCompatActivity implements View.OnClickListener {
 
@@ -50,7 +50,6 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
     private Button scan;
     private Button bluetooth;
     private Button collectK;
-    private TextView tempTextView;
     private RecyclerView showinfo;
 
     private ImageView imageView;
@@ -82,11 +81,9 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         collectK = (Button) findViewById(R.id.collectK);
         collectK.setOnClickListener(this);
 
-        showinfo = (RecyclerView)findViewById(R.id.showinfo);
+        showinfo = (RecyclerView) findViewById(R.id.showinfo);
         showinfo.setLayoutManager(new LinearLayoutManager(Collect.this));
         showinfo.setAdapter(new showinfo_adapter(Collect.this));
-
-        tempTextView = (TextView) findViewById(R.id.textView2);
 
         imageView = (ImageView) findViewById(R.id.image_show);
 
@@ -162,6 +159,63 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                 break;
             case R.id.collectK:
                 // 提交内容到服务器计算Collect
+                List<Integer> ind = new ArrayList<Integer>();
+                ind.add(new Integer(1));
+                ind.add(new Integer(2));
+                CollectRequest collectRequest = (CollectRequest) new CollectRequest(0, ind, splitMat).setNetCallback(new NetCallback() {
+                    @Override
+                    public void callBack(Map res) {
+                        if (res == null || !res.get("code").equals("200")) {
+                            String logInfo = "网络响应异常";
+                            Log.e("Collect", "Net response illegal");
+                            if (res.get("code") != null) {
+                                logInfo += " " + res.get("code");
+                                Log.e("Collect", "http code " + res.get("code"));
+                            }
+                            Looper.prepare();
+                            Toast.makeText(Collect.this, logInfo, Toast.LENGTH_LONG).show();
+                            Looper.loop();
+                            return;
+                        }
+                        String flag = res.get("flag").toString();
+                        if (flag.equals("1")) {
+                            String secretKey = res.get("secretKey").toString();
+                            AlertDialog.Builder alertdialogbuilder = new AlertDialog.Builder(Collect.this);
+                            alertdialogbuilder.setMessage("私钥已找回：\n" + secretKey);
+                            alertdialogbuilder.setPositiveButton("确定", null);
+                            alertdialogbuilder.setNeutralButton("复制到剪贴板", new DialogInterface.OnClickListener() {
+                                @RequiresApi(api = Build.VERSION_CODES.M)
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                                    ClipData mClipData = ClipData.newPlainText("私钥", "secretKey");
+                                    cm.setPrimaryClip(mClipData);
+                                    Looper.prepare();
+                                    Toast.makeText(Collect.this, "复制成功", Toast.LENGTH_LONG).show();
+                                    Looper.loop();
+                                }
+                            });
+                            final AlertDialog alertdialog = alertdialogbuilder.create();
+                            alertdialog.show();
+                        } else if (flag.equals("0")) {
+                            Log.e("Collect", "Net flag 0, pics were modified");
+                            Looper.prepare();
+                            Toast.makeText(Collect.this, "分存图遭到篡改，请检查图片内容", Toast.LENGTH_LONG).show();
+                            Looper.loop();
+                        } else if (flag.equals("-1")) {
+                            Log.e("Collect", "Net flag -1, pics were not qrcode");
+                            Looper.prepare();
+                            Toast.makeText(Collect.this, "分存图无法识别", Toast.LENGTH_LONG).show();
+                            Looper.loop();
+                        } else {
+                            Log.e("Collect", "Net flag illegal");
+                            Looper.prepare();
+                            Toast.makeText(Collect.this, "服务器响应异常", Toast.LENGTH_LONG).show();
+                            Looper.loop();
+                        }
+                    }
+                });
+                collectRequest.start();
 
                 break;
             default:
@@ -179,13 +233,13 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         switch (requestCode) {
             case Constant.REQUEST_IMAGE:
                 if (resultCode == RESULT_OK) {
+                    assert data != null;
                     String path = ImageUtil.getImageAbsolutePath(this, data.getData());
                     Log.i("img path", path);
                     new DecodeImgThread(path, new DecodeImgCallback() {
                         @Override
                         public void onImageDecodeSuccess(Result result) {
                             Log.i("local pic scan result", result.getText());
-                            tempTextView.setText(result.getText());
                             // TODO: 相册扫码成功，向recycleview添加对象，对应处理
                         }
 
@@ -193,7 +247,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                         public void onImageDecodeFailed() {
                             Toast.makeText(Collect.this, cn.milkyship.zxing.R.string.scan_failed_tip, Toast.LENGTH_SHORT).show();
                         }
-                    }).run();
+                    }).start();
                 }
                 break;
             case REQUEST_CODE_SCAN:
@@ -201,21 +255,22 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                     String content = data.getStringExtra(Constant.CODED_CONTENT);
                     String pointMatrix = data.getStringExtra(Constant.CODED_POINT_MATRIX);
 
+                    // todo:remove log code
+                    Log.i("camera scan result", content);
+                    Log.i("point matrix size", String.valueOf(pointMatrix.length()));
+                    //Log.i("point matrix", " \n" + pointMatrix.replace("1", "#").replace("0", " "));
+
                     splitInfo.add(content);
                     splitMat.add(pointMatrix);
                     // TODO: 刷新页面recycleview?
-                    tempTextView.setText(content);
 
-                    // todo:remove log code
-                    Log.i("point matrix size", String.valueOf(pointMatrix.length()));
-                    Log.i("point matrix", " \n" + pointMatrix.replace("1", "#").replace("0", " "));
                 }
                 break;
             default:
                 break;
         }
-        
-        if(splitInfo.size() == k) {
+
+        if (splitInfo.size() == k) {
             collectK.setVisibility(View.VISIBLE);
         }
     }

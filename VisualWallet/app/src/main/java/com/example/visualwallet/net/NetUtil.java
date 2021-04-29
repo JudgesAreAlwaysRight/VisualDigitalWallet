@@ -2,15 +2,17 @@ package com.example.visualwallet.net;
 
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.example.visualwallet.common.Constant;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 public class NetUtil {
@@ -18,12 +20,15 @@ public class NetUtil {
     private static String urlBase;
 
     static {
-        urlBase = Constant.protocol + "://" + Constant.domain;
-        if (!Constant.domain.equals("80"))
-            urlBase += ":" + Constant.port;
+        urlBase = Constant.protocol
+                + "://"
+                + Constant.domain
+                + ":"
+                + Constant.port
+                + Constant.projectRoot;
     }
 
-    public static String Get(String subUrlStr, Map<String, String> args) {
+    public static Map<String, Object> Get(String subUrlStr, Map<String, Object> args) {
 
         HttpURLConnection connection = null;
         String response = null;
@@ -31,14 +36,14 @@ public class NetUtil {
         StringBuilder urlStr = new StringBuilder(urlBase + subUrlStr);
         boolean firstArg = true;
         if (args != null) {
-            for (Map.Entry<String, String> it : args.entrySet()) {
+            for (Map.Entry<String, Object> it : args.entrySet()) {
                 urlStr.append(firstArg ? "?" : "&");
                 if (firstArg) {
                     firstArg = false;
                 }
                 urlStr.append(it.getKey());
                 urlStr.append("=");
-                urlStr.append(args.get(it.getValue()));
+                urlStr.append(args.get(it.getValue().toString()));
             }
         }
 
@@ -63,29 +68,20 @@ public class NetUtil {
                 connection.disconnect();
             }
         }
-        return response;
+        return JSONObject.parseObject(response);
     }
 
-    public static String Post(String subUrlStr, Map<String, String> args) {
+    public static Map Post(String subUrlStr, Map<String, String> args) {
 
         HttpURLConnection connection = null;
         String response = null;
+        int code;
 
-        StringBuilder argsBuf = new StringBuilder();
+        String jsonString = JSON.toJSONString(args);
+        byte[] argsByte = jsonString.getBytes();
 
-        boolean firstArg = true;
-        if (args != null) {
-            for (Map.Entry<String, String> it : args.entrySet()) {
-                argsBuf.append(firstArg ? "" : "&");
-                if (firstArg) {
-                    firstArg = false;
-                }
-                argsBuf.append(it.getKey());
-                argsBuf.append("=");
-                argsBuf.append(args.get(it.getValue()));
-            }
-        }
-        byte[] argsByte = argsBuf.toString().getBytes();
+        Log.i("post url", urlBase + subUrlStr);
+        Log.i("post body", jsonString.toString());
 
         try {
             URL url = new URL(urlBase + subUrlStr);
@@ -102,19 +98,36 @@ public class NetUtil {
             OutputStream outputStream = connection.getOutputStream();
             outputStream.write(argsByte, 0, argsByte.length);
 
-            InputStream in = connection.getInputStream();
+            code = connection.getResponseCode();
+            InputStream in;
+            if (code == 200) {
+                in = connection.getInputStream(); // 得到网络返回的正确输入流
+            } else {
+                in = connection.getErrorStream(); // 得到网络返回的错误输入流
+            }
             InputStreamReader inputStreamReader = new InputStreamReader(in);
             BufferedReader reader = new BufferedReader(inputStreamReader);
             response = reader.readLine();
+            Log.i("response", response);
 
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         } finally {
             if (connection != null) {
                 connection.disconnect();
             }
         }
 
-        return response;
+        if (code == 200) {
+            Map resMap = (Map) JSONObject.parse(response);
+            resMap.put("code", "200");
+            return resMap;
+        }
+        else {
+            Map<String, String> errorMap = new HashMap<String, String>();
+            errorMap.put("code", String.valueOf(code));
+            return errorMap;
+        }
     }
 }
