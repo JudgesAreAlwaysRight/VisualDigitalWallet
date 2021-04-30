@@ -506,6 +506,27 @@ public final class BitMatrix implements Cloneable {
     return result.toString();
   }
 
+  public String getString() {
+    StringBuilder result = new StringBuilder();
+    boolean first1 = true, first2 = true;
+    result.append("[");
+    for (int y = 0; y < height; y++) {
+      if (!first1) result.append(",");
+      else first1 = false;
+
+      first2 = true;
+      result.append("[");
+      for (int x = 0; x < width; x++) {
+        if (!first2) result.append(",");
+        else first2 = false;
+        result.append(get(x, y) ? "1" : "0");
+      }
+      result.append("]");
+    }
+    result.append("]");
+    return result.toString();
+  }
+
   @Override
   public BitMatrix clone() {
     return new BitMatrix(width, height, rowSize, bits.clone());

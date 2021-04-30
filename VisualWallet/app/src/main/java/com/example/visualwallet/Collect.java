@@ -60,11 +60,13 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
 
     private Uri imageUri;
 
+    private int walletId;
+    private List<Integer> splitIndex;
     private List<String> splitInfo;
     private List<String> splitMat;
 
     // TODO: K 应当存储在数据库中
-    private final int k = 2;
+    private final int k = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,9 +89,15 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
 
         imageView = (ImageView) findViewById(R.id.image_show);
 
+        walletId = 0;
+        splitIndex = new ArrayList<Integer>();
         splitInfo = new ArrayList<String>();
         splitMat = new ArrayList<String>();
 
+    }
+
+    public void setWalletId(int id) {
+        this.walletId = id;
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -159,10 +167,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                 break;
             case R.id.collectK:
                 // 提交内容到服务器计算Collect
-                List<Integer> ind = new ArrayList<Integer>();
-                ind.add(new Integer(1));
-                ind.add(new Integer(2));
-                CollectRequest collectRequest = (CollectRequest) new CollectRequest(0, ind, splitMat).setNetCallback(new NetCallback() {
+                CollectRequest collectRequest = (CollectRequest) new CollectRequest(walletId, splitIndex, splitMat).setNetCallback(new NetCallback() {
                     @Override
                     public void callBack(Map res) {
                         if (res == null || !res.get("code").equals("200")) {
@@ -180,6 +185,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                         String flag = res.get("flag").toString();
                         if (flag.equals("1")) {
                             String secretKey = res.get("secretKey").toString();
+                            Looper.prepare();
                             AlertDialog.Builder alertdialogbuilder = new AlertDialog.Builder(Collect.this);
                             alertdialogbuilder.setMessage("私钥已找回：\n" + secretKey);
                             alertdialogbuilder.setPositiveButton("确定", null);
@@ -190,13 +196,11 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                                     ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                                     ClipData mClipData = ClipData.newPlainText("私钥", "secretKey");
                                     cm.setPrimaryClip(mClipData);
-                                    Looper.prepare();
                                     Toast.makeText(Collect.this, "复制成功", Toast.LENGTH_LONG).show();
-                                    Looper.loop();
                                 }
                             });
-                            final AlertDialog alertdialog = alertdialogbuilder.create();
-                            alertdialog.show();
+                            alertdialogbuilder.create().show();
+                            Looper.loop();
                         } else if (flag.equals("0")) {
                             Log.e("Collect", "Net flag 0, pics were modified");
                             Looper.prepare();
@@ -260,6 +264,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                     Log.i("point matrix size", String.valueOf(pointMatrix.length()));
                     //Log.i("point matrix", " \n" + pointMatrix.replace("1", "#").replace("0", " "));
 
+                    splitIndex.add(splitIndex.size());
                     splitInfo.add(content);
                     splitMat.add(pointMatrix);
                     // TODO: 刷新页面recycleview?
