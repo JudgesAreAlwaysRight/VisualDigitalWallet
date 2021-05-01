@@ -63,7 +63,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
     private int walletId;
     private List<Integer> splitIndex;
     private List<String> splitInfo;
-    private List<String> splitMat;
+    private List<int[][]> splitMat;
 
     // TODO: K 应当存储在数据库中
     private final int k = 3;
@@ -89,10 +89,10 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
 
         imageView = (ImageView) findViewById(R.id.image_show);
 
-        walletId = 0;
+        walletId = 5; // TODO: 初始化到0
         splitIndex = new ArrayList<Integer>();
         splitInfo = new ArrayList<String>();
-        splitMat = new ArrayList<String>();
+        splitMat = new ArrayList<int[][]>();
 
     }
 
@@ -257,11 +257,11 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
             case REQUEST_CODE_SCAN:
                 if (resultCode == RESULT_OK && data != null) {
                     String content = data.getStringExtra(Constant.CODED_CONTENT);
-                    String pointMatrix = data.getStringExtra(Constant.CODED_POINT_MATRIX);
+                    int[][] pointMatrix = (int[][]) data.getSerializableExtra(Constant.CODED_POINT_MATRIX);
 
                     // todo:remove log code
                     Log.i("camera scan result", content);
-                    Log.i("point matrix size", String.valueOf(pointMatrix.length()));
+                    Log.i("point matrix size", String.format("%dx%d", pointMatrix.length, pointMatrix[0].length));
                     //Log.i("point matrix", " \n" + pointMatrix.replace("1", "#").replace("0", " "));
 
                     splitIndex.add(splitIndex.size());

@@ -11,9 +11,9 @@ public class CollectRequest extends NetRequest {
     private static final String reqFlag = "validQR";
     private int id;
     private List<Integer> index;
-    private List<String> keys;
+    private List<int[][]> keys;
 
-    public CollectRequest(int id, List<Integer> index, List<String> keys) {
+    public CollectRequest(int id, List<Integer> index, List<int[][]> keys) {
 
         if (index.size() != keys.size()) return;
 
@@ -26,31 +26,12 @@ public class CollectRequest extends NetRequest {
 
     @Override
     public void run() {
-        Map<String, String> args = new HashMap<String, String>();
+        Map<String, Object> args = new HashMap<String, Object>();
 
         args.put("reqFlag", reqFlag);
-
-        args.put("id", String.valueOf(id));
-
-        boolean first = true;
-        StringBuilder indexBuilder = new StringBuilder("[");
-        for (Integer i : index) {
-            if (!first) indexBuilder.append(",");
-            else first = false;
-            indexBuilder.append(i);
-        }
-        indexBuilder.append("]");
-        args.put("index", indexBuilder.toString());
-
-        first = true;
-        StringBuilder keysBuilder = new StringBuilder("[");
-        for (String i : keys) {
-            if (!first) keysBuilder.append(",");
-            else first = false;
-            keysBuilder.append(i);
-        }
-        keysBuilder.append("]");
-        args.put("keys", keysBuilder.toString());
+        args.put("id", id);
+        args.put("index", index);
+        args.put("keys", keys);
 
         Map response = NetUtil.Post(subUrl, args);
 
