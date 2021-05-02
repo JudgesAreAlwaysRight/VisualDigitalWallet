@@ -187,7 +187,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
 
         Intent intent = getIntent();
         intent.putExtra(Constant.CODED_CONTENT, rawResult.getText());
-        intent.putExtra(Constant.CODED_POINT_MATRIX, rawResult.getPointMatrix().toString("1", "0"));
+        intent.putExtra(Constant.CODED_POINT_MATRIX, rawResult.getPointMatrix().getArray());
 
         setResult(RESULT_OK, intent);
         this.finish();

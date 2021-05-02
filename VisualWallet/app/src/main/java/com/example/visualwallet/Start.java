@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
 
-public class start extends AppCompatActivity {
+import com.example.visualwallet.net.SplitRequest;
+
+public class Start extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -14,6 +16,7 @@ public class start extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);//状态栏隐藏
         getSupportActionBar().hide();//标题栏隐藏
         setContentView(R.layout.activity_start);
+        SplitRequest.setAndroidId(Start.this);
         Thread myThread = new Thread()  //子线程
         {
             @Override

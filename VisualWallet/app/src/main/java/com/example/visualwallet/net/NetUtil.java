@@ -71,7 +71,7 @@ public class NetUtil {
         return JSONObject.parseObject(response);
     }
 
-    public static Map Post(String subUrlStr, Map<String, String> args) {
+    public static Map Post(String subUrlStr, Map<String, Object> args) {
 
         HttpURLConnection connection = null;
         String response = null;
@@ -84,7 +84,7 @@ public class NetUtil {
         Log.i("post body", jsonString.toString());
 
         try {
-            URL url = new URL(urlBase + subUrlStr);
+            URL url = new URL(urlBase + subUrlStr + "/");
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setConnectTimeout(Constant.connectTimeout);
@@ -92,8 +92,7 @@ public class NetUtil {
             connection.setDoInput(true);
             connection.setDoOutput(true);
             connection.setUseCaches(false);
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            connection.setRequestProperty("Content-Length", String.valueOf(argsByte.length));
+            connection.setRequestProperty("Content-Type", "application/json");
 
             OutputStream outputStream = connection.getOutputStream();
             outputStream.write(argsByte, 0, argsByte.length);

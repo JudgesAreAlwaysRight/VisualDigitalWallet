@@ -16,6 +16,7 @@
 
 package com.google.zxing.common;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
@@ -33,7 +34,7 @@ import java.util.Arrays;
  * @author Sean Owen
  * @author dswitkin@google.com (Daniel Switkin)
  */
-public final class BitMatrix implements Cloneable {
+public final class BitMatrix implements Cloneable, Serializable {
 
   private int width;
   private int height;
@@ -504,6 +505,16 @@ public final class BitMatrix implements Cloneable {
       result.append(lineSeparator);
     }
     return result.toString();
+  }
+
+  public int[][] getArray() {
+    int[][] arr = new int[this.getHeight()][this.getWidth()];
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        arr[y][x] = get(x, y) ? 0 : 1;
+      }
+    }
+    return arr;
   }
 
   @Override
