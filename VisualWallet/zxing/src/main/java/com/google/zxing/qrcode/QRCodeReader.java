@@ -88,9 +88,7 @@ public class QRCodeReader implements Reader {
 
     BitMatrix pointMatrix = decoderResult.getPointMatrix();
 
-    //todo:remove log code
-    Log.i("reader mat size", String.format("%dx%d", pointMatrix.getWidth(), pointMatrix.getHeight()));
-    //Log.i("pointMatrix", " \n" + pointMatrix.toString("#", " "));
+//    Log.i("reader mat size", String.format("%dx%d", pointMatrix.getWidth(), pointMatrix.getHeight()));
 
     Result result = new Result(decoderResult.getText(), decoderResult.getRawBytes(), points, BarcodeFormat.QR_CODE, pointMatrix);
     List<byte[]> byteSegments = decoderResult.getByteSegments();

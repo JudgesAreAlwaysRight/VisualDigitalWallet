@@ -108,12 +108,6 @@ public final class DecodeHandler extends Handler {
         if (rawResult != null) {
 
             if (handler != null) {
-
-                // TODO: remove log code
-                BitMatrix pointMatrix = rawResult.getPointMatrix();
-                Log.i("decodeHandler", String.format("%d,%d", pointMatrix.getHeight(), pointMatrix.getWidth()));
-//                Log.i("pointMatrix", " \n" + pointMatrix.toString("#", " "));
-
                 Message message = Message.obtain(handler,
                         Constant.DECODE_SUCCEEDED, rawResult);
                 message.sendToTarget();
