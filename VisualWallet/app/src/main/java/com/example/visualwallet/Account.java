@@ -11,6 +11,7 @@ import android.widget.Button;
 public class Account extends AppCompatActivity {
 
     private Button getsecret;
+    private Button delete;
 
     @Nullable
     @Override
@@ -27,5 +28,13 @@ public class Account extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        delete = (Button)findViewById(R.id.delete);
+//        delete.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                TODO：这里应该搞个返回值啥的然后在Notification里根据返回值看要不要移除按钮
+//                我对不起你因为我实在不会搞这玩意，如果可以的话你写个样例代码，我照着改
+//            }
+//        });
     }
 }
