@@ -9,11 +9,11 @@
         android:id="@+id/account_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:layout_alignParentTop="true"
-        android:textColor="#000"
-        android:textSize="40dp"
-        android:text = "账户详情" />
+        android:gravity="center"
+        android:text="账户详情"
+        android:textColor="#2196F3"
+        android:textSize="40dp" />
 
     <RelativeLayout
         android:id="@+id/account_address"
