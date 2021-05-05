@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +52,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
     private Button bluetooth;
     private Button collectK;
     private RecyclerView showinfo;
-
+    private LinearLayout collectll;
     private ImageView imageView;
 
     private static final int TAKE_CAMERA = 101;
@@ -73,7 +74,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collect);
         getSupportActionBar().hide();//标题栏隐藏
-
+        collectll = (LinearLayout)findViewById(R.id.info_linear);
         local = (Button) findViewById(R.id.local);
         local.setOnClickListener(this);
         scan = (Button) findViewById(R.id.scan);
@@ -83,9 +84,9 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         collectK = (Button) findViewById(R.id.collectK);
         collectK.setOnClickListener(this);
 
-        showinfo = (RecyclerView) findViewById(R.id.showinfo);
-        showinfo.setLayoutManager(new LinearLayoutManager(Collect.this));
-        showinfo.setAdapter(new showinfo_adapter(Collect.this));
+//        showinfo = (RecyclerView) findViewById(R.id.showinfo);
+//        showinfo.setLayoutManager(new LinearLayoutManager(Collect.this));
+//        showinfo.setAdapter(new showinfo_adapter(Collect.this));
 
         imageView = (ImageView) findViewById(R.id.image_show);
 
@@ -245,6 +246,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                         public void onImageDecodeSuccess(Result result) {
                             Log.i("local pic scan result", result.getText());
                             // TODO: 相册扫码成功，向recycleview添加对象，对应处理
+                            addinfo();
                         }
 
                         @Override
@@ -263,12 +265,11 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                     Log.i("camera scan result", content);
                     Log.i("point matrix size", String.format("%dx%d", pointMatrix.length, pointMatrix[0].length));
                     //Log.i("point matrix", " \n" + pointMatrix.replace("1", "#").replace("0", " "));
-
+                    addinfo();
                     splitIndex.add(splitIndex.size());
                     splitInfo.add(content);
                     splitMat.add(pointMatrix);
                     // TODO: 刷新页面recycleview?
-
                 }
                 break;
             default:
@@ -279,4 +280,24 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
             collectK.setVisibility(View.VISIBLE);
         }
     }
+
+    private void addinfo()
+    {
+        TextView newtext = new TextView(this);
+        newtext.setText("这里填充数据库的info");
+        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) newtext.getLayoutParams();
+        lp.setMargins(20,20,20,20);
+
+        newtext.setLayoutParams(lp);
+        collectll.addView(newtext);
+
+//        Button newbtn = new Button(getActivity());
+//        newbtn.setText("狗币"+"账户");//这里应该是返回的币种类型
+//        newbtn.setTextSize(20);
+//        newbtn.setBackgroundResource(R.drawable.buttom_press);
+////        newbtn.setOnClickListener(); 加一个监听列表
+//        accountll.addView(newbtn);
+        return;
+    }
+
 }

@@ -66,7 +66,7 @@
         android:layout_marginBottom="-95dp" />
 
 
-    
+<!--
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/showinfo"
         android:layout_width="match_parent"
@@ -76,7 +76,27 @@
         android:layout_margin="30dp">
 
     </androidx.recyclerview.widget.RecyclerView>
+-->
+    <ScrollView
+        android:id="@+id/info_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/modes"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:scrollbars="none">
+        <LinearLayout
+            android:id="@+id/info_linear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:isScrollContainer="true"
+            android:orientation="vertical"
+            android:padding="10dp">
 
+        </LinearLayout>
+    </ScrollView>
 
     <Button
         android:id="@+id/collectK"
