@@ -8,10 +8,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.visualwallet.entity.Wallet;
+
 public class Account extends AppCompatActivity {
 
     private Button getsecret;
     private Button delete;
+    private Wallet wallet;
 
     @Nullable
     @Override

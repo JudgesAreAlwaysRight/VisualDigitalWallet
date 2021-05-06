@@ -100,4 +100,14 @@ public class WalletQuery {
         }
         return null;
     }
+
+    public int getNewNo() {
+        Wallet[] wallets = getWallets();
+        int no = 1, wno = 0;
+        for (Wallet w : wallets) {
+            wno = w.getWalNo();
+            no = (wno >= no ? wno + 1 : no);
+        }
+        return no;
+    }
 }

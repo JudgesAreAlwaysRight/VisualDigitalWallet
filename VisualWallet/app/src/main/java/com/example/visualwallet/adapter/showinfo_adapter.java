@@ -10,18 +10,23 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.visualwallet.R;
+import com.example.visualwallet.data.WalletQuery;
+import com.example.visualwallet.entity.Wallet;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class showinfo_adapter extends RecyclerView.Adapter<showinfo_adapter.infoViewHolder> {
     private Context infoContext;
 
-//    private List<String> list;
-//    public showinfo_adapter(Context context) {
-//        this.infoContext = context;
-//    }
+    private List<Wallet> wallets;
+
     public showinfo_adapter(Context context) {
         this.infoContext = context;
+        WalletQuery walletQuery = new WalletQuery(context);
+        this.wallets = new ArrayList<>();
+        Collections.addAll(this.wallets, walletQuery.getWallets());
     }
 
     @NonNull
@@ -38,8 +43,7 @@ public class showinfo_adapter extends RecyclerView.Adapter<showinfo_adapter.info
 
     @Override
     public int getItemCount() {
-//        return list.size();
-        return 10;
+        return wallets.size();
     }
 
     class infoViewHolder extends RecyclerView.ViewHolder{

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
 
+import com.example.visualwallet.data.DataUtil;
 import com.example.visualwallet.net.SplitRequest;
 
 public class Start extends AppCompatActivity {
@@ -17,12 +18,13 @@ public class Start extends AppCompatActivity {
         getSupportActionBar().hide();//标题栏隐藏
         setContentView(R.layout.activity_start);
         SplitRequest.setAndroidId(Start.this);
+        DataUtil.initData(Start.this);
         Thread myThread = new Thread()  //子线程
         {
             @Override
             public void run() {
                 try {
-                    sleep(1000);
+                    sleep(500);
                     Intent it = new Intent(getApplication(), MainActivity.class);
                     startActivity(it);
                     finish();
