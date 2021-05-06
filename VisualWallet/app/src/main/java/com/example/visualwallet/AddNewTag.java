@@ -28,6 +28,7 @@ import com.example.visualwallet.data.WalletQuery;
 import com.example.visualwallet.entity.Wallet;
 import com.example.visualwallet.net.NetCallback;
 import com.example.visualwallet.net.SplitRequest;
+import com.example.visualwallet.ui.notifications.NotificationsFragment;
 
 import java.util.Map;
 
@@ -69,8 +70,19 @@ public class AddNewTag extends AppCompatActivity {
                 String type = viewType.getText().toString();
                 int K = viewK.getTextAlignment();
                 int N = viewN.getTextAlignment();
-
+                String Kstr = viewK.getSelectedItem().toString();
+                String Nstr = viewN.getSelectedItem().toString();
                 Wallet wallet = new Wallet(address, K, N, type, walNo, name);
+//以下是bug段
+                NotificationsFragment myFragment = new NotificationsFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("address",address);
+                bundle.putString("K",Kstr);
+                bundle.putString("N",Nstr);
+                bundle.putString("type",type);
+                bundle.putString("name",name);
+                myFragment.setArguments(bundle);
+//以上是bug段
 
                 // 新建一个网络请求线程类并启动线程
                 SplitRequest splitRequest = new SplitRequest(key, K, N, type, walNo);

@@ -45,20 +45,28 @@ public class NotificationsFragment extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), AddNewTag.class);
                 //TODO
-                //startActivity(intent);
+                startActivity(intent);
+                //以下是bug
+                Bundle retbundle = getArguments();
+                String add = retbundle.getString("address");
+                String type = retbundle.getString("type");
+                String name = retbundle.getString("name");
+                String Kstr = retbundle.getString("K");
+                String Nstr = retbundle.getString("N");
+                //以上是bug
                 //这里应该有个返回值啥的
-                addCtrl(view);
+                addCtrl(view, add, type, name, Kstr, Nstr);
             }
         });
         return view;
     }
 
-    private void addCtrl(View view) {
+    private void addCtrl(View view, String address, String type, String name, String K, String N) {
         if(view == null) {
             return;
         }
         Button newbtn = new Button(getActivity());
-        newbtn.setText("狗币"+"账户");//这里应该是返回的币种类型
+        newbtn.setText(type+"账户");//这里应该是返回的币种类型
         newbtn.setTextSize(20);
         newbtn.setBackgroundResource(R.drawable.buttom_press);
 //        newbtn.setOnClickListener(); 加一个监听列表
