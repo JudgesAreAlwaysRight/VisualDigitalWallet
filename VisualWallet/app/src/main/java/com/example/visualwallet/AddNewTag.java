@@ -1,5 +1,7 @@
 package com.example.visualwallet;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -73,16 +75,7 @@ public class AddNewTag extends AppCompatActivity {
                 String Kstr = viewK.getSelectedItem().toString();
                 String Nstr = viewN.getSelectedItem().toString();
                 Wallet wallet = new Wallet(address, K, N, type, walNo, name);
-//以下是bug段
-                NotificationsFragment myFragment = new NotificationsFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString("address",address);
-                bundle.putString("K",Kstr);
-                bundle.putString("N",Nstr);
-                bundle.putString("type",type);
-                bundle.putString("name",name);
-                myFragment.setArguments(bundle);
-//以上是bug段
+
 
                 // 新建一个网络请求线程类并启动线程
                 SplitRequest splitRequest = new SplitRequest(key, K, N, type, walNo);
@@ -117,6 +110,16 @@ public class AddNewTag extends AppCompatActivity {
                     }
                 });
                 splitRequest.start();
+
+                //以下是bug段
+                Intent intent = getIntent();
+                intent.putExtra("add",address);
+                intent.putExtra("name",name);
+                intent.putExtra("type",type);
+                intent.putExtra("K",Kstr);
+                intent.putExtra("N",Nstr);
+                finish();
+                //以上是bug段
             }
         });
     }

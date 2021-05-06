@@ -2,6 +2,7 @@ package com.example.visualwallet.ui.notifications;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,25 +47,14 @@ public class NotificationsFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), AddNewTag.class);
                 //TODO
                 startActivity(intent);
-                //以下是bug
-                Bundle retbundle = getArguments();
-                String add = retbundle.getString("address");
-                String type = retbundle.getString("type");
-                String name = retbundle.getString("name");
-                String Kstr = retbundle.getString("K");
-                String Nstr = retbundle.getString("N");
-                //以上是bug
-                //这里应该有个返回值啥的
-                addCtrl(view, add, type, name, Kstr, Nstr);
+
             }
         });
         return view;
     }
 
-    private void addCtrl(View view, String address, String type, String name, String K, String N) {
-        if(view == null) {
-            return;
-        }
+    private void addCtrl(String address, String type, String name, String K, String N) {
+
         Button newbtn = new Button(getActivity());
         newbtn.setText(type+"账户");//这里应该是返回的币种类型
         newbtn.setTextSize(20);
@@ -74,4 +64,20 @@ public class NotificationsFragment extends Fragment {
         return;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        String add = data.getStringExtra("add");
+        Log.i("add",add);
+        String type = data.getStringExtra("type");
+        Log.i("type",type);
+        String name = data.getStringExtra("name");
+        Log.i("name",name);
+        String Kstr = data.getStringExtra("K");
+        Log.i("kstr",Kstr);
+        String Nstr = data.getStringExtra("N");
+        Log.i("nstr",Nstr);
+        //以上是bug
+        //这里应该有个返回值啥的
+        addCtrl(add, type, name, Kstr, Nstr);
+    }
 }
