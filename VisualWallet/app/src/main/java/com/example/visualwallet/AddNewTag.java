@@ -99,7 +99,7 @@ public class AddNewTag extends AppCompatActivity {
                             return;
                         }
 
-                        // TODO: 如果那个接口返回的id需要存储，就在Wallet类里面加一个int id，这里set进去存着，然后网络模块发出去的时候不要发walNo，用id
+                        wallet.setWalNo(id);  // TODO: 目前的处理是用服务器返回的id覆盖之前生成的，如果没啥问题这个TODO直接删
                         walletQuery.addWallet(wallet);  // 数据接口调用
                         ImageExporter.export(AddNewTag.this, name, split);  // 调用图像模块，直接全部保存到本地
                     }
