@@ -1,6 +1,8 @@
 package com.example.visualwallet.ui.notifications;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,12 +13,11 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
-import com.example.visualwallet.Account;
 import com.example.visualwallet.AddNewTag;
 import com.example.visualwallet.R;
-import com.example.visualwallet.common.Constant;
 import com.example.visualwallet.data.WalletQuery;
 import com.example.visualwallet.entity.Wallet;
 
@@ -26,18 +27,16 @@ public class NotificationsFragment extends Fragment {
     private Button wallet_btn1;
     private ImageButton wallet_add;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_notifications, null);
-        accountLL = (LinearLayout) view.findViewById(R.id.accounts_linear);
-        wallet_add = (ImageButton) view.findViewById(R.id.wallet_button_add);
-        wallet_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), AddNewTag.class);
-                startActivity(intent);
-            }
+        @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.fragment_notifications, null);
+        accountLL = view.findViewById(R.id.accounts_linear);
+        wallet_add = view.findViewById(R.id.wallet_button_add);
+        wallet_add.setOnClickListener(view1 -> {
+            Intent intent = new Intent(getActivity(), AddNewTag.class);
+            startActivity(intent);
         });
         // 读取数据并显示到scroll view
         WalletQuery query = new WalletQuery(getActivity());
@@ -51,20 +50,18 @@ public class NotificationsFragment extends Fragment {
         return view;
     }
 
+    @SuppressLint("DefaultLocale")
     private void addCtrl(String address, String type, String name, int K, int N) {
 
-        Button newbtn = new Button(getActivity());
-        newbtn.setText(String.format("%s - %s (%d/%d)\n地址：%s", name, type, K, N, address));
-        newbtn.setTextSize(20);
-        newbtn.setBackgroundResource(R.drawable.buttom_press);
-        newbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int pos = v.getVerticalScrollbarPosition();
-                Log.i("scroll view", String.valueOf(pos));
-            }
+        Button newBtn = new Button(getActivity());
+        newBtn.setText(String.format("%s - %s (%d/%d)\n地址：%s", name, type, K, N, address));
+        newBtn.setTextSize(20);
+        newBtn.setBackgroundResource(R.drawable.buttom_press);
+        newBtn.setOnClickListener(v -> {
+            int pos = v.getVerticalScrollbarPosition();
+            Log.i("scroll view", String.valueOf(pos));
         });
-        accountLL.addView(newbtn);
+        accountLL.addView(newBtn);
     }
 
     @Override

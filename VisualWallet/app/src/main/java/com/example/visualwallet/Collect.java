@@ -1,10 +1,5 @@
 package com.example.visualwallet;
 
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -21,10 +16,14 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.visualwallet.entity.Wallet;
 import com.example.visualwallet.net.CollectRequest;
@@ -34,16 +33,17 @@ import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import cn.milkyship.zxing.android.CaptureActivity;
 import cn.milkyship.zxing.bean.ZxingConfig;
 import cn.milkyship.zxing.common.Constant;
 import cn.milkyship.zxing.decode.DecodeImgCallback;
 import cn.milkyship.zxing.decode.DecodeImgThread;
 import cn.milkyship.zxing.decode.ImageUtil;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class Collect extends AppCompatActivity implements View.OnClickListener {
 
@@ -66,22 +66,22 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collect);
-        getSupportActionBar().hide();//标题栏隐藏
-        collectLL = (LinearLayout)findViewById(R.id.info_linear);
-        local = (Button) findViewById(R.id.local);
+        Objects.requireNonNull(getSupportActionBar()).hide();//标题栏隐藏
+        collectLL = findViewById(R.id.info_linear);
+        local = findViewById(R.id.local);
         local.setOnClickListener(this);
-        scan = (Button) findViewById(R.id.scan);
+        scan = findViewById(R.id.scan);
         scan.setOnClickListener(this);
-        bluetooth = (Button) findViewById(R.id.bluetooth);
+        bluetooth = findViewById(R.id.bluetooth);
         bluetooth.setOnClickListener(this);
-        collectK = (Button) findViewById(R.id.collectK);
+        collectK = findViewById(R.id.collectK);
         collectK.setOnClickListener(this);
 
         this.wallet = (Wallet) savedInstanceState.getSerializable(com.example.visualwallet.common.Constant.WALLET_ARG);
 
-        splitIndex = new ArrayList<Integer>();
-        splitInfo = new ArrayList<String>();
-        splitMat = new ArrayList<int[][]>();
+        splitIndex = new ArrayList<>();
+        splitInfo = new ArrayList<>();
+        splitMat = new ArrayList<>();
 
     }
 
@@ -93,117 +93,111 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
             case R.id.local:
                 AndPermission.with(this)
                         .permission(Permission.READ_EXTERNAL_STORAGE)
-                        .onGranted(new Action() {
-                            @Override
-                            public void onAction(List<String> permissions) {
-                                /*打开相册*/
-                                Intent intent = new Intent();
-                                intent.setAction(Intent.ACTION_PICK);
-                                intent.setType("image/*");
-                                startActivityForResult(intent, Constant.REQUEST_IMAGE);
-                            }
+                        .onGranted(permissions -> {
+                            /*打开相册*/
+                            Intent intent = new Intent();
+                            intent.setAction(Intent.ACTION_PICK);
+                            intent.setType("image/*");
+                            startActivityForResult(intent, Constant.REQUEST_IMAGE);
                         })
-                        .onDenied(new Action() {
-                            @Override
-                            public void onAction(List<String> permissions) {
-                                Uri packageURI = Uri.parse("package:" + getPackageName());
-                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageURI);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        .onDenied(permissions -> {
+                            Uri packageURI = Uri.parse("package:" + getPackageName());
+                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageURI);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                                startActivity(intent);
+                            startActivity(intent);
 
-                                Toast.makeText(Collect.this, "没有权限无法扫描呦", Toast.LENGTH_LONG).show();
-                            }
+                            Toast.makeText(Collect.this, "没有权限无法扫描呦", Toast.LENGTH_LONG).show();
                         }).start();
                 break;
             case R.id.scan:
                 AndPermission.with(this)
                         .permission(Permission.CAMERA, Permission.READ_EXTERNAL_STORAGE)
-                        .onGranted(new Action() {
-                            @Override
-                            public void onAction(List<String> permissions) {
-                                Intent intent = new Intent(Collect.this, CaptureActivity.class);
-                                ZxingConfig config = new ZxingConfig();//可选的配置类
-                                //config.setPlayBeep(false);//是否播放扫描声音 默认为true
-                                //config.setShake(false);//是否震动  默认为true
-                                config.setDecodeBarCode(false);//是否扫描条形码 默认为true
-                                //config.setReactColor(R.color.colorAccent);//设置扫描框四个角的颜色 默认为白色
-                                //config.setFrameLineColor(R.color.colorAccent);//设置扫描框边框颜色 默认无色
-                                //config.setScanLineColor(R.color.colorAccent);//设置扫描线的颜色 默认白色
-                                //config.setFullScreenScan(false);//是否全屏扫描  默认为true 设为false则只会在扫描框中扫描
-                                intent.putExtra(Constant.INTENT_ZXING_CONFIG, config);
-                                startActivityForResult(intent, REQUEST_CODE_SCAN);
-                            }
+                        .onGranted(permissions -> {
+                            Intent intent = new Intent(Collect.this, CaptureActivity.class);
+                            ZxingConfig config = new ZxingConfig();//可选的配置类
+                            //config.setPlayBeep(false);//是否播放扫描声音 默认为true
+                            //config.setShake(false);//是否震动  默认为true
+                            config.setDecodeBarCode(false);//是否扫描条形码 默认为true
+                            //config.setReactColor(R.color.colorAccent);//设置扫描框四个角的颜色 默认为白色
+                            //config.setFrameLineColor(R.color.colorAccent);//设置扫描框边框颜色 默认无色
+                            //config.setScanLineColor(R.color.colorAccent);//设置扫描线的颜色 默认白色
+                            //config.setFullScreenScan(false);//是否全屏扫描  默认为true 设为false则只会在扫描框中扫描
+                            intent.putExtra(Constant.INTENT_ZXING_CONFIG, config);
+                            startActivityForResult(intent, REQUEST_CODE_SCAN);
                         })
-                        .onDenied(new Action() {
-                            @Override
-                            public void onAction(List<String> permissions) {
-                                Uri packageURI = Uri.parse("package:" + getPackageName());
-                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageURI);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        .onDenied(permissions -> {
+                            Uri packageURI = Uri.parse("package:" + getPackageName());
+                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageURI);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                                startActivity(intent);
+                            startActivity(intent);
 
-                                Toast.makeText(Collect.this, "没有权限无法扫描呦", Toast.LENGTH_LONG).show();
-                            }
+                            Toast.makeText(Collect.this, "没有权限无法扫描呦", Toast.LENGTH_LONG).show();
                         }).start();
                 break;
             case R.id.bluetooth:
                 break;
             case R.id.collectK:
                 // 提交内容到服务器计算Collect
-                CollectRequest collectRequest = (CollectRequest) new CollectRequest(wallet.getId(), splitIndex, splitMat).setNetCallback(new NetCallback() {
-                    @Override
-                    public void callBack(Map res) {
-                        if (res == null || !res.get("code").equals("200")) {
-                            String logInfo = "网络响应异常";
-                            Log.e("Collect", "Net response illegal");
-                            if (res.get("code") != null) {
-                                logInfo += " " + res.get("code");
-                                Log.e("Collect", "http code " + res.get("code"));
-                            }
-                            Looper.prepare();
-                            Toast.makeText(Collect.this, logInfo, Toast.LENGTH_LONG).show();
-                            Looper.loop();
-                            return;
-                        }
-                        String flag = res.get("flag").toString();
-                        if (flag.equals("1")) {
-                            String secretKey = res.get("secretKey").toString();
-                            Looper.prepare();
-                            AlertDialog.Builder alertdialogbuilder = new AlertDialog.Builder(Collect.this);
-                            alertdialogbuilder.setMessage("私钥已找回：\n" + secretKey);
-                            alertdialogbuilder.setPositiveButton("确定", null);
-                            alertdialogbuilder.setNeutralButton("复制到剪贴板", new DialogInterface.OnClickListener() {
-                                @RequiresApi(api = Build.VERSION_CODES.M)
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                                    ClipData mClipData = ClipData.newPlainText("私钥", "secretKey");
-                                    cm.setPrimaryClip(mClipData);
-                                    Toast.makeText(Collect.this, "复制成功", Toast.LENGTH_LONG).show();
+                CollectRequest collectRequest = (CollectRequest) new CollectRequest(wallet.getId(), splitIndex, splitMat)
+                        .setNetCallback(new NetCallback() {
+                            @Override
+                            public void callBack(Map res) {
+                                if (res == null || !res.get("code").equals("200")) {
+                                    String logInfo = "网络响应异常";
+                                    Log.e("Collect", "Net response illegal");
+                                    if (res.get("code") != null) {
+                                        logInfo += " " + res.get("code");
+                                        Log.e("Collect", "http code " + res.get("code"));
+                                    }
+                                    Looper.prepare();
+                                    Toast.makeText(Collect.this, logInfo, Toast.LENGTH_LONG).show();
+                                    Looper.loop();
+                                    return;
                                 }
-                            });
-                            alertdialogbuilder.create().show();
-                            Looper.loop();
-                        } else if (flag.equals("0")) {
-                            Log.e("Collect", "Net flag 0, pics were modified");
-                            Looper.prepare();
-                            Toast.makeText(Collect.this, "分存图遭到篡改，请检查图片内容", Toast.LENGTH_LONG).show();
-                            Looper.loop();
-                        } else if (flag.equals("-1")) {
-                            Log.e("Collect", "Net flag -1, pics were not qrcode");
-                            Looper.prepare();
-                            Toast.makeText(Collect.this, "分存图无法识别", Toast.LENGTH_LONG).show();
-                            Looper.loop();
-                        } else {
-                            Log.e("Collect", "Net flag illegal");
-                            Looper.prepare();
-                            Toast.makeText(Collect.this, "服务器响应异常", Toast.LENGTH_LONG).show();
-                            Looper.loop();
-                        }
-                    }
-                });
+                                String flag = Objects.requireNonNull(res.get("flag")).toString();
+                                switch (flag) {
+                                    case "1":
+                                        String secretKey = Objects.requireNonNull(res.get("secretKey")).toString();
+                                        Looper.prepare();
+                                        AlertDialog.Builder alertdialogbuilder = new AlertDialog.Builder(Collect.this);
+                                        alertdialogbuilder.setMessage("私钥已找回：\n" + secretKey);
+                                        alertdialogbuilder.setPositiveButton("确定", null);
+                                        alertdialogbuilder.setNeutralButton("复制到剪贴板", new DialogInterface.OnClickListener() {
+                                            @RequiresApi(api = Build.VERSION_CODES.M)
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                                                ClipData mClipData = ClipData.newPlainText("私钥", "secretKey");
+                                                cm.setPrimaryClip(mClipData);
+                                                Toast.makeText(Collect.this, "复制成功", Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+                                        alertdialogbuilder.create().show();
+                                        Looper.loop();
+                                        break;
+                                    case "0":
+                                        Log.e("Collect", "Net flag 0, pics were modified");
+                                        Looper.prepare();
+                                        Toast.makeText(Collect.this, "分存图遭到篡改，请检查图片内容", Toast.LENGTH_LONG).show();
+                                        Looper.loop();
+                                        break;
+                                    case "-1":
+                                        Log.e("Collect", "Net flag -1, pics were not qrcode");
+                                        Looper.prepare();
+                                        Toast.makeText(Collect.this, "分存图无法识别", Toast.LENGTH_LONG).show();
+                                        Looper.loop();
+                                        break;
+                                    default:
+                                        Log.e("Collect", "Net flag illegal");
+                                        Looper.prepare();
+                                        Toast.makeText(Collect.this, "服务器响应异常", Toast.LENGTH_LONG).show();
+                                        Looper.loop();
+                                        break;
+                                }
+                            }
+                        });
                 collectRequest.start();
 
                 break;
@@ -270,19 +264,18 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
-    private void addinfo(String dinfo)
-    {
-        TextView newtext = new TextView(this);
-        newtext.setText("No."+String.valueOf(splitInfo.size()+1)+": "+dinfo);
-        newtext.setTextColor(this.getResources().getColor(R.color.white));
-        newtext.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30);
-        newtext.setGravity(Gravity.CENTER);
-        //LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) newtext.getLayoutParams();
+    @SuppressLint("SetTextI18n")
+    private void addinfo(String dinfo) {
+        TextView newText = new TextView(this);
+        newText.setText("No." + String.valueOf(splitInfo.size() + 1) + ": " + dinfo);
+        newText.setTextColor(this.getResources().getColor(R.color.white));
+        newText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30);
+        newText.setGravity(Gravity.CENTER);
+        //LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) newText.getLayoutParams();
         //lp.setMargins(20,20,20,20);
 
-        //newtext.setLayoutParams(lp);
-        collectLL.addView(newtext);
-        return;
+        //newText.setLayoutParams(lp);
+        collectLL.addView(newText);
 //        Button newbtn = new Button(getActivity());
 //        newbtn.setText("狗币"+"账户");//这里应该是返回的币种类型
 //        newbtn.setTextSize(20);
