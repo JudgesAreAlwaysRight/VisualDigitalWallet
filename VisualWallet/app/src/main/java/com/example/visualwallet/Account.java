@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.visualwallet.common.Constant;
 import com.example.visualwallet.entity.Wallet;
 
 public class Account extends AppCompatActivity {
@@ -28,6 +29,7 @@ public class Account extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Account.this, Collect.class);
+                intent.putExtra(Constant.WALLET_ARG, wallet);
                 startActivity(intent);
             }
         });

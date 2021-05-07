@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import com.example.visualwallet.Account;
 import com.example.visualwallet.AddNewTag;
 import com.example.visualwallet.R;
+import com.example.visualwallet.common.Constant;
 
 public class NotificationsFragment extends Fragment {
 
@@ -33,7 +34,6 @@ public class NotificationsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), Account.class);
-
                 //TODO
                 //目标Activity
                 //这里应该做成所有的账户button都访问Account，并且根据提交的数据显示

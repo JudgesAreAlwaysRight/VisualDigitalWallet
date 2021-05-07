@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.visualwallet.adapter.showinfo_adapter;
+import com.example.visualwallet.entity.Wallet;
 import com.example.visualwallet.net.CollectRequest;
 import com.example.visualwallet.net.NetCallback;
 import com.google.zxing.Result;
@@ -61,13 +62,10 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
 
     private Uri imageUri;
 
-    private int walletId;
+    private Wallet wallet;
     private List<Integer> splitIndex;
     private List<String> splitInfo;
     private List<int[][]> splitMat;
-
-    // TODO: K 应当存储在数据库中
-    private final int k = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,15 +88,12 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
 
         imageView = (ImageView) findViewById(R.id.image_show);
 
-        walletId = 5; // TODO: 初始化到0
+        this.wallet = (Wallet) savedInstanceState.getSerializable(com.example.visualwallet.common.Constant.WALLET_ARG);
+
         splitIndex = new ArrayList<Integer>();
         splitInfo = new ArrayList<String>();
         splitMat = new ArrayList<int[][]>();
 
-    }
-
-    public void setWalletId(int id) {
-        this.walletId = id;
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -168,7 +163,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                 break;
             case R.id.collectK:
                 // 提交内容到服务器计算Collect
-                CollectRequest collectRequest = (CollectRequest) new CollectRequest(walletId, splitIndex, splitMat).setNetCallback(new NetCallback() {
+                CollectRequest collectRequest = (CollectRequest) new CollectRequest(wallet.getId(), splitIndex, splitMat).setNetCallback(new NetCallback() {
                     @Override
                     public void callBack(Map res) {
                         if (res == null || !res.get("code").equals("200")) {
@@ -276,7 +271,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                 break;
         }
 
-        if (splitInfo.size() == k) {
+        if (splitInfo.size() == wallet.getCoeK()) {
             collectK.setVisibility(View.VISIBLE);
         }
     }

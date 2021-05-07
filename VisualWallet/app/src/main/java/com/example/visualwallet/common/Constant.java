@@ -12,4 +12,7 @@ public class Constant {
     public static final String projectRoot = "/vw";
     public static int connectTimeout = 3000;
     public static int readTimeout = 3000;
+
+    // 关键字常量
+    public static final String WALLET_ARG = "wallet_arg";
 }

@@ -9,6 +9,7 @@ public class Wallet implements Serializable {
     private String curType;
     private int walNo;
     private String walName;
+    private int id;
 
     public Wallet(String address, int coeK, int coeN, String curType, int walNo, String walName) {
         this.address = address;
@@ -65,5 +66,13 @@ public class Wallet implements Serializable {
 
     public void setWalName(String walName) {
         this.walName = walName;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
