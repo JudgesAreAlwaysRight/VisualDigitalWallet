@@ -15,4 +15,6 @@ public class Constant {
 
     // 关键字常量
     public static final String WALLET_ARG = "wallet_arg";
+    public static final int REQUEST_ADD_ACC = 301;
+    public static final int REQUEST_DEL_ACC = 302;
 }

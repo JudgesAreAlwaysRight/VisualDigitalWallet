@@ -39,9 +39,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/account_address01"
-            android:text="mtZ9wAKCvpSzsHSuYFrHvDTZb2rvkMVTqV"
-            android:maxLines="1"
             android:ellipsize="end"
+            android:maxLines="1"
             android:textSize="25sp">
 
         </TextView>
@@ -72,7 +71,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/account_type01"
-            android:text="BTC"
             android:textSize="30sp">
 
         </TextView>
@@ -93,8 +91,8 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:textSize="25sp"
-            android:text="账户余额: ">
+            android:text="账户名称: "
+            android:textSize="25sp">
 
         </TextView>
 
@@ -103,7 +101,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/account_balance01"
-            android:text="1.2345678"
             android:textSize="30sp">
 
         </TextView>

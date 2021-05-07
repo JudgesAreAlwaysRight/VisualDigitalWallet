@@ -57,6 +57,8 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
     private static final int PICK_PHOTO = 102;
     private static final int REQUEST_CODE_SCAN = 111;
 
+    private Intent intent;
+
     private Wallet wallet;
     private List<Integer> splitIndex;
     private List<String> splitInfo;
@@ -67,6 +69,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collect);
         Objects.requireNonNull(getSupportActionBar()).hide();//标题栏隐藏
+
         collectLL = findViewById(R.id.info_linear);
         local = findViewById(R.id.local);
         local.setOnClickListener(this);
@@ -77,7 +80,8 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         collectK = findViewById(R.id.collectK);
         collectK.setOnClickListener(this);
 
-        this.wallet = (Wallet) savedInstanceState.getSerializable(com.example.visualwallet.common.Constant.WALLET_ARG);
+        intent = getIntent();
+        this.wallet = (Wallet) intent.getSerializableExtra(com.example.visualwallet.common.Constant.WALLET_ARG);
 
         splitIndex = new ArrayList<>();
         splitInfo = new ArrayList<>();
