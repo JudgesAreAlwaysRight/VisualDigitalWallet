@@ -19,6 +19,8 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -240,8 +242,9 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                         @Override
                         public void onImageDecodeSuccess(Result result) {
                             Log.i("local pic scan result", result.getText());
-                            // TODO: 相册扫码成功，向recycleview添加对象，对应处理
-                            addinfo();
+                            // TODO: 相册扫码成功后在这里读取返回的info
+                            String decodeinfo = result.getText();
+                            addinfo(decodeinfo);
                         }
 
                         @Override
@@ -260,11 +263,15 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                     Log.i("camera scan result", content);
                     Log.i("point matrix size", String.format("%dx%d", pointMatrix.length, pointMatrix[0].length));
                     //Log.i("point matrix", " \n" + pointMatrix.replace("1", "#").replace("0", " "));
-                    addinfo();
+
+                    // TODO: 扫码成功后在这里读取返回的info
+
+                    addinfo(content);
+
                     splitIndex.add(splitIndex.size());
                     splitInfo.add(content);
                     splitMat.add(pointMatrix);
-                    // TODO: 刷新页面recycleview?
+
                 }
                 break;
             default:
@@ -276,23 +283,26 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
-    private void addinfo()
+    private void addinfo(String dinfo)
     {
         TextView newtext = new TextView(this);
-        newtext.setText("这里填充数据库的info");
-        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) newtext.getLayoutParams();
-        lp.setMargins(20,20,20,20);
+        newtext.setText("No."+String.valueOf(splitInfo.size()+1)+": "+dinfo);
+        newtext.setTextColor(this.getResources().getColor(R.color.white));
+        newtext.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30);
+        newtext.setGravity(Gravity.CENTER);
+        //LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) newtext.getLayoutParams();
+        //lp.setMargins(20,20,20,20);
 
-        newtext.setLayoutParams(lp);
+        //newtext.setLayoutParams(lp);
         collectll.addView(newtext);
-
+        return;
 //        Button newbtn = new Button(getActivity());
 //        newbtn.setText("狗币"+"账户");//这里应该是返回的币种类型
 //        newbtn.setTextSize(20);
 //        newbtn.setBackgroundResource(R.drawable.buttom_press);
 ////        newbtn.setOnClickListener(); 加一个监听列表
 //        accountll.addView(newbtn);
-        return;
+
     }
 
 }
