@@ -17,6 +17,8 @@ import com.example.visualwallet.Account;
 import com.example.visualwallet.AddNewTag;
 import com.example.visualwallet.R;
 import com.example.visualwallet.common.Constant;
+import com.example.visualwallet.data.WalletQuery;
+import com.example.visualwallet.entity.Wallet;
 
 public class NotificationsFragment extends Fragment {
 
@@ -26,58 +28,60 @@ public class NotificationsFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_notifications, null);
-        accountLL = (LinearLayout)view.findViewById(R.id.accounts_linear);
-        wallet_btn1 = (Button) view.findViewById(R.id.wallet_button1);
-        wallet_btn1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), Account.class);
-                //TODO
-                //目标Activity
-                //这里应该做成所有的账户button都访问Account，并且根据提交的数据显示
-                startActivity(intent);
-            }
-        });
+        accountLL = (LinearLayout) view.findViewById(R.id.accounts_linear);
         wallet_add = (ImageButton) view.findViewById(R.id.wallet_button_add);
         wallet_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), AddNewTag.class);
-                //TODO
                 startActivity(intent);
-
             }
         });
+        // 读取数据并显示到scroll view
+        WalletQuery query = new WalletQuery(getActivity());
+        Wallet[] wallets = query.getWallets();
+        for (Wallet w : wallets) {
+            if (w != null) {
+                addCtrl(w.getAddress(), w.getCurType(), w.getWalName(), w.getCoeK(), w.getCoeN());
+            }
+        }
+
         return view;
     }
 
-    private void addCtrl(String address, String type, String name, String K, String N) {
+    private void addCtrl(String address, String type, String name, int K, int N) {
 
         Button newbtn = new Button(getActivity());
-        newbtn.setText(type+"账户");//这里应该是返回的币种类型
+        newbtn.setText(String.format("%s - %s (%d/%d)\n地址：%s", name, type, K, N, address));
         newbtn.setTextSize(20);
         newbtn.setBackgroundResource(R.drawable.buttom_press);
-//        newbtn.setOnClickListener(); 加一个监听列表
+        newbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int pos = v.getVerticalScrollbarPosition();
+                Log.i("scroll view", String.valueOf(pos));
+            }
+        });
         accountLL.addView(newbtn);
-        return;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        assert data != null;
         String add = data.getStringExtra("add");
-        Log.i("add",add);
+        Log.i("add", add);
         String type = data.getStringExtra("type");
-        Log.i("type",type);
+        Log.i("type", type);
         String name = data.getStringExtra("name");
-        Log.i("name",name);
-        String Kstr = data.getStringExtra("K");
-        Log.i("kstr",Kstr);
-        String Nstr = data.getStringExtra("N");
-        Log.i("nstr",Nstr);
+        Log.i("name", name);
+        int K = data.getIntExtra("K", 0);
+        Log.i("k", String.valueOf(K));
+        int N = data.getIntExtra("N", 0);
+        Log.i("n", String.valueOf(N));
         //以上是bug
         //这里应该有个返回值啥的
-        addCtrl(add, type, name, Kstr, Nstr);
+        addCtrl(add, type, name, K, N);
     }
 }

@@ -44,9 +44,7 @@ public class AddNewTag extends AppCompatActivity {
     private Spinner viewN;
     private Button submit;
 
-    @Nullable
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addnewtag);
@@ -61,6 +59,7 @@ public class AddNewTag extends AppCompatActivity {
 
         submit = (Button) findViewById(R.id.ant_submit);
         submit.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View v) {
                 WalletQuery walletQuery = new WalletQuery(AddNewTag.this);
@@ -70,12 +69,12 @@ public class AddNewTag extends AppCompatActivity {
                 String key = viewKey.getText().toString();
                 String name = viewName.getText().toString();
                 String type = viewType.getText().toString();
-                int K = viewK.getTextAlignment();
-                int N = viewN.getTextAlignment();
-                String Kstr = viewK.getSelectedItem().toString();
-                String Nstr = viewN.getSelectedItem().toString();
+                int K = Integer.parseInt(viewK.getSelectedItem().toString());
+                int N = Integer.parseInt(viewN.getSelectedItem().toString());
                 Wallet wallet = new Wallet(address, K, N, type, walNo, name);
 
+                wallet.setId(5);
+                walletQuery.addWallet(wallet);  // TODO 临时直接写，等后台写完再等网络请求
 
                 // 新建一个网络请求线程类并启动线程
                 SplitRequest splitRequest = new SplitRequest(key, K, N, type, walNo);
@@ -113,11 +112,11 @@ public class AddNewTag extends AppCompatActivity {
 
                 //以下是bug段
                 Intent intent = getIntent();
-                intent.putExtra("add",address);
-                intent.putExtra("name",name);
-                intent.putExtra("type",type);
-                intent.putExtra("K",Kstr);
-                intent.putExtra("N",Nstr);
+                intent.putExtra("add", address);
+                intent.putExtra("name", name);
+                intent.putExtra("type", type);
+                intent.putExtra("K", K);
+                intent.putExtra("N", N);
                 finish();
                 //以上是bug段
             }

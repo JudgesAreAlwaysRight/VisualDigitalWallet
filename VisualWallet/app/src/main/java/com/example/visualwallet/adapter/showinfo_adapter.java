@@ -38,7 +38,7 @@ public class showinfo_adapter extends RecyclerView.Adapter<showinfo_adapter.info
     @Override
     public void onBindViewHolder(@NonNull showinfo_adapter.infoViewHolder holder, int position) {
         // TODO：在这里每次读取图片后设置信息，或许也可换个位置
-        holder.txt.setText("SumingNB");
+        holder.txt.setText("测试内容");
     }
 
     @Override

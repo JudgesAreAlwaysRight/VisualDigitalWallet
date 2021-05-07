@@ -2,7 +2,10 @@ package com.example.visualwallet.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import com.example.visualwallet.entity.Wallet;
 
@@ -15,6 +18,7 @@ public class WalletQuery {
         this.context = context;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void addWallet(Wallet wallet) {
         String walStr = null;
         try {
@@ -45,6 +49,7 @@ public class WalletQuery {
         return pref.getInt("accNum", -1);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public Wallet[] getWallets() {
 
         SharedPreferences pref = context.getSharedPreferences("share", Context.MODE_PRIVATE);
@@ -60,12 +65,11 @@ public class WalletQuery {
             String accStr = pref.getString(String.valueOf(i), "");
 
             if (accStr.equals("")) {
+                wallets[i - 1] = null;
                 Log.e("get Ws", String.format("accNum=%d, index=%d", accNum, i));
-                return null;
-            }
-            else {
+            } else {
                 try {
-                    wallets[i] = (Wallet) DataUtil.deserialize(accStr);
+                    wallets[i - 1] = (Wallet) DataUtil.deserialize(accStr);
                 } catch (IOException | ClassNotFoundException e) {
                     Log.e("get Ws", String.format("accNum=%d, index=%d", accNum, i));
                     e.printStackTrace();
@@ -76,6 +80,7 @@ public class WalletQuery {
         return wallets;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public Wallet getWallet(int walNo) {
 
         SharedPreferences pref = context.getSharedPreferences("share", Context.MODE_PRIVATE);
@@ -101,6 +106,7 @@ public class WalletQuery {
         return null;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public int getNewNo() {
         Wallet[] wallets = getWallets();
         int no = 1, wno = 0;

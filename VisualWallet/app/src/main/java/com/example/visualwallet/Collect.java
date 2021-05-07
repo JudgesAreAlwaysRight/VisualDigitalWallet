@@ -4,8 +4,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.ClipData;
@@ -28,7 +26,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.visualwallet.adapter.showinfo_adapter;
 import com.example.visualwallet.entity.Wallet;
 import com.example.visualwallet.net.CollectRequest;
 import com.example.visualwallet.net.NetCallback;
@@ -54,15 +51,11 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
     private Button scan;
     private Button bluetooth;
     private Button collectK;
-    private RecyclerView showinfo;
-    private LinearLayout collectll;
-    private ImageView imageView;
+    private LinearLayout collectLL;
 
     private static final int TAKE_CAMERA = 101;
     private static final int PICK_PHOTO = 102;
     private static final int REQUEST_CODE_SCAN = 111;
-
-    private Uri imageUri;
 
     private Wallet wallet;
     private List<Integer> splitIndex;
@@ -74,7 +67,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collect);
         getSupportActionBar().hide();//标题栏隐藏
-        collectll = (LinearLayout)findViewById(R.id.info_linear);
+        collectLL = (LinearLayout)findViewById(R.id.info_linear);
         local = (Button) findViewById(R.id.local);
         local.setOnClickListener(this);
         scan = (Button) findViewById(R.id.scan);
@@ -83,12 +76,6 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         bluetooth.setOnClickListener(this);
         collectK = (Button) findViewById(R.id.collectK);
         collectK.setOnClickListener(this);
-
-//        showinfo = (RecyclerView) findViewById(R.id.showinfo);
-//        showinfo.setLayoutManager(new LinearLayoutManager(Collect.this));
-//        showinfo.setAdapter(new showinfo_adapter(Collect.this));
-
-        imageView = (ImageView) findViewById(R.id.image_show);
 
         this.wallet = (Wallet) savedInstanceState.getSerializable(com.example.visualwallet.common.Constant.WALLET_ARG);
 
@@ -294,7 +281,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         //lp.setMargins(20,20,20,20);
 
         //newtext.setLayoutParams(lp);
-        collectll.addView(newtext);
+        collectLL.addView(newtext);
         return;
 //        Button newbtn = new Button(getActivity());
 //        newbtn.setText("狗币"+"账户");//这里应该是返回的币种类型
