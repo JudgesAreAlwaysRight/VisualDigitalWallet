@@ -244,7 +244,6 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                     String content = data.getStringExtra(Constant.CODED_CONTENT);
                     int[][] pointMatrix = (int[][]) data.getSerializableExtra(Constant.CODED_POINT_MATRIX);
 
-                    // todo:remove log code
                     Log.i("camera scan result", content);
                     Log.i("point matrix size", String.format("%dx%d", pointMatrix.length, pointMatrix[0].length));
                     //Log.i("point matrix", " \n" + pointMatrix.replace("1", "#").replace("0", " "));

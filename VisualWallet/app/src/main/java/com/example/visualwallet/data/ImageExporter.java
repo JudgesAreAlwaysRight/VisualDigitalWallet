@@ -35,7 +35,7 @@ public class ImageExporter {
                 imgBitMat[0].length * scale + padding * 2,
                 imgBitMat.length * scale + padding * 2,
                 Bitmap.Config.RGB_565);
-        // TODO：性能还可以优化一下
+        // TIP：性能还可以优化一下
         for (int i = 0; i < imgBitMat.length; i++) {
             for (int j = 0; j < imgBitMat[0].length; j++) {
                 int tarPix = 0x000000;
