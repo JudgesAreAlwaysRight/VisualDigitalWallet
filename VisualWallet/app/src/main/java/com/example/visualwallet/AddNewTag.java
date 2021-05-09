@@ -91,6 +91,12 @@ public class AddNewTag extends AppCompatActivity {
             });
             splitRequest.start();
 
+            try {
+                splitRequest.join(0);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             //以下是bug段
             Intent intent = getIntent();
             intent.putExtra("add", address);
