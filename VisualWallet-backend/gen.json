@@ -1,1 +1,7 @@
-{"reqFlag":"genSplit","secretKey":"1a2aa","coeK":2,"coeN":3,"IMEI":"23432","IMSI":"21314","MAC":"d3d3","curType":"BTC","walNo":1}
+{   "reqFlag": "genSplit",
+    "secretKey": "123456",
+    "coeK":5,
+    "coeN":5,
+    "android_id" :"hdksjdfhsksdj",
+    "curType":"BTC"
+}

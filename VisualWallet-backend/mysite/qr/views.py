@@ -20,11 +20,7 @@ def genSplit(request):
             sk = skinfo['secretKey']
             k = skinfo['coeK']
             n = skinfo['coeN']
-            imei = skinfo['IMEI']
-            imsi = skinfo['IMSI']
-            mac = skinfo['MAC']
             cur = skinfo['curType']
-            walno = skinfo['walNo']
             res, carrier, length, width, c1, c2, c3 = api1(sk, k, n, "", "")
             for i in range(len(res)):
                 res[i] = res[i].tolist()
