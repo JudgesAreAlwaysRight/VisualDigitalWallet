@@ -6,7 +6,7 @@
 | 名称 | 类型 | 最大长度 | 说明 |
 | :-----| :----- | :----- | :----- |
 | reqFlag| str| \ | 获取生成分存图-genSplit<br/>其他：页面返回Wrong Request Flag
-| secretKey | str | 512 |私钥
+| secretKey | str | 512 |私钥 仅限256bit字符串
 | coeK | int | \ | K
 | coeN | int | \ | N
 | android_id | str |30 | android_id
@@ -17,7 +17,7 @@
 ### 示例
 ```json
 {   "reqFlag": "genSplit",
-    "secretKey": "1a2aa",
+    "secretKey": "111011010001001001111011010.....",
     "coeK":2,
     "coeN":3,
     "android_id":"23432",
@@ -70,5 +70,5 @@
 
 ### 示例
 ```json
-{"secretKey": "1a2aa", "flag": 1}
+{"secretKey": "10100...", "flag": 1}
 ```

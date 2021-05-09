@@ -13,12 +13,21 @@ import random
 
 
 def qrcodeGenerate(msg):
-    qr_maker = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_M, box_size=1, border=0)
-    qr_maker.add_data(msg)
-    qr_maker.make(fit=True)
-    qr_img = qr_maker.make_image()
-    qr_img.save(TARGET)
-    qr_img = cv2.imread(TARGET)
+    # qr_maker = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_M, box_size=1, border=0)
+    # qr_maker.add_data(msg)
+    # qr_maker.make(fit=True)
+    # qr_img = qr_maker.make_image()
+    # qr_img.save(TARGET)
+    # qr_img = cv2.imread(TARGET)
+    idx = 0
+    qr_img = np.zeros((16, 16, 3), np.uint8)
+    for i in range(16):
+        for j in range(16):
+            if msg[idx] == '1':
+                qr_img[i, j] = [0, 0, 0]
+            else:
+                qr_img[i, j] = [255, 255, 255]
+            idx += 1
     length, width = qr_img.shape[0:2]
     return qr_img, length, width
 
@@ -26,9 +35,9 @@ def qrcodeGenerate(msg):
 def carrierGenerate(msg, k):
     version = 22
     if k == 4:
-        version = 26
+        version = 40
     elif k == 5:
-        version = 32
+        version = 40
     qr_maker = qrcode.QRCode(version=version, error_correction=qrcode.constants.ERROR_CORRECT_H, box_size=1, border=0)
     qr_maker.add_data(msg)
     img = qr_maker.make_image()
@@ -247,23 +256,42 @@ def decode(merge, x, y, m, d0, d1):
 
 def validate(result, skhash):
     xx, yy = result.shape[0:2]
-    result = cv2.resize(result, (4*xx, 4*yy))
-    result = Image.fromarray(cv2.cvtColor(result, cv2.COLOR_BGR2RGB))
-    barcodes = pyzbar.decode(result)
-    if barcodes:
-        validateSK = barcodes[0].data.decode("utf-8")
-        valid = hashlib.sha256()
-        valid.update(validateSK.encode("utf8"))
-        validmd5 = valid.hexdigest()
-        if skhash == validmd5:
-            flag = 1
-            return validateSK, flag
-        else:
-            flag = 0
-            return "", flag
+    sk = ""
+    for i in range(xx):
+        for j in range(yy):
+            if (result[i, j] == [0, 0, 0]).all():
+                sk = sk + "1"
+            elif (result[i, j] == [255, 255, 255]).all():
+                sk = sk + "0"
+            else:
+                sk = sk
+    valid = hashlib.sha256()
+    valid.update(sk.encode("utf8"))
+    validmd5 = valid.hexdigest()
+    if skhash == validmd5:
+        flag = 1
+        return sk, flag
     else:
-        flag = -1
-        return "", flag
+        flag = 0
+        return sk, flag
+
+    # result = cv2.resize(result, (4*xx, 4*yy))
+    # result = Image.fromarray(cv2.cvtColor(result, cv2.COLOR_BGR2RGB))
+    # barcodes = pyzbar.decode(result)
+    # if barcodes:
+    #     validateSK = barcodes[0].data.decode("utf-8")
+    #     valid = hashlib.sha256()
+    #     valid.update(validateSK.encode("utf8"))
+    #     validmd5 = valid.hexdigest()
+    #     if skhash == validmd5:
+    #         flag = 1
+    #         return validateSK, flag
+    #     else:
+    #         flag = 0
+    #         return "", flag
+    # else:
+    #     flag = -1
+    #     return "", flag
 
 
 def apiFirst(msg, k, n, carriermsg, logo, boxsize):
@@ -288,8 +316,10 @@ def apiFirst(msg, k, n, carriermsg, logo, boxsize):
         l, w = key_list[i].shape[0:2]
         l, w = l//boxsize, w//boxsize
         key_list[i] = cv2.resize(key_list[i], (l, w))
+        cv2.imwrite(KEYPATH + ".png", key_list[i])
         key_list[i] = cv2.cvtColor(key_list[i], cv2.COLOR_BGR2GRAY)
         _, key_list[i] = cv2.threshold(key_list[i], 125, 1, cv2.THRESH_BINARY)
+
     ax0 = n
     ax1, ax2, ax3 = carrier_list[0].shape[0:3]
     carrier_store = np.zeros((ax0, ax1, ax2, ax3), np.uint8)
