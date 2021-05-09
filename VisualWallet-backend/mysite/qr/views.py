@@ -7,7 +7,14 @@ import hashlib
 from qr.kn.shadow_gen_kn import api1, api2, carryStore, carryFetch
 import json
 import numpy as np
+import time
 import cv2
+
+# TODO: change logo according to the currency type
+# TODO: support the logo of users' customization
+# TODO: add multiple verification
+# TODO: improve the interface
+# TODO: instantly tell the share is fake
 
 
 def genSplit(request):
@@ -17,14 +24,20 @@ def genSplit(request):
         skinfo = json.loads(postBody.decode('utf-8'))
         flag = skinfo['reqFlag']
         if flag == "genSplit":
+            startall = time.time()
             sk = skinfo['secretKey']
             k = skinfo['coeK']
             n = skinfo['coeN']
+            android = skinfo['android_id']
             cur = skinfo['curType']
-            res, carrier, length, width, c1, c2, c3 = api1(sk, k, n, "", "")
+            startapi = time.time()
+            res, carrier, length, width, c1, c2, c3 = api1(sk, k, n, android, cur)
+            endapi = time.time()
             for i in range(len(res)):
                 res[i] = res[i].tolist()
+            startdb = time.time()
             idx = SKInfo(coeK=k, coeN=n, length=length, width=width, c1=c1, c2=c2, c3=c3)
+
             num = len(carrier)
             if num >= 2:
                 idx.carry0 = carryStore(carrier[0])
@@ -35,10 +48,11 @@ def genSplit(request):
                         idx.carry3 = carryStore(carrier[3])
                         if num == 5:
                             idx.carry4 = carryStore(carrier[4])
-                        else:
+                        elif num >= 5:
                             print("The Maximum N is 5!")
             else:
                 print("The Minimum N is 2!")
+            enddb = time.time()
             sha = hashlib.sha256()
             sha.update(sk.encode("utf8"))
             skmd5 = sha.hexdigest()
@@ -47,6 +61,8 @@ def genSplit(request):
             index = idx.id
             res = {'id': index, 'split': res}
             res = json.dumps(res)
+            endall = time.time()
+            print(endall-startall, endapi-startapi, enddb-startdb)
         else:
             res = "Wrong Request Flag!"
         return HttpResponse(res)
@@ -57,6 +73,7 @@ def genSplit(request):
 def validate(request):
     if request.method == 'POST':  # 当提交表单时
         # 判断是否传参
+        start = time.time()
         postBody = request.body
         skinfo = json.loads(postBody.decode('utf-8'))
         flag = skinfo['reqFlag']
@@ -68,7 +85,11 @@ def validate(request):
             for i in range(len(data_matrix)):
                 data_matrix[i] = np.array(data_matrix[i], dtype=np.uint8)
             carrier_matrix = []
+            start3 = time.time()
             target = SKInfo.objects.get(pk=index)
+            end3 = time.time()
+            print("dbtime")
+            print(end3-start3)
             skhash = target.secretKeyHash
             length = target.length
             width = target.width
@@ -85,9 +106,16 @@ def validate(request):
                         carrier_matrix.append(carryFetch(target.carry3))
                         if coeN == 5:
                             carrier_matrix.append(carryFetch(target.carry4))
+            start2 = time.time()
             sk, text = api2(skhash, splitNo, data_matrix, carrier_matrix, length, width, c1, c2, c3)
+            end2 = time.time()
+            print("apitime")
+            print(end2-start2)
             res = {"secretKey": sk, "flag": text}
             res = json.dumps(res)
+            end = time.time()
+            print("totaltime")
+            print(end-start)
         else:
             res = "Wrong Request Flag!"
         return HttpResponse(res)

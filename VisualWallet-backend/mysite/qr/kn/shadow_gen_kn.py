@@ -9,6 +9,7 @@ from PIL import Image
 from qr.kn.global_var import *
 import hashlib
 import pickle
+import random
 
 
 def qrcodeGenerate(msg):
@@ -22,8 +23,13 @@ def qrcodeGenerate(msg):
     return qr_img, length, width
 
 
-def carrierGenerate(msg, boxsize):
-    qr_maker = qrcode.QRCode(version=22, error_correction=qrcode.constants.ERROR_CORRECT_H, box_size=1, border=0)
+def carrierGenerate(msg, k):
+    version = 22
+    if k == 4:
+        version = 26
+    elif k == 5:
+        version = 32
+    qr_maker = qrcode.QRCode(version=version, error_correction=qrcode.constants.ERROR_CORRECT_H, box_size=1, border=0)
     qr_maker.add_data(msg)
     img = qr_maker.make_image()
     return img
@@ -57,6 +63,8 @@ def embedding(logo, carry):
 
 def makes(k, n):
     p = 0
+    d1 = 0
+    d0 = 0
     a0 = []
     a1 = []
     s0 = []
@@ -82,6 +90,14 @@ def makes(k, n):
         else:
             t1 = comb((n - k + floor(k / 2) + p), (floor(k / 2) - p))
             t0 = 0
+        if p >= 1:
+            if (k >= 1) and (k < n - p + 1):
+                for x in range(k):
+                    d0 += comb(n-x, p-1)*t0
+                    d1 += comb(n-x, p-1)*t1
+            elif k >= n-p+1:
+                    d0 += comb(n, p) * t0
+                    d1 += comb(n, p) * t1
         a0.append(t0)
         a1.append(t1)
         p += 1
@@ -97,7 +113,15 @@ def makes(k, n):
             t1 = 0
         else:
             t0 = 0
-            t1 = comb((p - floor(k/2) - 1), (p - (n-k) - floor(k/2) - 1))
+            t1 = comb((p - floor(k / 2) - 1), (p - (n - k) - floor(k / 2) - 1))
+        if p >= 1:
+            if (k >= 1) and (k < n - p + 1):
+                for x in range(k):
+                    d0 += comb(n-x, p-1)* t0
+                    d1 += comb(n-x, p-1)* t1
+            elif k >= n-p+1:
+                    d0 += comb(n, p) * t0
+                    d1 += comb(n, p) * t1
         a0.append(t0)
         a1.append(t1)
         p += 1
@@ -114,19 +138,22 @@ def makes(k, n):
                     s1.append(allc[c])
         p += 1
     # 扩充为m个像素
-    m = len(s0)
+    m1 = len(s0)
+    m2 = len(s1)
+    m = max(m1,m2)
     # 计算较为接近的平方便于扩充为 n*n的形式
     goal = ceil(sqrt(m)) ** 2
     # 补全为1的行(之后转置为列)
-    e = [1 for i in range(n)]
-    for i in range(goal - m):
-        s0.append(e)
+    e = [0 for i in range(n)]
+    for i in range(goal - m2):
         s1.append(e)
+    for i in range(goal - m1):
+        s0.append(e)
 
     s0 = np.array(s0).T
     s1 = np.array(s1).T
 
-    return s0, s1, goal
+    return s0, s1, goal, d0, d1
 
 
 def generateSplit(s0, s1, m, x, y, k, n, bin):
@@ -139,7 +166,8 @@ def generateSplit(s0, s1, m, x, y, k, n, bin):
     split = []
     for i in range(n):
         split.append(np.zeros((newx, newy, 3), np.uint8))
-
+    randlistblack = random.sample(range(0, m), m)
+    randlistwhite = random.sample(range(0, m), m)
     # 这个part有优化空间，可以搞成并行的
     # 原图的横轴
     for i in range(x):
@@ -149,12 +177,12 @@ def generateSplit(s0, s1, m, x, y, k, n, bin):
                 # 每一张分存图
                 for c in range(n):
                     for o in range(len(s0[0])):
-                        split[c][lenm*i + floor(o/lenm), lenm*j + o % lenm] = (1 - s1[c][o]) * 255
+                        split[c][lenm*i + floor(o/lenm), lenm*j + o % lenm] = (1 - s1[c][randlistblack[o]]) * 255
 
             if bin[i, j].all():
                 for c in range(n):
                     for o in range(len(s0[0])):
-                        split[c][lenm*i + floor(o/lenm), lenm*j + o % lenm] = (1 - s0[c][o]) * 255
+                        split[c][lenm*i + floor(o/lenm), lenm*j + o % lenm] = (1 - s0[c][randlistwhite[o]]) * 255
 
     split_enlarged = []
     finx, finy = newx * ES, newy * ES
@@ -179,7 +207,7 @@ def retrieveSplit(key, carry, x, y):
     return result
 
 
-def mergeSplit(split, finx, finy, d, alpha, lenm):
+def mergeSplit(split, finx, finy, d0, d1, lenm):
     merge = np.zeros((finx, finy, 3), np.uint8)
     # 图像合并
     for i in range(len(split)):
@@ -195,13 +223,13 @@ def mergeSplit(split, finx, finy, d, alpha, lenm):
                             merge[si, sj, sk] = 0
     cv2.imwrite(ADDRESS + "merge.png", merge)
     lastx, lasty = finx // lenm, finy // lenm
-    qr = decode(merge, lastx, lasty, lenm, d, alpha)
+    qr = decode(merge, lastx, lasty, lenm, d0, d1)
     cv2.imwrite(ADDRESS+"res.png", qr)
     return qr
 
 
 # 根据合并的图像还原
-def decode(merge, x, y, m, d, alpha):
+def decode(merge, x, y, m, d0, d1):
     qr = np.zeros((x, y, 3), np.uint8)
     for ix in range(x):
         for jy in range(y):
@@ -210,9 +238,9 @@ def decode(merge, x, y, m, d, alpha):
                 for ok in range(3):
                     count += int((255 - merge[m*ix + floor(om/m), m*jy + om % m, ok]) / 255)
             count = count / 3
-            if count >= d:
+            if count >= d1:
                 qr[ix, jy] = 0
-            elif count < d:
+            elif count <= d0:
                 qr[ix, jy] = 255
     return qr
 
@@ -238,22 +266,20 @@ def validate(result, skhash):
         return "", flag
 
 
-def apiFirst(msg, k, n, carriermsg, logo, boxsize, currecy, wallet):
+def apiFirst(msg, k, n, carriermsg, logo, boxsize):
     secret, x, y = qrcodeGenerate(msg)
-    s0, s1, m = makes(k, n)
+    s0, s1, m, d0, d1 = makes(k, n)
     split = generateSplit(s0, s1, m, x, y, k, n, secret)
     retx, rety = split[0].shape[0:2]
-
     # coefficients that needs to be saved
-    d = m - n + k
-    alpha = (n / 2) / m
+    d = d0
+    alpha = d1
     lenm = int(sqrt(m))
-
     carrier_list = []
     key_list = []
     # transfer_list = []
     for i in range(n):
-        img = carrierGenerate(carriermsg[i], boxsize)
+        img = carrierGenerate(carriermsg[0], k)
         img.save(CARRIERPATH+str(i)+".png")
         img = cv2.imread(CARRIERPATH+str(i)+".png")
         carrier_list.append(img)
@@ -264,9 +290,6 @@ def apiFirst(msg, k, n, carriermsg, logo, boxsize, currecy, wallet):
         key_list[i] = cv2.resize(key_list[i], (l, w))
         key_list[i] = cv2.cvtColor(key_list[i], cv2.COLOR_BGR2GRAY)
         _, key_list[i] = cv2.threshold(key_list[i], 125, 1, cv2.THRESH_BINARY)
-        # cv2.imwrite(KEYPATH + str(i) + ".png", key_list[i])
-        # gray = cv2.cvtColor(key_list[i], cv2.COLOR_BGR2GRAY)
-        # transfer_list.append(cv2.adaptiveThreshold(~gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 35, -5))
     ax0 = n
     ax1, ax2, ax3 = carrier_list[0].shape[0:3]
     carrier_store = np.zeros((ax0, ax1, ax2, ax3), np.uint8)
@@ -276,25 +299,31 @@ def apiFirst(msg, k, n, carriermsg, logo, boxsize, currecy, wallet):
     return key_list, carrier_list, retx, rety, d, alpha, lenm
 
 
-def apiSecond(skhash, split_no, mat, carrier, x, y, d, alpha, lenm):
+def apiSecond(skhash, split_no, mat, carrier, x, y, d0, d1, lenm):
     split = []
     for i in split_no:
         mat[i] = mat[i] * 255
         mat[i] = cv2.cvtColor(mat[i], cv2.COLOR_GRAY2BGR)
         res = retrieveSplit(mat[i], carrier[i], x, y)
         split.append(res)
-    qr = mergeSplit(split, x, y, d, alpha, lenm)
+    qr = mergeSplit(split, x, y, d0, d1, lenm)
     return validate(qr, skhash)
-
-    # TODO: cur&wallet to corresponding logo
-    # TODO: save the hash of sk in database
 
 
 def api1(msg, k, n, devicemsg, currencymsg):
-    cmsg = ["d1", "d2", "d3"]
+    cmsg = []
+    msg1 = "Device ID: " + devicemsg + "\n"
+    msg2 = "Type: " + currencymsg
+    cmsg.append(msg1+msg2)
     k = int(k)
     n = int(n)
-    data_matrix, carrier_matrix, length, width, c1, c2, c3 = apiFirst(msg, k, n, cmsg, BTCLOGO, ES, "BTC", 1)
+    if currencymsg == "BTC":
+        logo = BTCLOGO
+    elif currencymsg == "ETH":
+        logo = ETHDOTLOGO
+    else:
+        logo = BTCLOGO
+    data_matrix, carrier_matrix, length, width, c1, c2, c3 = apiFirst(msg, k, n, cmsg, logo, ES)
     return data_matrix, carrier_matrix, length, width, c1, c2, c3
 
 
