@@ -2,6 +2,7 @@ from math import ceil, floor, sqrt
 from itertools import combinations
 from scipy.special import comb
 import cv2
+import os, sys, stat
 import numpy as np
 import qrcode
 import pyzbar.pyzbar as pyzbar
@@ -41,6 +42,7 @@ def carrierGenerate(msg, k):
     qr_maker = qrcode.QRCode(version=version, error_correction=qrcode.constants.ERROR_CORRECT_H, box_size=1, border=0)
     qr_maker.add_data(msg)
     img = qr_maker.make_image()
+    
     return img
 
 
@@ -309,6 +311,7 @@ def apiFirst(msg, k, n, carriermsg, logo, boxsize):
     for i in range(n):
         img = carrierGenerate(carriermsg[0], k)
         img.save(CARRIERPATH+str(i)+".png")
+        os.chmod(CARRIERPATH+str(i)+".png",stat.S_IRWXU|stat.S_IRWXG|stat.S_IRWXO)
         img = cv2.imread(CARRIERPATH+str(i)+".png")
         carrier_list.append(img)
         carrier_list[i] = embedding(logo, carrier_list[i])
