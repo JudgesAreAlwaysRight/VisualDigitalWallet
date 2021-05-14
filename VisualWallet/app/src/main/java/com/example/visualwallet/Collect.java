@@ -28,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.visualwallet.entity.Wallet;
 import com.example.visualwallet.net.CollectRequest;
 import com.example.visualwallet.net.NetCallback;
+import com.example.visualwallet.net.NetUtil;
 import com.google.zxing.Result;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
@@ -131,11 +132,11 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                             startActivityForResult(intent, REQUEST_CODE_SCAN);
                         })
                         .onDenied(permissions -> {
-                            Uri packageURI = Uri.parse("package:" + getPackageName());
-                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageURI);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                            startActivity(intent);
+//                            Uri packageURI = Uri.parse("package:" + getPackageName());
+//                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageURI);
+//                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//
+//                            startActivity(intent);
 
                             Toast.makeText(Collect.this, "没有权限无法扫描呦", Toast.LENGTH_LONG).show();
                         }).start();
@@ -164,16 +165,18 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                                 switch (flag) {
                                     case "1":
                                         String secretKey = Objects.requireNonNull(res.get("secretKey")).toString();
+                                        secretKey = NetUtil.key2hex(secretKey);
                                         Looper.prepare();
                                         AlertDialog.Builder alertdialogbuilder = new AlertDialog.Builder(Collect.this);
-                                        alertdialogbuilder.setMessage("私钥已找回：\n" + secretKey);
+                                        alertdialogbuilder.setMessage("私钥已找回：\n0x" + secretKey);
                                         alertdialogbuilder.setPositiveButton("确定", null);
+                                        String finalSecretKey = secretKey;
                                         alertdialogbuilder.setNeutralButton("复制到剪贴板", new DialogInterface.OnClickListener() {
                                             @RequiresApi(api = Build.VERSION_CODES.M)
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                                                ClipData mClipData = ClipData.newPlainText("私钥", "secretKey");
+                                                ClipData mClipData = ClipData.newPlainText("私钥", finalSecretKey);
                                                 cm.setPrimaryClip(mClipData);
                                                 Toast.makeText(Collect.this, "复制成功", Toast.LENGTH_LONG).show();
                                             }

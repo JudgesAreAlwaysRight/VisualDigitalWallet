@@ -48,7 +48,7 @@ public class NotificationsFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == Constant.REQUEST_ADD_ACC) {
-            assert data != null;
+            if (data == null) return; // 用户直接返回了
             Wallet w = (Wallet) data.getSerializableExtra("wallet");
 
             Log.i("add", w.getAddress());
@@ -58,8 +58,7 @@ public class NotificationsFragment extends Fragment {
             Log.i("n", String.valueOf(w.getCoeN()));
 
             addCtrl(w);
-        }
-        else if (requestCode == Constant.REQUEST_DEL_ACC) {
+        } else if (requestCode == Constant.REQUEST_DEL_ACC) {
             refreshScrollView();
         }
     }

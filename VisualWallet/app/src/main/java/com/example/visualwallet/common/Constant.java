@@ -13,6 +13,12 @@ public class Constant {
     public static int connectTimeout = 3000;
     public static int readTimeout = 3000;
 
+    // 区块链接口相关
+    public static final String blockchainTestDomain = "https://api.blockcypher.com";
+    public static final String fromAddr = "";
+    public static final String toAddr = "";
+    public static final long value = 1000;
+
     // 关键字常量
     public static final String WALLET_ARG = "wallet_arg";
     public static final int REQUEST_ADD_ACC = 301;

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.provider.Settings;
 import android.util.Log;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,14 +16,12 @@ public class SplitRequest extends NetRequest {
     private int coeN;
     private static String androidId;
     private String curType;
-    private int walNo;
 
-    public SplitRequest(String secretKey, int coeK, int coeN, String curType, int walNo) {
+    public SplitRequest(String secretKey, int coeK, int coeN, String curType) {
         this.secretKey = secretKey;
         this.coeK = coeK;
         this.coeN = coeN;
         this.curType = curType;
-        this.walNo = walNo;
     }
 
     /*
@@ -30,7 +29,7 @@ public class SplitRequest extends NetRequest {
      */
     public static void setAndroidId(Context context) {
         SplitRequest.androidId = Settings.System.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        Log.i("Android_id", androidId);
+        Log.i("android_id", androidId);
     }
 
     @Override
@@ -41,9 +40,8 @@ public class SplitRequest extends NetRequest {
         args.put("secretKey", secretKey);
         args.put("coeK", coeK);
         args.put("coeN", coeN);
-        args.put("androidId", androidId);
+        args.put("android_id", androidId);
         args.put("curType", curType);
-        args.put("walNo", walNo);
 
         Map response = NetUtil.Post(subUrl, args);
 

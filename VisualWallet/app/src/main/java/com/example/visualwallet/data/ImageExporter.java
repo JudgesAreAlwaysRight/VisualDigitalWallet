@@ -3,6 +3,7 @@ package com.example.visualwallet.data;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -34,17 +35,17 @@ public class ImageExporter {
         Bitmap imgBitmap = Bitmap.createBitmap(
                 imgBitMat[0].length * scale + padding * 2,
                 imgBitMat.length * scale + padding * 2,
-                Bitmap.Config.RGB_565);
+                Bitmap.Config.ARGB_8888);
+        imgBitmap.eraseColor(Color.parseColor("#FFFFFFFF"));
         // TIP：性能还可以优化一下
         for (int i = 0; i < imgBitMat.length; i++) {
             for (int j = 0; j < imgBitMat[0].length; j++) {
-                int tarPix = 0x000000;
-                if (imgBitMat[i][j] == 1) {
-                    tarPix = 0xFFFFFF;
+                int tarPix = 0xFFFFFFFF;
+                if (imgBitMat[i][j] == 0) {
+                    tarPix = 0xFF000000;
                 }
-
-                for (int y = padding + i * scale; y < scale; y++) {
-                    for (int x = padding + j * scale; x < scale; x++) {
+                for (int y = padding + i * scale; y < padding + (i + 1) * scale; y++) {
+                    for (int x = padding + j * scale; x < padding + (j + 1) * scale; x++) {
                         imgBitmap.setPixel(x, y, tarPix);
                     }
                 }
@@ -54,7 +55,13 @@ public class ImageExporter {
     }
 
     public static void saveBitmap(Context context, Bitmap bitmap, String bitName) {
-        String fileName = Environment.getExternalStorageDirectory().getPath() + "/DCIM/VisualWallet/" + bitName;
+        String pathName = Environment.getExternalStorageDirectory().getPath() + "/DCIM/VisualWallet/";
+        File path = new File(pathName);
+        if(!path.exists()) {
+            path.mkdirs();
+        }
+
+        String fileName = Environment.getExternalStorageDirectory().getPath() + "/DCIM/VisualWallet/" + bitName + ".jpg";
         File file = new File(fileName);
         Log.d("save bitMap", fileName);
 

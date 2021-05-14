@@ -47,7 +47,7 @@ public class Account extends AppCompatActivity {
         delete = findViewById(R.id.delete);
         delete.setOnClickListener(v -> {
             WalletQuery query = new WalletQuery(Account.this);
-            query.deleteWallet(wallet.getWalNo());
+            query.deleteWallet(wallet.getId());
             setResult(RESULT_OK, intent);
             this.finish();
         });

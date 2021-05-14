@@ -10,6 +10,7 @@ import androidx.annotation.RequiresApi;
 import com.example.visualwallet.entity.Wallet;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class WalletQuery {
     private final Context context;
@@ -26,59 +27,44 @@ public class WalletQuery {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Log.i("data save", walStr);
+        Log.i("data to save", walStr);
 
-        int accNum = getAccNum();
-        Log.i("pre add accNum", String.valueOf(accNum));
-
-        if (accNum < 0) {
-            DataUtil.initData(this.context);
-            accNum = 0;
-        }
-
-        accNum += 1;
         SharedPreferences.Editor editor = context.getSharedPreferences("share", Context.MODE_PRIVATE)
                 .edit();
-        editor.putInt("accNum", accNum);
-        editor.putString(String.valueOf(accNum), walStr);
+        editor.putString(String.valueOf(wallet.getId()), walStr);
         editor.apply();
     }
 
-    public void deleteWallet(int walNo) {
+    public void deleteWallet(int walId) {
         // TODO 删除账户
     }
 
     public int getAccNum() {
         SharedPreferences pref = context.getSharedPreferences("share", Context.MODE_PRIVATE);
-        return pref.getInt("accNum", -1);
+        Map<String, ?> datas = pref.getAll();
+        return datas.size();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public Wallet[] getWallets() {
 
         SharedPreferences pref = context.getSharedPreferences("share", Context.MODE_PRIVATE);
-        int accNum = pref.getInt("accNum", -1);
 
-        if (accNum < 0) {
-            DataUtil.initData(this.context);
+        Map<String, ?> datas = pref.getAll();
+        if (datas.isEmpty()) {
             return new Wallet[0];
         }
 
-        Wallet[] wallets = new Wallet[accNum];
-        for (int i = 1; i <= accNum; i++) {
-            String accStr = pref.getString(String.valueOf(i), "");
-
-            if (accStr.equals("")) {
-                wallets[i - 1] = null;
-                Log.e("get Ws", String.format("accNum=%d, index=%d", accNum, i));
-            } else {
-                try {
-                    wallets[i - 1] = (Wallet) DataUtil.deserialize(accStr);
-                } catch (IOException | ClassNotFoundException e) {
-                    Log.e("get Ws", String.format("accNum=%d, index=%d", accNum, i));
-                    e.printStackTrace();
-                }
+        Wallet[] wallets = new Wallet[datas.size()];
+        int ind = 0;
+        for (Map.Entry<String, ?> entry : datas.entrySet()) {
+            try {
+                wallets[ind] = (Wallet) DataUtil.deserialize((String) entry.getValue());
+            } catch (IOException | ClassNotFoundException e) {
+                Log.e("get Ws", String.format("accNum=%d, index=%s", datas.size(), entry.getKey()));
+                e.printStackTrace();
             }
+            ind++;
         }
 
         return wallets;
@@ -88,14 +74,9 @@ public class WalletQuery {
     public Wallet getWallet(int walNo) {
 
         SharedPreferences pref = context.getSharedPreferences("share", Context.MODE_PRIVATE);
-        int accNum = pref.getInt("accNum", -1);
 
-        if (accNum < 0) {
-            DataUtil.initData(this.context);
-        }
-
-        if (accNum < walNo) {
-            Log.e("get W", String.format("get walNo over limit, accNum=%d. index=%d", accNum, walNo));
+        Map<String, ?> datas = pref.getAll();
+        if (datas.isEmpty()) {
             return null;
         }
 
@@ -104,20 +85,9 @@ public class WalletQuery {
         try {
             return (Wallet) DataUtil.deserialize(accStr);
         } catch (IOException | ClassNotFoundException e) {
-            Log.e("get Ws", String.format("accNum=%d, index=%d", accNum, walNo));
+            Log.e("get Ws", String.format("accNum=%d, index=%d", datas.size(), walNo));
             e.printStackTrace();
         }
         return null;
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public int getNewNo() {
-        Wallet[] wallets = getWallets();
-        int no = 1, wno = 0;
-        for (Wallet w : wallets) {
-            wno = w.getWalNo();
-            no = (wno >= no ? wno + 1 : no);
-        }
-        return no;
     }
 }

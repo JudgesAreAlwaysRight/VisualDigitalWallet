@@ -26,16 +26,9 @@ public class DataUtil {
      * 本地数据持久化模块初始化，如果没有存储过列表，就初始化一个空列表
      */
     public static void initData(Context context) {
-        SharedPreferences pref = context.getSharedPreferences("share", Context.MODE_PRIVATE);
-        int accNum = pref.getInt("accNum", -1);
-        Log.i("init data", String.format("get accNum=%d", accNum));
-
-        if (accNum == -1) {
-            SharedPreferences.Editor editor = context.getSharedPreferences("share", Context.MODE_PRIVATE).edit();
-            editor.putInt("accNum", 0);
-            editor.apply();
-            Log.i("init data", "init");
-        }
+        SharedPreferences.Editor editor = context.getSharedPreferences("share", Context.MODE_PRIVATE).edit();
+        editor.apply();
+        Log.i("init data", "init");
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -57,8 +50,7 @@ public class DataUtil {
         ObjectInputStream objectInputStream = null;
         try {
             objectInputStream = new ObjectInputStream(byteArrayInputStream);
-        }
-        catch (EOFException eEof) {
+        } catch (EOFException eEof) {
             // 正常的异常（JAVA的迷惑设计）反序列化读到序列尾部必然抛出异常
             Log.i("DataUtil", "got eof");
         }
