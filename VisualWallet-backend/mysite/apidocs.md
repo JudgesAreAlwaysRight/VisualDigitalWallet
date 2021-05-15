@@ -32,7 +32,7 @@
 | 名称 | 类型 | 最大长度 | 说明 |
 | :-----| :----- | :----- | :----- |
 | id| int| \ | 此钱包对应id
-| split | ndarray | \ | 分存数组 默认大小为(n, 105, 105, 3) 默认序号为0-4
+| split | ndarray | \ | 分存数组 默认大小为(n, 105, 105) 默认序号为0-4
 
 <br />
 
@@ -41,6 +41,29 @@
 {"id": 6, "split":...}
 ```
 <br />
+
+## 防欺诈
+
+## **url: /vw/detect/**
+### 请求参数说明
+| 名称 | 类型 | 最大长度 | 说明 |
+| :-----| :----- | :----- | :----- |
+| reqFlag| str| \ | 验证-cheatDetect<br/>其他：页面返回Wrong Request Flag
+| id | int | \ |请求id, 与获取分存图时返回id对应
+| index | int | \ | 验证对应的carrier id 与返回split序号对应
+| keys | ndarray | \ | 分存数组 默认大小为(105, 105) 
+<br />
+
+### 示例
+```json
+{"reqFlag":"cheatDetect", "id": 5, "index":1, "keys": ...}
+```
+
+<br />
+
+### 返回参数说明
+
+1 - pass 0 - failed
 
 ## 验证
 
@@ -51,7 +74,7 @@
 | reqFlag| str| \ | 验证-validQR<br/>其他：页面返回Wrong Request Flag
 | id | int | \ |请求id, 与获取分存图时返回id对应
 | index | list | \ | 验证对应的carrier id 与返回split序号对应
-| keys | ndarray | \ | 分存数组 默认大小为(n, 105, 105, 3) 
+| keys | ndarray | \ | 分存数组 默认大小为(n, 105, 105) 
 <br />
 
 ### 示例

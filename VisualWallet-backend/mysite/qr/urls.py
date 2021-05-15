@@ -7,4 +7,5 @@ app_name = "qr"
 urlpatterns = [
     path('generate/', views.genSplit, name='genSplit'),
     path('validate/', views.validate, name='validate'),
+    path('detect/', views.detect, name='detect'),
 ]

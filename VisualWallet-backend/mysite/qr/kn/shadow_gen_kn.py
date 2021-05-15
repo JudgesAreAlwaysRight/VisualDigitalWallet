@@ -13,13 +13,7 @@ import pickle
 import random
 
 
-def qrcodeGenerate(msg):
-    # qr_maker = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_M, box_size=1, border=0)
-    # qr_maker.add_data(msg)
-    # qr_maker.make(fit=True)
-    # qr_img = qr_maker.make_image()
-    # qr_img.save(TARGET)
-    # qr_img = cv2.imread(TARGET)
+def datamatGenerate(msg):
     idx = 0
     qr_img = np.zeros((16, 16, 3), np.uint8)
     for i in range(16):
@@ -36,17 +30,18 @@ def qrcodeGenerate(msg):
 def carrierGenerate(msg, k):
     version = 22
     if k == 4:
-        version = 40
+        version = 22
     elif k == 5:
-        version = 40
+        version = 22
     qr_maker = qrcode.QRCode(version=version, error_correction=qrcode.constants.ERROR_CORRECT_H, box_size=1, border=0)
     qr_maker.add_data(msg)
     img = qr_maker.make_image()
-    
     return img
 
 
-def alter(carry, split):
+def alter(carry, split, k, n):
+    if k >= 4 and n == 5:
+        return split
     carrier = carry
     split01 = split
     x, y = carrier.shape[0:2]
@@ -204,11 +199,15 @@ def generateSplit(s0, s1, m, x, y, k, n, bin):
     for i in range(n):
         cv2.imwrite(ADDRESS+"split"+str(i)+".png", split_enlarged[i])
 
-    return split_enlarged
+    splithash = []
+    for i in range(n):
+        splithash.append(hashlib.sha256(split_enlarged[i].tobytes()).hexdigest())
+    return split_enlarged, splithash
 
 
-def retrieveSplit(key, carry, x, y):
-
+def retrieveSplit(key, carry, x, y, K, N):
+    if N == 5 and K >=4:
+        return key
     result = cv2.bitwise_xor(key, carry)
     xc, yc = result.shape[0:2]
     black = np.zeros((xc, yc, 3), np.uint8)
@@ -216,6 +215,14 @@ def retrieveSplit(key, carry, x, y):
     result = cv2.bitwise_xor(result, black)
     result = result[xc - x - 15 * ES: xc - 15 * ES, yc - y - 15 * ES: yc - 15 * ES]
     return result
+
+
+def splitCheck(split, sk):
+    splithash = hashlib.sha256(split.tobytes()).hexdigest()
+    if splithash == sk:
+        return 1
+    else:
+        return 0
 
 
 def mergeSplit(split, finx, finy, d0, d1, lenm):
@@ -277,29 +284,11 @@ def validate(result, skhash):
         flag = 0
         return sk, flag
 
-    # result = cv2.resize(result, (4*xx, 4*yy))
-    # result = Image.fromarray(cv2.cvtColor(result, cv2.COLOR_BGR2RGB))
-    # barcodes = pyzbar.decode(result)
-    # if barcodes:
-    #     validateSK = barcodes[0].data.decode("utf-8")
-    #     valid = hashlib.sha256()
-    #     valid.update(validateSK.encode("utf8"))
-    #     validmd5 = valid.hexdigest()
-    #     if skhash == validmd5:
-    #         flag = 1
-    #         return validateSK, flag
-    #     else:
-    #         flag = 0
-    #         return "", flag
-    # else:
-    #     flag = -1
-    #     return "", flag
-
 
 def apiFirst(msg, k, n, carriermsg, logo, boxsize):
-    secret, x, y = qrcodeGenerate(msg)
+    secret, x, y = datamatGenerate(msg)
     s0, s1, m, d0, d1 = makes(k, n)
-    split = generateSplit(s0, s1, m, x, y, k, n, secret)
+    split, splithash = generateSplit(s0, s1, m, x, y, k, n, secret)
     retx, rety = split[0].shape[0:2]
     # coefficients that needs to be saved
     d = d0
@@ -315,13 +304,14 @@ def apiFirst(msg, k, n, carriermsg, logo, boxsize):
         img = cv2.imread(CARRIERPATH+str(i)+".png")
         carrier_list.append(img)
         carrier_list[i] = embedding(logo, carrier_list[i])
-        key_list.append(alter(carrier_list[i], split[i]))
+        key_list.append(alter(carrier_list[i], split[i], k, n))
         l, w = key_list[i].shape[0:2]
         l, w = l//boxsize, w//boxsize
         key_list[i] = cv2.resize(key_list[i], (l, w))
         cv2.imwrite(KEYPATH + ".png", key_list[i])
         key_list[i] = cv2.cvtColor(key_list[i], cv2.COLOR_BGR2GRAY)
         _, key_list[i] = cv2.threshold(key_list[i], 125, 1, cv2.THRESH_BINARY)
+        # mask(key_list)
 
     ax0 = n
     ax1, ax2, ax3 = carrier_list[0].shape[0:3]
@@ -329,15 +319,15 @@ def apiFirst(msg, k, n, carriermsg, logo, boxsize):
     for i in range(n):
         carrier_store[i] = carrier_list[i]
 
-    return key_list, carrier_list, retx, rety, d, alpha, lenm
+    return key_list, carrier_list, retx, rety, d, alpha, lenm, splithash
 
 
-def apiSecond(skhash, split_no, mat, carrier, x, y, d0, d1, lenm):
+def apiSecond(skhash, split_no, mat, carrier, x, y, d0, d1, lenm, coeK, coeN):
     split = []
     for i in split_no:
         mat[i] = mat[i] * 255
         mat[i] = cv2.cvtColor(mat[i], cv2.COLOR_GRAY2BGR)
-        res = retrieveSplit(mat[i], carrier[i], x, y)
+        res = retrieveSplit(mat[i], carrier[i], x, y, coeK, coeN)
         split.append(res)
     qr = mergeSplit(split, x, y, d0, d1, lenm)
     return validate(qr, skhash)
@@ -356,13 +346,22 @@ def api1(msg, k, n, devicemsg, currencymsg):
         logo = ETHDOTLOGO
     else:
         logo = BTCLOGO
-    data_matrix, carrier_matrix, length, width, c1, c2, c3 = apiFirst(msg, k, n, cmsg, logo, ES)
-    return data_matrix, carrier_matrix, length, width, c1, c2, c3
+    data_matrix, carrier_matrix, length, width, c1, c2, c3, splithash = apiFirst(msg, k, n, cmsg, logo, ES)
+    return data_matrix, carrier_matrix, length, width, c1, c2, c3, splithash
 
 
-def api2(skhash, split_no, data_matrix, carrier_matrix, length, width, c1, c2, c3):
-    status = apiSecond(skhash, split_no, data_matrix, carrier_matrix, length, width, c1, c2, c3)
+def api2(skhash, split_no, data_matrix, carrier_matrix, length, width, c1, c2, c3, coeK, coeN):
+    status = apiSecond(skhash, split_no, data_matrix, carrier_matrix, length, width, c1, c2, c3, coeK, coeN)
     return status
+
+
+def api3(splithash, split, carrier, length, width, coeK, coeN):
+    split = split*255
+    split = cv2.cvtColor(split, cv2.COLOR_GRAY2BGR)
+    res = retrieveSplit(split, carrier, length, width, coeK, coeN)
+    res2 = splitCheck(res, splithash)
+
+    return res2
 
 
 def carryStore(carry):
