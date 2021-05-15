@@ -90,9 +90,11 @@ def detect(request):
             width = target.width
             coeK = target.coeK
             coeN = target.coeN
-            res = api3(skhash, data_matrix, carrier, length, width, coeK, coeN)
+            result = api3(skhash, data_matrix, carrier, length, width, coeK, coeN)
         else:
-            res = 0
+            result = -1
+        res = {"id": index, "flag": result}
+        res = json.dumps(res)
         return HttpResponse(res)
     else:
         return HttpResponse('transfer failed!')
