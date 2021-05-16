@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.visualwallet.entity.Wallet;
 import com.example.visualwallet.net.CollectRequest;
+import com.example.visualwallet.net.DetectRequest;
 import com.example.visualwallet.net.NetCallback;
 import com.example.visualwallet.net.NetUtil;
 import com.google.zxing.Result;
@@ -230,7 +231,6 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                         @Override
                         public void onImageDecodeSuccess(Result result) {
                             Log.i("local pic scan result", result.getText());
-                            // TODO: 相册扫码成功后在这里读取返回的info
                             String decodeinfo = result.getText();
                             addinfo(decodeinfo);
                         }
@@ -251,14 +251,26 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                     Log.i("point matrix size", String.format("%dx%d", pointMatrix.length, pointMatrix[0].length));
                     //Log.i("point matrix", " \n" + pointMatrix.replace("1", "#").replace("0", " "));
 
-                    // TODO: 扫码成功后在这里读取返回的info
+                    DetectRequest detectRequest = new DetectRequest(splitIndex.size(), splitIndex.size(), pointMatrix);
+                    detectRequest.setNetCallback(new NetCallback() {
+                        @Override
+                        public void callBack(@Nullable @org.jetbrains.annotations.Nullable Map res) {
+                            int DetectRes = (int) res.get("flag");
 
-                    addinfo(content);
+                            if (DetectRes == 1) {
+                                addinfo(content);
 
-                    splitIndex.add(splitIndex.size());
-                    splitInfo.add(content);
-                    splitMat.add(pointMatrix);
-
+                                splitIndex.add(splitIndex.size());
+                                splitInfo.add(content);
+                                splitMat.add(pointMatrix);
+                            }
+                            else {
+                                Looper.prepare();
+                                Toast.makeText(Collect.this, "分存码异常", Toast.LENGTH_LONG).show();
+                                Looper.loop();
+                            }
+                        }
+                    }).start();
                 }
                 break;
             default:
@@ -277,8 +289,6 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         newText.setTextColor(this.getResources().getColor(R.color.white));
         newText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30);
         newText.setGravity(Gravity.CENTER);
-        //LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) newText.getLayoutParams();
-        //lp.setMargins(20,20,20,20);
 
         //newText.setLayoutParams(lp);
         collectLL.addView(newText);
