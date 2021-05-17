@@ -28,11 +28,12 @@ def datamatGenerate(msg):
 
 
 def carrierGenerate(msg, k):
-    version = 22
+    version = 28
     if k == 4:
-        version = 22
+        version = 32
     elif k == 5:
-        version = 22
+        version = 32
+
     qr_maker = qrcode.QRCode(version=version, error_correction=qrcode.constants.ERROR_CORRECT_H, box_size=1, border=0)
     qr_maker.add_data(msg)
     img = qr_maker.make_image()
@@ -298,7 +299,7 @@ def apiFirst(msg, k, n, carriermsg, logo, boxsize):
     key_list = []
     # transfer_list = []
     for i in range(n):
-        img = carrierGenerate(carriermsg[0], k)
+        img = carrierGenerate(carriermsg[i], k)
         img.save(CARRIERPATH+str(i)+".png")
         os.chmod(CARRIERPATH+str(i)+".png",stat.S_IRWXU|stat.S_IRWXG|stat.S_IRWXO)
         img = cv2.imread(CARRIERPATH+str(i)+".png")
@@ -308,7 +309,8 @@ def apiFirst(msg, k, n, carriermsg, logo, boxsize):
         l, w = key_list[i].shape[0:2]
         l, w = l//boxsize, w//boxsize
         key_list[i] = cv2.resize(key_list[i], (l, w))
-        cv2.imwrite(KEYPATH + ".png", key_list[i])
+        key_list_store = cv2.resize(key_list[i], (8 * l, 8 * w), interpolation=cv2.INTER_NEAREST)
+        cv2.imwrite(KEYPATH + str(i) + ".png", key_list_store)
         key_list[i] = cv2.cvtColor(key_list[i], cv2.COLOR_BGR2GRAY)
         _, key_list[i] = cv2.threshold(key_list[i], 125, 1, cv2.THRESH_BINARY)
         # mask(key_list)
@@ -335,9 +337,11 @@ def apiSecond(skhash, split_no, mat, carrier, x, y, d0, d1, lenm, coeK, coeN):
 
 def api1(msg, k, n, devicemsg, currencymsg):
     cmsg = []
-    msg1 = "Device ID: " + devicemsg + "\n"
-    msg2 = "Type: " + currencymsg
-    cmsg.append(msg1+msg2)
+    for i in range(5):
+        msg1 = "Device ID: " + "MyDeviceId" + str(i) + "\n"
+        msg2 = "Type: " + currencymsg + "\n"
+        msg3 = "Index: " + str(i) + "\n"
+        cmsg.append(msg1+msg2+msg3)
     k = int(k)
     n = int(n)
     if currencymsg == "BTC":
