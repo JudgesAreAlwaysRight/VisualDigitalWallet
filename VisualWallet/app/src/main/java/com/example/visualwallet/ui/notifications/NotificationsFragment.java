@@ -59,8 +59,9 @@ public class NotificationsFragment extends Fragment {
 
             addCtrl(w);
         } else if (requestCode == Constant.REQUEST_DEL_ACC) {
-            refreshScrollView();
+            // TODO: 删除账户
         }
+        refreshScrollView();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

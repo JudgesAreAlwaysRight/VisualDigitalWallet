@@ -10,8 +10,8 @@ public class Constant {
     public static final String domain = "vw.milkyship.cn";
     public static final String port = "8000";
     public static final String projectRoot = "/vw";
-    public static int connectTimeout = 3000;
-    public static int readTimeout = 3000;
+    public static int connectTimeout = 10000;
+    public static int readTimeout = 10000;
 
     // 区块链接口相关
     public static final String blockchainTestDomain = "https://api.blockcypher.com";

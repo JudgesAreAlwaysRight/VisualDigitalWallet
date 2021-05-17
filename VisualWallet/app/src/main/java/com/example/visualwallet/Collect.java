@@ -145,6 +145,9 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
             case R.id.bluetooth:
                 break;
             case R.id.collectK:
+                Log.i("Collect submit", "id" + String.valueOf(wallet.getId()));
+                Log.i("Collect submit", "splitIndex" + String.valueOf(splitIndex.size()));
+                Log.i("Collect submit", "splitMat" + String.valueOf(splitIndex.size()));
                 // 提交内容到服务器计算Collect
                 CollectRequest collectRequest = (CollectRequest) new CollectRequest(wallet.getId(), splitIndex, splitMat)
                         .setNetCallback(new NetCallback() {
@@ -233,6 +236,9 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                             Log.i("local pic scan result", result.getText());
                             String decodeinfo = result.getText();
                             addinfo(decodeinfo);
+                            if (splitInfo.size() == wallet.getCoeK()) {
+                                collectK.setVisibility(View.VISIBLE);
+                            }
                         }
 
                         @Override
@@ -245,30 +251,53 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
             case REQUEST_CODE_SCAN:
                 if (resultCode == RESULT_OK && data != null) {
                     String content = data.getStringExtra(Constant.CODED_CONTENT);
-                    int[][] pointMatrix = (int[][]) data.getSerializableExtra(Constant.CODED_POINT_MATRIX);
+
+                    String indexStr = content.substring(content.length() - 2, content.length() - 1);
 
                     Log.i("camera scan result", content);
+                    Log.i("Collect indexStr", indexStr);
+
+                    int picIndex = Integer.parseInt(indexStr);
+                    int[][] pointMatrix = (int[][]) data.getSerializableExtra(Constant.CODED_POINT_MATRIX);
+
                     Log.i("point matrix size", String.format("%dx%d", pointMatrix.length, pointMatrix[0].length));
                     //Log.i("point matrix", " \n" + pointMatrix.replace("1", "#").replace("0", " "));
 
-                    DetectRequest detectRequest = new DetectRequest(splitIndex.size(), splitIndex.size(), pointMatrix);
-                    detectRequest.setNetCallback(new NetCallback() {
-                        @Override
-                        public void callBack(@Nullable @org.jetbrains.annotations.Nullable Map res) {
-                            int DetectRes = (int) res.get("flag");
+                    DetectRequest detectRequest = new DetectRequest(wallet.getId(), picIndex, pointMatrix);
+                    detectRequest.setNetCallback(res -> {
+                        if (res == null) {
+                            Looper.prepare();
+                            Toast.makeText(Collect.this, "网络异常，无返回信息", Toast.LENGTH_LONG).show();
+                            Looper.loop();
+                            return;
+                        }
+                        Integer DetectRes = (Integer) res.get("flag");
+                        if (DetectRes == null) {
+                            Looper.prepare();
+                            Toast.makeText(Collect.this, "网络异常，返回信息错误", Toast.LENGTH_LONG).show();
+                            Looper.loop();
+                            return;
+                        }
 
-                            if (DetectRes == 1) {
-                                addinfo(content);
+                        if (DetectRes == 1) {
+                            addinfo(content);
 
-                                splitIndex.add(splitIndex.size());
-                                splitInfo.add(content);
-                                splitMat.add(pointMatrix);
+                            splitIndex.add(picIndex);
+                            splitInfo.add(content);
+                            splitMat.add(pointMatrix);
+
+                            if (splitInfo.size() == wallet.getCoeK()) {
+                                Collect.this.runOnUiThread(new Runnable() {
+                                    public void run() {
+                                        collectK.setVisibility(View.VISIBLE);
+                                    }
+                                });
                             }
-                            else {
-                                Looper.prepare();
-                                Toast.makeText(Collect.this, "分存码异常", Toast.LENGTH_LONG).show();
-                                Looper.loop();
-                            }
+                        }
+                        else {
+                            Looper.prepare();
+                            Toast.makeText(Collect.this, "分存码异常", Toast.LENGTH_LONG).show();
+                            Looper.loop();
                         }
                     }).start();
                 }
@@ -276,28 +305,32 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
             default:
                 break;
         }
-
-        if (splitInfo.size() == wallet.getCoeK()) {
-            collectK.setVisibility(View.VISIBLE);
-        }
+//        Log.i("Collect", String.format("splitInfo size %d, K = %d", splitInfo.size(), wallet.getCoeK()));
+//        if (splitInfo.size() == wallet.getCoeK()) {
+//            collectK.setVisibility(View.VISIBLE);
+//        }
     }
 
     @SuppressLint("SetTextI18n")
     private void addinfo(String dinfo) {
-        TextView newText = new TextView(this);
-        newText.setText("No." + String.valueOf(splitInfo.size() + 1) + ": " + dinfo);
-        newText.setTextColor(this.getResources().getColor(R.color.white));
-        newText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30);
-        newText.setGravity(Gravity.CENTER);
+        Collect.this.runOnUiThread(new Runnable() {
+            public void run() {
+                TextView newText = new TextView(Collect.this);
+                newText.setText("No." + String.valueOf(splitInfo.size() + 1) + ": " + dinfo);
+                newText.setTextColor(Collect.this.getResources().getColor(R.color.white));
+                newText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30);
+                newText.setGravity(Gravity.CENTER);
 
-        //newText.setLayoutParams(lp);
-        collectLL.addView(newText);
-//        Button newbtn = new Button(getActivity());
-//        newbtn.setText("狗币"+"账户");//这里应该是返回的币种类型
-//        newbtn.setTextSize(20);
-//        newbtn.setBackgroundResource(R.drawable.buttom_press);
-////        newbtn.setOnClickListener(); 加一个监听列表
-//        accountll.addView(newbtn);
+                //newText.setLayoutParams(lp);
+                collectLL.addView(newText);
+                //Button newbtn = new Button(getActivity());
+                //newbtn.setText("狗币"+"账户");//这里应该是返回的币种类型
+                //newbtn.setTextSize(20);
+                //newbtn.setBackgroundResource(R.drawable.buttom_press);
+                ////newbtn.setOnClickListener(); 加一个监听列表
+                //accountll.addView(newbtn);
+            }
+        });
 
     }
 

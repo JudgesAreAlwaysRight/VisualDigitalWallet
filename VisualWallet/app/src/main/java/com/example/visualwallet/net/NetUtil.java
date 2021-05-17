@@ -191,16 +191,19 @@ public class NetUtil {
     public static int[][][] arrayJson2java(JSONArray jsonArray) {
         if (jsonArray == null)
             return null;
-        int[][][] arr = new int[jsonArray.size()][105][105];
+        JSONArray mat = (JSONArray) jsonArray.get(0);
+        JSONArray line = (JSONArray) mat.get(0);
+        int[][][] arr = new int[jsonArray.size()][mat.size()][line.size()];
         for (int k = 0; k < jsonArray.size(); k++) {
-            JSONArray mat = (JSONArray) jsonArray.get(k);
+            mat = (JSONArray) jsonArray.get(k);
+            if (mat == null) {
+                Log.i("arrayJson2java", String.format("got null jsonArray at (%d)", k));
+                return null;
+            }
             for (int i = 0; i < mat.size(); i++) {
-                JSONArray line = (JSONArray) mat.get(i);
-                if (line == null || line.size() != 105) {
-                    if(line != null)
-                        Log.i("arrayJson2java", String.valueOf(line.size()));
-                    else
-                        Log.i("arrayJson2java", String.format("got null jsonArray at (%d,%d)", k, i));
+                line = (JSONArray) mat.get(i);
+                if (line == null) {
+                    Log.i("arrayJson2java", String.format("got null jsonArray at (%d,%d)", k, i));
                     return null;
                 }
                 for (int j = 0; j < line.size(); j++) {
