@@ -31,6 +31,7 @@ import com.example.visualwallet.net.DetectRequest;
 import com.example.visualwallet.net.NetCallback;
 import com.example.visualwallet.net.NetUtil;
 import com.google.zxing.Result;
+import com.google.zxing.common.BitMatrix;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
@@ -233,12 +234,9 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                     new DecodeImgThread(path, new DecodeImgCallback() {
                         @Override
                         public void onImageDecodeSuccess(Result result) {
-                            Log.i("local pic scan result", result.getText());
                             String decodeinfo = result.getText();
-                            addinfo(decodeinfo);
-                            if (splitInfo.size() == wallet.getCoeK()) {
-                                collectK.setVisibility(View.VISIBLE);
-                            }
+                            int[][] pointMatrix = result.getPointMatrix().getArray();
+                            imgDetect(decodeinfo, pointMatrix);
                         }
 
                         @Override
@@ -251,55 +249,9 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
             case REQUEST_CODE_SCAN:
                 if (resultCode == RESULT_OK && data != null) {
                     String content = data.getStringExtra(Constant.CODED_CONTENT);
-
-                    String indexStr = content.substring(content.length() - 2, content.length() - 1);
-
-                    Log.i("camera scan result", content);
-                    Log.i("Collect indexStr", indexStr);
-
-                    int picIndex = Integer.parseInt(indexStr);
                     int[][] pointMatrix = (int[][]) data.getSerializableExtra(Constant.CODED_POINT_MATRIX);
 
-                    Log.i("point matrix size", String.format("%dx%d", pointMatrix.length, pointMatrix[0].length));
-                    //Log.i("point matrix", " \n" + pointMatrix.replace("1", "#").replace("0", " "));
-
-                    DetectRequest detectRequest = new DetectRequest(wallet.getId(), picIndex, pointMatrix);
-                    detectRequest.setNetCallback(res -> {
-                        if (res == null) {
-                            Looper.prepare();
-                            Toast.makeText(Collect.this, "网络异常，无返回信息", Toast.LENGTH_LONG).show();
-                            Looper.loop();
-                            return;
-                        }
-                        Integer DetectRes = (Integer) res.get("flag");
-                        if (DetectRes == null) {
-                            Looper.prepare();
-                            Toast.makeText(Collect.this, "网络异常，返回信息错误", Toast.LENGTH_LONG).show();
-                            Looper.loop();
-                            return;
-                        }
-
-                        if (DetectRes == 1) {
-                            addinfo(content);
-
-                            splitIndex.add(picIndex);
-                            splitInfo.add(content);
-                            splitMat.add(pointMatrix);
-
-                            if (splitInfo.size() == wallet.getCoeK()) {
-                                Collect.this.runOnUiThread(new Runnable() {
-                                    public void run() {
-                                        collectK.setVisibility(View.VISIBLE);
-                                    }
-                                });
-                            }
-                        }
-                        else {
-                            Looper.prepare();
-                            Toast.makeText(Collect.this, "分存码异常", Toast.LENGTH_LONG).show();
-                            Looper.loop();
-                        }
-                    }).start();
+                    imgDetect(content, pointMatrix);
                 }
                 break;
             default:
@@ -317,7 +269,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
             public void run() {
                 TextView newText = new TextView(Collect.this);
                 newText.setText("No." + String.valueOf(splitInfo.size() + 1) + ": " + dinfo);
-                newText.setTextColor(Collect.this.getResources().getColor(R.color.white));
+                newText.setTextColor(Collect.this.getResources().getColor(R.color.black40));
                 newText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30);
                 newText.setGravity(Gravity.CENTER);
 
@@ -331,7 +283,55 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                 //accountll.addView(newbtn);
             }
         });
-
     }
 
+    private void imgDetect(String content, int[][] pointMatrix) {
+        String indexStr = content.substring(content.length() - 2, content.length() - 1);
+
+        Log.i("Collect scan result", content);
+        Log.i("Collect indexStr", indexStr);
+
+        int picIndex = Integer.parseInt(indexStr);
+
+        Log.i("point matrix size", String.format("%dx%d", pointMatrix.length, pointMatrix[0].length));
+        //Log.i("point matrix", " \n" + pointMatrix.replace("1", "#").replace("0", " "));
+
+        DetectRequest detectRequest = new DetectRequest(wallet.getId(), picIndex, pointMatrix);
+        detectRequest.setNetCallback(res -> {
+            if (res == null) {
+                Looper.prepare();
+                Toast.makeText(Collect.this, "网络异常，无返回信息", Toast.LENGTH_LONG).show();
+                Looper.loop();
+                return;
+            }
+            Integer DetectRes = (Integer) res.get("flag");
+            if (DetectRes == null) {
+                Looper.prepare();
+                Toast.makeText(Collect.this, "网络异常，返回信息错误", Toast.LENGTH_LONG).show();
+                Looper.loop();
+                return;
+            }
+
+            if (DetectRes == 1) {
+                addinfo(content);
+
+                splitIndex.add(picIndex);
+                splitInfo.add(content);
+                splitMat.add(pointMatrix);
+
+                if (splitInfo.size() == wallet.getCoeK()) {
+                    Collect.this.runOnUiThread(new Runnable() {
+                        public void run() {
+                            collectK.setVisibility(View.VISIBLE);
+                        }
+                    });
+                }
+            }
+            else {
+                Looper.prepare();
+                Toast.makeText(Collect.this, "分存码异常", Toast.LENGTH_LONG).show();
+                Looper.loop();
+            }
+        }).start();
+    }
 }

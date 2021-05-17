@@ -11,9 +11,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:gravity="center"
-        android:text="账户详情"
-        android:textColor="#2196F3"
-        android:textSize="40dp" />
+        android:text="@string/accountDetail"
+        android:textAlignment="textStart"
+        android:textColor="@color/black80"
+        android:textSize="40sp" />
 
     <RelativeLayout
         android:id="@+id/account_address"
@@ -30,7 +31,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:textSize="25sp"
-            android:text="公开地址: ">
+            android:text="@string/publicAddress">
 
         </TextView>
 
@@ -38,7 +39,7 @@
             android:id="@+id/account_address02"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/account_address01"
+            android:layout_toEndOf="@id/account_address01"
             android:ellipsize="end"
             android:maxLines="1"
             android:textSize="25sp">
@@ -62,7 +63,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:textSize="25sp"
-            android:text="货币类型: ">
+            android:text="@string/curType">
 
         </TextView>
 
@@ -70,7 +71,7 @@
             android:id="@+id/account_type02"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/account_type01"
+            android:layout_toEndOf="@id/account_type01"
             android:textSize="30sp">
 
         </TextView>
@@ -91,7 +92,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:text="账户名称: "
+            android:text="@string/accountName"
             android:textSize="25sp">
 
         </TextView>
@@ -100,7 +101,7 @@
             android:id="@+id/account_balance02"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/account_balance01"
+            android:layout_toEndOf="@id/account_balance01"
             android:textSize="30sp">
 
         </TextView>

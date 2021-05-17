@@ -78,18 +78,21 @@ public class NotificationsFragment extends Fragment {
         }
     }
 
-    @SuppressLint("DefaultLocale")
+    @SuppressLint({"DefaultLocale", "ResourceAsColor"})
     private void addCtrl(Wallet w) {
         Button newBtn = new Button(getActivity());
         newBtn.setText(String.format("%s - %s (%d/%d)\n地址：%s",
                 w.getWalName(), w.getCurType(), w.getCoeK(), w.getCoeN(), w.getAddress()));
         newBtn.setTextSize(20);
-        newBtn.setBackgroundResource(R.drawable.buttom_press);
+        newBtn.setBackgroundColor(R.color.black20);
         newBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), Account.class);
             intent.putExtra(Constant.WALLET_ARG, w);
             startActivityForResult(intent, Constant.REQUEST_DEL_ACC);
         });
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(20,8,20,8);
+        newBtn.setLayoutParams(layoutParams);
         accountLL.addView(newBtn);
     }
 }
