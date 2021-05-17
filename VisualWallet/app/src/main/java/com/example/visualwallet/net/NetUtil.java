@@ -93,14 +93,14 @@ public class NetUtil {
     public static Map Post(String subUrlStr, Map<String, Object> args) {
 
         HttpURLConnection connection = null;
-        String response = null;
+        String response;
         int code;
 
         String jsonString = JSON.toJSONString(args);
         byte[] argsByte = jsonString.getBytes();
 
         Log.i("post url", urlBase + subUrlStr + "/");
-        Log.i("post body", jsonString.toString());
+        Log.i("post body", jsonString);
 
         try {
             URL url = new URL(urlBase + subUrlStr + "/");
