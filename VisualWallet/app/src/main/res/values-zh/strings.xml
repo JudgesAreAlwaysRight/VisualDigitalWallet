@@ -6,7 +6,7 @@
     <string name="title_notifications">钱包</string>
     <string name="header_wallet">钱包账户</string>
     <string name="accountDetail">账户详情</string>
-    <string name="publicAddress">公开地址:</string>
-    <string name="curType">货币类型:</string>
-    <string name="accountName">账户名称:</string>
+    <string name="publicAddress">● 地址:</string>
+    <string name="curType">● 类型:</string>
+    <string name="accountName">● 名称:</string>
 </resources>

@@ -34,6 +34,8 @@ public class Account extends AppCompatActivity {
         addrView.setText(wallet.getAddress());
         TextView typeView = findViewById(R.id.account_type02);
         typeView.setText(wallet.getCurType());
+        TextView typeViewTitle = findViewById(R.id.account_type2);
+        typeViewTitle.setText(wallet.getCurType());
         TextView nameView = findViewById(R.id.account_balance02);
         nameView.setText(wallet.getWalName());
 
