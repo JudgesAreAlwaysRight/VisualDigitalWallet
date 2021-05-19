@@ -8,19 +8,50 @@
         android:id="@+id/collect_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
+        android:layout_marginStart="25dp"
         android:layout_marginTop="40dp"
         android:gravity="center|left"
         android:text="私钥解锁"
         android:textColor="@color/black80"
-        android:textSize="34sp"></TextView>
+        android:textSize="34sp" />
+
+    <LinearLayout
+        android:id="@+id/progress_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/collect_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp">
+        <com.example.visualwallet.common.WaveBallProgress
+            android:id="@+id/wave_progress"
+            android:layout_width="200dp"
+            android:layout_height="200dp" />
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/info_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_below="@id/progress_layout"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/info_linear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:isScrollContainer="true"
+            android:orientation="vertical"
+            android:padding="10dp" />
+    </ScrollView>
 
     <RelativeLayout
         android:id="@+id/modes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/collect_title"
-        android:layout_marginTop="462dp">
+        android:layout_below="@id/info_scroll"
+        android:layout_marginTop="30dp">
 
         <Button
             android:id="@+id/local"
@@ -32,7 +63,7 @@
             android:layout_toLeftOf="@id/scan"
             android:background="@drawable/buttom_press"
             android:text="本地上传"
-            android:textSize="20dp"></Button>
+            android:textSize="20dp" />
 
         <Button
             android:id="@+id/scan"
@@ -43,7 +74,7 @@
             android:layout_marginRight="30dp"
             android:background="@drawable/buttom_press"
             android:text="相机扫描"
-            android:textSize="20dp"></Button>
+            android:textSize="20dp" />
 
         <Button
             android:id="@+id/bluetooth"
@@ -55,53 +86,9 @@
             android:layout_toRightOf="@id/scan"
             android:background="@drawable/buttom_press"
             android:text="蓝牙传输"
-            android:textSize="20dp"></Button>
+            android:textSize="20dp" />
 
     </RelativeLayout>
-
-    <ImageView
-        android:id="@+id/image_show"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/modes"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="-95dp" />
-
-
-<!--
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/showinfo"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/modes"
-        android:layout_above="@id/collectK"
-        android:layout_margin="30dp">
-
-    </androidx.recyclerview.widget.RecyclerView>
--->
-
-    <ScrollView
-        android:id="@+id/info_scroll"
-        android:layout_width="match_parent"
-        android:layout_height="208dp"
-        android:layout_below="@+id/collect_title"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="-1dp"
-        android:layout_marginTop="216dp"
-        android:layout_marginBottom="254dp"
-        android:scrollbars="none">
-
-        <LinearLayout
-            android:id="@+id/info_linear"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:isScrollContainer="true"
-            android:orientation="vertical"
-            android:padding="10dp">
-
-        </LinearLayout>
-    </ScrollView>
 
     <Button
         android:id="@+id/collectK"
@@ -116,8 +103,6 @@
         android:text="找回私钥"
         android:textSize="24sp"
         android:visibility="invisible">
-        <!--        android:visibility="gone">-->
-
     </Button>
 
 </RelativeLayout>

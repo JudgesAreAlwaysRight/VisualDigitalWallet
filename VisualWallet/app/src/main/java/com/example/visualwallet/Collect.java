@@ -25,6 +25,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.visualwallet.common.WaveBallProgress;
 import com.example.visualwallet.entity.Wallet;
 import com.example.visualwallet.net.CollectRequest;
 import com.example.visualwallet.net.DetectRequest;
@@ -55,6 +56,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
     private Button bluetooth;
     private Button collectK;
     private LinearLayout collectLL;
+    private WaveBallProgress waveProgress;
 
     private static final int TAKE_CAMERA = 101;
     private static final int PICK_PHOTO = 102;
@@ -90,6 +92,8 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         splitInfo = new ArrayList<>();
         splitMat = new ArrayList<>();
 
+        waveProgress = findViewById(R.id.wave_progress);
+//        waveProgress.startProgress(50, 500, 50);
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -319,12 +323,13 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                 splitInfo.add(content);
                 splitMat.add(pointMatrix);
 
+                Collect.this.runOnUiThread(() -> {
+                    int prog = (int) (splitInfo.size() / (float) wallet.getCoeK() * 100);
+                    waveProgress.startProgress(prog, 300, 0);
+                });
+
                 if (splitInfo.size() == wallet.getCoeK()) {
-                    Collect.this.runOnUiThread(new Runnable() {
-                        public void run() {
-                            collectK.setVisibility(View.VISIBLE);
-                        }
-                    });
+                    Collect.this.runOnUiThread(() -> collectK.setVisibility(View.VISIBLE));
                 }
             }
             else {

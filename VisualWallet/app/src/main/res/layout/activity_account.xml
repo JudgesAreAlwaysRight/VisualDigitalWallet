@@ -3,12 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/account_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/account_back">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/account_title"
-        android:layout_width="377dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
@@ -20,6 +19,48 @@
         android:textColor="@color/black80"
         android:textSize="24sp"
         tools:ignore="RtlCompat" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/half_ridius_rect_blue"
+        android:translationZ="-2dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="360dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="180dp"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/half_ridius_rect"
+        android:elevation="5dp"
+        android:rotationX="180"
+        android:translationZ="-1dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="380dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="180dp"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/half_ridius_rect"
+        android:elevation="5dp"
+        android:rotationX="180"
+        android:translationZ="-2dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="180dp"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/half_ridius_rect"
+        android:elevation="5dp"
+        android:rotationX="180"
+        android:translationZ="-3dp" />
 
     <RelativeLayout
         android:id="@+id/account_address"
@@ -122,18 +163,6 @@
 
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/delete"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="60dp"
-        android:layout_marginBottom="60dp"
-        android:background="@drawable/sub_btn"
-        android:textColor="@color/black80"
-        android:textSize="16sp"></Button>
-
     <RelativeLayout
         android:id="@+id/layout_collect"
         android:layout_width="match_parent"
@@ -167,5 +196,17 @@
         android:textSize="34sp">
 
     </TextView>
+
+    <Button
+        android:id="@+id/delete"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="60dp"
+        android:layout_marginBottom="60dp"
+        android:background="@drawable/sub_btn"
+        android:textColor="@color/black80"
+        android:textSize="16sp" />
 
 </RelativeLayout>

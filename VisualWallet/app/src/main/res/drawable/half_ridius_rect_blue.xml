@@ -3,10 +3,10 @@
     <corners
         android:bottomLeftRadius="0dp"
         android:bottomRightRadius="0dp"
-        android:topLeftRadius="70dp"
-        android:topRightRadius="70dp" />
+        android:topLeftRadius="60dp"
+        android:topRightRadius="60dp" />
     <gradient
         android:angle="270"
-        android:endColor="#ffffff"
-        android:startColor="#ffffff" />
+        android:endColor="@color/main_blue"
+        android:startColor="@color/main_blue" />
 </shape>

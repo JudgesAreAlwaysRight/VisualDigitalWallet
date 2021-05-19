@@ -86,7 +86,6 @@ public class NotificationsFragment extends Fragment {
         newBtn.setText(String.format("%s\t\t\t\t\t%s (%d/%d)", w.getWalName(), w.getCurType(), w.getCoeK(), w.getCoeN()));
         newBtn.setTextSize(20);
         newBtn.setTextColor(Color.WHITE);
-//        newBtn.setBackgroundColor(R.color.second_blue);
         newBtn.setBackgroundResource(R.drawable.button_account);
         newBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), Account.class);
