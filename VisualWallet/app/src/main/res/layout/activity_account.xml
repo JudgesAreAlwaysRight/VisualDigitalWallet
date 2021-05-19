@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/account_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,7 +18,8 @@
         android:text="@string/accountDetail"
         android:textAlignment="textStart"
         android:textColor="@color/black80"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        tools:ignore="RtlCompat" />
 
     <RelativeLayout
         android:id="@+id/account_address"

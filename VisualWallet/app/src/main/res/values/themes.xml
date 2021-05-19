@@ -6,10 +6,12 @@
         <item name="colorPrimaryVariant">@color/second_blue</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Status Bar -->
-        <item name="android:windowTranslucentStatus">true</item>
+<!--        <item name="android:windowTranslucentStatus">true</item>-->
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">@color/black60</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/black20</item>
         <!-- Customize your theme here. -->
-        <item name="colorError">@color/red_warning</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/bkg_gray</item>
     </style>
 </resources>

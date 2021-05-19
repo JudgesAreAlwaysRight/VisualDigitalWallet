@@ -2,6 +2,8 @@ package com.example.visualwallet.ui.notifications;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -81,15 +83,17 @@ public class NotificationsFragment extends Fragment {
     @SuppressLint({"DefaultLocale", "ResourceAsColor"})
     private void addCtrl(Wallet w) {
         Button newBtn = new Button(getActivity());
-        newBtn.setText(String.format("%s - %s (%d/%d)\n地址：%s",
-                w.getWalName(), w.getCurType(), w.getCoeK(), w.getCoeN(), w.getAddress()));
+        newBtn.setText(String.format("%s\t\t\t\t\t%s (%d/%d)", w.getWalName(), w.getCurType(), w.getCoeK(), w.getCoeN()));
         newBtn.setTextSize(20);
-        newBtn.setBackgroundColor(R.color.black20);
+        newBtn.setTextColor(Color.WHITE);
+//        newBtn.setBackgroundColor(R.color.second_blue);
+        newBtn.setBackgroundResource(R.drawable.button_account);
         newBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), Account.class);
             intent.putExtra(Constant.WALLET_ARG, w);
             startActivityForResult(intent, Constant.REQUEST_DEL_ACC);
         });
+        newBtn.setWidth(960);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(20,8,20,8);
         newBtn.setLayoutParams(layoutParams);

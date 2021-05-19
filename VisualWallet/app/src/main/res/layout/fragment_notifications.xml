@@ -8,53 +8,58 @@
 
     <TextView
         android:id="@+id/wallet_text1"
-        android:layout_width="363dp"
-        android:layout_height="53dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
         android:layout_marginStart="25dp"
-
-        android:layout_marginEnd="25dp"
         android:gravity="center"
-        android:text="   钱包"
+        android:text="钱包"
         android:textAlignment="textStart"
         android:textColor="@color/black80"
         android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:textStyle="bold"
         tools:ignore="RtlCompat" />
 
-    <ScrollView
-        android:id="@+id/accounts_scroll"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="53dp"
-        android:layout_marginBottom="1dp"
-        android:padding="20dp"
-        android:scrollbars="horizontal|none">
+        android:layout_height="900dp"
+        android:layout_marginTop="70dp"
+        android:background="@drawable/half_ridius_rect"
+        android:elevation="5dp">
 
-        <LinearLayout
-            android:id="@+id/accounts_linear"
+        <ScrollView
+            android:id="@+id/accounts_scroll"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:isScrollContainer="true"
-            android:orientation="vertical"
-            android:padding="10dp" />
-    </ScrollView>
+            android:layout_height="400dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:padding="20dp"
+            android:scrollbars="horizontal|none"
+            android:translationZ="2dp">
 
-    <ImageButton
-        android:id="@+id/wallet_button_add"
-        android:layout_width="56dp"
-        android:layout_height="58dp"
-        android:layout_alignParentEnd="true"
+            <LinearLayout
+                android:id="@+id/accounts_linear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:isScrollContainer="true"
+                android:orientation="vertical"
+                android:padding="10dp" />
+        </ScrollView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="36dp"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/add_btn"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:translationZ="5dp">
+
+        <ImageButton
+            android:id="@+id/wallet_button_add"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/add_btn" />
+    </LinearLayout>
 
 </RelativeLayout>
