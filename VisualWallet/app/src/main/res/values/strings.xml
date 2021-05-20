@@ -4,8 +4,12 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Wallet</string>
     <string name="header_wallet">Wallet</string>
-    <string name="accountDetail">账户详情</string>
-    <string name="publicAddress">公开地址:</string>
-    <string name="curType">货币类型:</string>
-    <string name="accountName">账户名称:</string>
+    <string name="accountDetail">Detail</string>
+    <string name="publicAddress">● Address:</string>
+    <string name="curType">● Type:</string>
+    <string name="accountName">● Name:</string>
+    <string name="add_acc_key">● Key:</string>
+    <string name="add_acc_addr">● Address:</string>
+    <string name="add_acc_type">● Type:</string>
+    <string name="add_acc_name">● Name:</string>
 </resources>

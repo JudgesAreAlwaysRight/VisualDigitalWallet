@@ -5,6 +5,7 @@
         android:bottomRightRadius="0dp"
         android:topLeftRadius="70dp"
         android:topRightRadius="70dp" />
+
     <gradient
         android:angle="270"
         android:endColor="#ffffff"
