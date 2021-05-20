@@ -24,7 +24,7 @@ public class Start extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    sleep(500);
+                    sleep(1000);
                     Intent it = new Intent(getApplication(), MainActivity.class);
                     startActivity(it);
                     finish();

@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -33,7 +34,7 @@ public class AddNewTag extends AppCompatActivity {
     private EditText viewName;
     private Spinner viewK;
     private Spinner viewN;
-    private Button submit;
+    private ImageButton submit;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
