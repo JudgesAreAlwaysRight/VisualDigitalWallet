@@ -32,14 +32,18 @@ public class Account extends AppCompatActivity {
         this.wallet = (Wallet) intent.getSerializableExtra(Constant.WALLET_ARG);
         TextView addrView = findViewById(R.id.account_address02);
         addrView.setText(wallet.getAddress());
+        addrView.bringToFront();
         TextView typeView = findViewById(R.id.account_type02);
         typeView.setText(wallet.getCurType());
+        typeView.bringToFront();
         TextView typeViewTitle = findViewById(R.id.account_type2);
         typeViewTitle.setText(wallet.getCurType());
+        typeViewTitle.bringToFront();
         TextView nameView = findViewById(R.id.account_balance02);
         nameView.setText(wallet.getWalName());
-
+        nameView.bringToFront();
         getsecret = findViewById(R.id.get_secret);
+        getsecret.bringToFront();
         getsecret.setOnClickListener(v -> {
             Intent intent = new Intent(Account.this, Collect.class);
             intent.putExtra(Constant.WALLET_ARG, wallet);

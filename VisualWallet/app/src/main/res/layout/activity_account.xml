@@ -38,7 +38,9 @@
         android:background="@drawable/half_ridius_rect"
         android:elevation="5dp"
         android:rotationX="180"
-        android:translationZ="-1dp" />
+        android:translationZ="-1dp" >
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -67,6 +69,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/account_balance"
+        android:stateListAnimator="@null"
         android:layout_marginTop="30dp">
 
         <TextView
@@ -91,7 +94,8 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/black80"
-            android:textSize="18sp">
+            android:textSize="18sp"
+            tools:text="@tools:sample/date/day_of_week">
 
         </TextView>
 
@@ -102,6 +106,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/account_address"
+        android:stateListAnimator="@null"
         android:layout_marginTop="30dp">
 
         <TextView
@@ -135,6 +140,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/account_title"
+        android:stateListAnimator="@null"
         android:layout_marginTop="160dp">
 
         <TextView

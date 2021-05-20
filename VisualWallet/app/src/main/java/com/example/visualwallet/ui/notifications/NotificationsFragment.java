@@ -35,6 +35,7 @@ public class NotificationsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.fragment_notifications, null);
+
         accountLL = view.findViewById(R.id.accounts_linear);
         wallet_add = view.findViewById(R.id.wallet_button_add);
         wallet_add.setOnClickListener(view1 -> {
