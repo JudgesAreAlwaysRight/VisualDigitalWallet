@@ -9,4 +9,8 @@
     <string name="publicAddress">● 地址:</string>
     <string name="curType">● 类型:</string>
     <string name="accountName">● 名称:</string>
+    <string name="add_acc_key">● 私钥:</string>
+    <string name="add_acc_addr">● 地址:</string>
+    <string name="add_acc_type">● 类型:</string>
+    <string name="add_acc_name">● 名称:</string>
 </resources>

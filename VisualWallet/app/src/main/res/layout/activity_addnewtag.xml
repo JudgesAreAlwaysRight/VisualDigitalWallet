@@ -10,7 +10,7 @@
         android:id="@+id/ant_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="25dp"
+        android:layout_marginStart="25dp"
         android:layout_marginBottom="20dp"
         android:gravity="left"
         android:text="添加账户"
@@ -22,7 +22,7 @@
 
     <RelativeLayout
         android:id="@+id/ant_pk"
-        android:layout_below="@id/ant_title"
+        android:layout_below="@id/ant_info"
         android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -30,20 +30,21 @@
             android:id="@+id/ant_pk_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="私钥:"
-            android:textSize="30dp"
+            android:text="@string/add_acc_key"
+            android:textSize="18sp"
             android:layout_margin="10dp">
         </TextView>
+
         <EditText
             android:id="@+id/ant_pk_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/ant_pk_tag"
             android:layout_alignBottom="@id/ant_pk_tag"
-            android:lines="1"
+            android:layout_toRightOf="@id/ant_pk_tag"
+            android:background="@color/on_blue"
             android:hint="在这输入你的私钥"
-            android:textSize="20dp">
-        </EditText>
+            android:lines="1"
+            android:textSize="18sp"></EditText>
     </RelativeLayout>
 
     <RelativeLayout
@@ -56,20 +57,21 @@
             android:id="@+id/ant_address_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="地址:"
-            android:textSize="30dp"
+            android:text="@string/add_acc_addr"
+            android:textSize="18sp"
             android:layout_margin="10dp">
         </TextView>
+
         <EditText
             android:id="@+id/ant_address_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/ant_address_tag"
             android:layout_alignBottom="@id/ant_address_tag"
-            android:lines="1"
+            android:layout_toRightOf="@id/ant_address_tag"
+            android:background="@color/on_blue"
             android:hint="在这输入你的地址"
-            android:textSize="20dp">
-        </EditText>
+            android:lines="1"
+            android:textSize="18sp"></EditText>
     </RelativeLayout>
 
     <RelativeLayout
@@ -82,25 +84,26 @@
             android:id="@+id/ant_type_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="类型:"
-            android:textSize="30dp"
+            android:text="@string/add_acc_type"
+            android:textSize="18sp"
             android:layout_margin="10dp">
         </TextView>
+
         <EditText
             android:id="@+id/ant_type_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/ant_type_tag"
             android:layout_alignBottom="@id/ant_type_tag"
-            android:lines="1"
+            android:layout_toRightOf="@id/ant_type_tag"
+            android:background="@color/on_blue"
             android:hint="在这输入你的币种类型"
-            android:textSize="20dp">
-        </EditText>
+            android:lines="1"
+            android:textSize="18sp"></EditText>
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/ant_info"
-        android:layout_below="@id/ant_type"
+        android:layout_below="@id/ant_title"
         android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -108,31 +111,35 @@
             android:id="@+id/ant_info_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="备注:"
-            android:textSize="30dp"
+            android:text="@string/add_acc_name"
+            android:textSize="18sp"
             android:layout_margin="10dp">
         </TextView>
+
         <EditText
             android:id="@+id/ant_info_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/ant_info_tag"
             android:layout_alignBottom="@id/ant_info_tag"
-            android:lines="1"
+            android:layout_toRightOf="@id/ant_info_tag"
+            android:background="@drawable/add_new_input"
             android:hint="在这输入你的备注信息"
-            android:textSize="20dp">
-        </EditText>
+            android:lines="1"
+            android:textAlignment="center"
+            android:textColorHighlight="#FFFFFF"
+            android:textColorLink="@color/darkBlue"
+            android:textSize="18sp"></EditText>
     </RelativeLayout>
 
     <TextView
         android:id="@+id/Warning"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/ant_info"
+        android:layout_below="@id/ant_type"
         android:text="注意：门限数应当小于等于分存数"
-        android:textSize="25dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="10dp"
+        android:textSize="16sp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="10dp"
         android:textColor="#de1242">
 
     </TextView>
@@ -148,18 +155,19 @@
             android:layout_height="wrap_content"
             android:text="门限数:"
             android:layout_margin="10dp"
-            android:textSize="25dp">
+            android:textSize="18sp">
         </TextView>
+
         <Spinner
             android:id="@+id/ant_k_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:spinnerMode="dialog"
-            android:theme="@style/Spinner"
-            android:entries="@array/valueK"
             android:layout_alignBottom="@id/ant_k_tag"
-            android:layout_toRightOf="@id/ant_k_tag">
-        </Spinner>
+            android:layout_toRightOf="@id/ant_k_tag"
+            android:entries="@array/valueK"
+            android:spinnerMode="dialog"
+            android:textSize="16sp"
+            android:theme="@style/Spinner"></Spinner>
         <TextView
             android:id="@+id/ant_n_tag"
             android:layout_width="wrap_content"
@@ -167,7 +175,7 @@
             android:text="分存数:"
             android:layout_toRightOf="@id/ant_k_spinner"
             android:layout_margin="10dp"
-            android:textSize="25dp">
+            android:textSize="18sp">
         </TextView>
         <Spinner
             android:id="@+id/ant_n_spinner"
@@ -176,7 +184,7 @@
             android:spinnerMode="dialog"
             android:theme="@style/Spinner"
             android:entries="@array/valueN"
-            android:textSize="25dp"
+            android:textSize="16sp"
             android:layout_alignBottom="@id/ant_n_tag"
             android:layout_toRightOf="@id/ant_n_tag">
         </Spinner>
