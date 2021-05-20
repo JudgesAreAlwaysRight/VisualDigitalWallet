@@ -14,4 +14,9 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@color/bkg_gray</item>
     </style>
+    <style name="itemSpinnerStyle" parent="@android:style/Widget.TextView.SpinnerItem">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:padding">8dp</item>
+
+    </style>
 </resources>

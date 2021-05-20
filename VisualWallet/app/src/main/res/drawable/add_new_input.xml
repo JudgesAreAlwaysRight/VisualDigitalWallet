@@ -6,6 +6,6 @@
         android:width="320dp"
         android:height="40dp" />
     <gradient
-        android:endColor="@color/on_blue"
-        android:startColor="@color/on_blue" />
+        android:endColor="@color/blue_edittext"
+        android:startColor="@color/blue_edittext" />
 </shape>

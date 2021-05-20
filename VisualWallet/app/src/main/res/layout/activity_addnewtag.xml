@@ -18,13 +18,65 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="40dp"
+
+        android:background="@drawable/half_ridius_rect_blue"
+        android:translationZ="5dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="360dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="180dp"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/half_ridius_rect"
+        android:elevation="5dp"
+        android:rotationX="180"
+
+        android:translationZ="5dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="380dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="180dp"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/half_ridius_rect"
+        android:elevation="5dp"
+        android:rotationX="180"
+        android:translationZ="3dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="180dp"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/half_ridius_rect"
+        android:elevation="5dp"
+        android:rotationX="180"
+        android:translationZ="1dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ant_title"
+        android:background="@drawable/half_ridius_rect"
+        android:elevation="5dp"
+        android:translationZ="-3dp"/>
 
     <RelativeLayout
         android:id="@+id/ant_pk"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ant_info"
-        android:layout_margin="10dp">
+        android:layout_marginEnd="50dp"
+        android:layout_marginStart="50dp"
+        android:translationZ="10dp">
 
         <TextView
             android:id="@+id/ant_pk_tag"
@@ -32,7 +84,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="@string/add_acc_key"
-            android:textSize="18sp"></TextView>
+            android:textSize="22sp"></TextView>
 
         <EditText
             android:id="@+id/ant_pk_input"
@@ -42,7 +94,10 @@
             android:layout_toEndOf="@id/ant_pk_tag"
             android:background="@drawable/add_new_input"
             android:gravity="center_vertical"
-            android:hint="在这输入你的私钥"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textColor="#ffffff"
+            android:hint="在这输入私钥"
             android:lines="1"
             android:textSize="18sp" />
     </RelativeLayout>
@@ -52,7 +107,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ant_pk"
-        android:layout_margin="10dp">
+        android:layout_marginEnd="50dp"
+        android:layout_marginStart="50dp"
+        android:translationZ="10dp">
 
         <TextView
             android:id="@+id/ant_address_tag"
@@ -60,7 +117,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="@string/add_acc_addr"
-            android:textSize="18sp"></TextView>
+            android:textSize="22sp"></TextView>
 
         <EditText
             android:id="@+id/ant_address_input"
@@ -70,7 +127,10 @@
             android:layout_toEndOf="@id/ant_address_tag"
             android:background="@drawable/add_new_input"
             android:gravity="center_vertical"
-            android:hint="在这输入你的地址"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textColor="#ffffff"
+            android:hint="在这输入地址"
             android:lines="1"
             android:textSize="18sp" />
     </RelativeLayout>
@@ -80,15 +140,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ant_address"
-        android:layout_margin="10dp">
+        android:layout_marginEnd="50dp"
+        android:layout_marginStart="50dp"
+        android:translationZ="10dp">
 
         <TextView
             android:id="@+id/ant_type_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
+
             android:text="@string/add_acc_type"
-            android:textSize="18sp"></TextView>
+            android:textSize="22sp"></TextView>
 
         <EditText
             android:id="@+id/ant_type_input"
@@ -98,7 +161,10 @@
             android:layout_toEndOf="@id/ant_type_tag"
             android:background="@drawable/add_new_input"
             android:gravity="center_vertical"
-            android:hint="在这输入你的币种类型"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textColor="#ffffff"
+            android:hint="在这输入币种类型"
             android:lines="1"
             android:textSize="18sp" />
     </RelativeLayout>
@@ -107,8 +173,10 @@
         android:id="@+id/ant_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/ant_title"
-        android:layout_margin="10dp">
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginStart="50dp"
+        android:translationZ="10dp">
 
         <TextView
             android:id="@+id/ant_info_tag"
@@ -116,7 +184,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="@string/add_acc_name"
-            android:textSize="20sp"></TextView>
+            android:textSize="22sp"></TextView>
 
         <EditText
             android:id="@+id/ant_info_input"
@@ -124,26 +192,30 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/ant_info_tag"
             android:layout_toEndOf="@id/ant_info_tag"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="0dp"
             android:background="@drawable/add_new_input"
             android:gravity="center_vertical"
-            android:hint="在这输入你的备注信息"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textColor="#ffffff"
+            android:hint="在这输入备注信息"
             android:lines="1"
-            android:textColorHighlight="#FFFFFF"
-            android:textColorLink="@color/darkBlue"
             android:textSize="18sp" />
     </RelativeLayout>
 
     <TextView
         android:id="@+id/Warning"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/ant_type"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="6dp"
         android:layout_marginEnd="10dp"
+        android:layout_centerHorizontal="true"
         android:text="注意：门限数应当小于等于分存数"
         android:textColor="#de1242"
-        android:textSize="16sp">
+        android:textSize="20sp"
+        android:translationZ="10dp">
 
     </TextView>
 
@@ -157,13 +229,14 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:translationZ="10dp">
 
         <TextView
             android:id="@+id/ant_k_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
+            android:layout_marginStart="50dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
@@ -188,7 +261,7 @@
             android:id="@+id/ant_n_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="100dp"
+            android:layout_marginStart="70dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:layout_toEndOf="@id/ant_k_spinner"
@@ -218,9 +291,12 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="80dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
         android:background="@drawable/buttom_press"
         android:text="提交"
-        android:textSize="25sp">
+        android:textSize="25sp"
+        android:translationZ="15dp">
 
     </Button>
 
