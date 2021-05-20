@@ -16,6 +16,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,9 +52,9 @@ import cn.milkyship.zxing.decode.ImageUtil;
 
 public class Collect extends AppCompatActivity implements View.OnClickListener {
 
-    private Button local;
-    private Button scan;
-    private Button bluetooth;
+    private ImageButton local;
+    private ImageButton scan;
+    private ImageButton bluetooth;
     private Button collectK;
     private LinearLayout collectLL;
     private WaveBallProgress waveProgress;
@@ -80,7 +81,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         local.setOnClickListener(this);
         scan = findViewById(R.id.scan);
         scan.setOnClickListener(this);
-        bluetooth = findViewById(R.id.bluetooth);
+        bluetooth =findViewById(R.id.bluetooth);
         bluetooth.setOnClickListener(this);
         collectK = findViewById(R.id.collectK);
         collectK.setOnClickListener(this);

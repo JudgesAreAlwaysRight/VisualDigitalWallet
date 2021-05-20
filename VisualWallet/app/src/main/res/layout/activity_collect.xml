@@ -25,7 +25,8 @@
         <com.example.visualwallet.common.WaveBallProgress
             android:id="@+id/wave_progress"
             android:layout_width="200dp"
-            android:layout_height="200dp" />
+            android:layout_height="200dp"
+            />
     </LinearLayout>
 
     <ScrollView
@@ -53,38 +54,41 @@
         android:layout_below="@id/info_scroll"
         android:layout_marginTop="30dp">
 
-        <Button
+        <ImageButton
             android:id="@+id/local"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="30dp"
+            android:scaleType="fitXY"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:layout_toLeftOf="@id/scan"
-            android:background="@drawable/buttom_press"
+            android:background="@drawable/photo"
             android:text="本地上传"
             android:textSize="20dp" />
 
-        <Button
+        <ImageButton
             android:id="@+id/scan"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:background="@drawable/buttom_press"
+            android:scaleType="fitXY"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/scan"
             android:text="相机扫描"
             android:textSize="20dp" />
 
-        <Button
+        <ImageButton
             android:id="@+id/bluetooth"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="20dp"
+            android:scaleType="fitXY"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:layout_toRightOf="@id/scan"
-            android:background="@drawable/buttom_press"
+            android:background="@drawable/blueteeth"
             android:text="蓝牙传输"
             android:textSize="20dp" />
 
