@@ -28,7 +28,7 @@
         android:layout_marginEnd="40dp"
 
         android:background="@drawable/half_ridius_rect_blue"
-        android:translationZ="-2dp" />
+        android:translationZ="5dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,7 +40,7 @@
         android:elevation="5dp"
         android:rotationX="180"
 
-        android:translationZ="0dp" />
+        android:translationZ="5dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -51,7 +51,7 @@
         android:background="@drawable/half_ridius_rect"
         android:elevation="5dp"
         android:rotationX="180"
-        android:translationZ="-2dp" />
+        android:translationZ="3dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -62,8 +62,14 @@
         android:background="@drawable/half_ridius_rect"
         android:elevation="5dp"
         android:rotationX="180"
-        android:translationZ="-3dp" />
-
+        android:translationZ="1dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/account_title"
+        android:background="@drawable/half_ridius_rect"
+        android:elevation="5dp"
+        android:translationZ="-1dp"/>
     <RelativeLayout
         android:id="@+id/account_address"
         android:layout_width="match_parent"
@@ -219,13 +225,13 @@
         android:id="@+id/delete"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="60dp"
         android:layout_marginBottom="60dp"
         android:background="@drawable/sub_btn"
         android:textColor="@color/black80"
         android:textSize="16sp"
-        android:translationZ="10dp" />
+        android:translationZ="10dp"
+        android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>

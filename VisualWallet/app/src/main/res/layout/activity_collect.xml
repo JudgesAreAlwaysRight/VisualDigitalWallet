@@ -63,9 +63,7 @@
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:layout_toLeftOf="@id/scan"
-            android:background="@drawable/photo"
-            android:text="本地上传"
-            android:textSize="20dp" />
+            android:background="@drawable/photo" />
 
         <ImageButton
             android:id="@+id/scan"
@@ -75,9 +73,7 @@
             android:scaleType="fitXY"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
-            android:background="@drawable/scan"
-            android:text="相机扫描"
-            android:textSize="20dp" />
+            android:background="@drawable/scan" />
 
         <ImageButton
             android:id="@+id/bluetooth"
