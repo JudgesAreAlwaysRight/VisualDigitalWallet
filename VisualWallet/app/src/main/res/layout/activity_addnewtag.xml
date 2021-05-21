@@ -91,15 +91,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/ant_pk_tag"
+            android:layout_marginTop="10dp"
             android:layout_toEndOf="@id/ant_pk_tag"
             android:background="@drawable/add_new_input"
             android:gravity="center_vertical"
+            android:hint="在这输入私钥"
+            android:lines="1"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColor="#ffffff"
-            android:hint="在这输入私钥"
-            android:lines="1"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -124,15 +125,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/ant_address_tag"
+            android:layout_marginTop="10dp"
             android:layout_toEndOf="@id/ant_address_tag"
             android:background="@drawable/add_new_input"
             android:gravity="center_vertical"
+            android:hint="在这输入地址"
+            android:lines="1"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColor="#ffffff"
-            android:hint="在这输入地址"
-            android:lines="1"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -158,15 +160,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/ant_type_tag"
+            android:layout_marginTop="10dp"
             android:layout_toEndOf="@id/ant_type_tag"
             android:background="@drawable/add_new_input"
             android:gravity="center_vertical"
+            android:hint="在这输入币种类型"
+            android:lines="1"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColor="#ffffff"
-            android:hint="在这输入币种类型"
-            android:lines="1"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -191,16 +194,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/ant_info_tag"
+            android:layout_marginTop="10dp"
             android:layout_toEndOf="@id/ant_info_tag"
-            android:layout_marginTop="0dp"
             android:background="@drawable/add_new_input"
             android:gravity="center_vertical"
+            android:hint="在这输入备注信息"
+            android:lines="1"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColor="#ffffff"
-            android:hint="在这输入备注信息"
-            android:lines="1"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
     </RelativeLayout>
 
     <TextView
@@ -208,13 +211,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/ant_type"
+        android:layout_centerHorizontal="true"
         android:layout_marginStart="20dp"
         android:layout_marginTop="6dp"
         android:layout_marginEnd="10dp"
-        android:layout_centerHorizontal="true"
         android:text="注意：门限数应当小于等于分存数"
         android:textColor="#de1242"
-        android:textSize="20sp"
+        android:textSize="14sp"
         android:translationZ="10dp">
 
     </TextView>
@@ -248,6 +251,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/ant_k_tag"
+            android:layout_marginTop="10dp"
             android:layout_toEndOf="@id/ant_k_tag"
             android:background="@drawable/add_new_spin"
             android:entries="@array/valueK"
@@ -261,7 +265,7 @@
             android:id="@+id/ant_n_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:layout_toEndOf="@id/ant_k_spinner"

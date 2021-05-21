@@ -15,6 +15,18 @@
         android:textColor="@color/black80"
         android:textSize="34sp" />
 
+    <ImageView
+        android:id="@+id/fail_alert"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_below="@id/collect_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/fail_alert"
+        android:gravity="center_horizontal"
+        android:visibility="invisible" />
+
+
     <LinearLayout
         android:id="@+id/progress_layout"
         android:layout_width="wrap_content"
@@ -22,11 +34,31 @@
         android:layout_below="@id/collect_title"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp">
+
         <com.example.visualwallet.common.WaveBallProgress
             android:id="@+id/wave_progress"
             android:layout_width="200dp"
             android:layout_height="200dp"
+            android:background="@color/bkg_gray"
             />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/progress_num_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/collect_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp">
+
+        <TextView
+            android:id="@+id/progress_text"
+            android:layout_width="120dp"
+            android:layout_height="80dp"
+            android:gravity="center"
+            android:text="0%"
+            android:textColor="@color/on_blue"
+            android:textSize="60sp" />
     </LinearLayout>
 
     <ScrollView
@@ -36,6 +68,7 @@
         android:layout_below="@id/progress_layout"
         android:layout_alignParentStart="true"
         android:layout_marginTop="20dp"
+        android:foregroundGravity="center_horizontal"
         android:scrollbars="none">
 
         <LinearLayout

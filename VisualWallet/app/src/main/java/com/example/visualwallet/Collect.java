@@ -15,6 +15,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -58,6 +59,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
     private ImageButton collectK;
     private LinearLayout collectLL;
     private WaveBallProgress waveProgress;
+    private TextView progressText;
 
     private static final int TAKE_CAMERA = 101;
     private static final int PICK_PHOTO = 102;
@@ -85,6 +87,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         bluetooth.setOnClickListener(this);
         collectK = findViewById(R.id.collectK);
         collectK.setOnClickListener(this);
+        progressText = findViewById(R.id.progress_text);
 
         intent = getIntent();
         this.wallet = (Wallet) intent.getSerializableExtra(com.example.visualwallet.common.Constant.WALLET_ARG);
@@ -162,7 +165,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                                 if (res == null || !res.get("code").equals("200")) {
                                     String logInfo = "网络响应异常";
                                     Log.e("Collect", "Net response illegal");
-                                    if (res.get("code") != null) {
+                                    if (res != null && res.get("code") != null) {
                                         logInfo += " " + res.get("code");
                                         Log.e("Collect", "http code " + res.get("code"));
                                     }
@@ -193,7 +196,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                                         });
                                         alertdialogbuilder.create().show();
                                         Looper.loop();
-                                        break;
+                                        return;
                                     case "0":
                                         Log.e("Collect", "Net flag 0, pics were modified");
                                         Looper.prepare();
@@ -213,6 +216,13 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                                         Looper.loop();
                                         break;
                                 }
+
+                                // 其它情况都认为存在错误，亮警示标
+                                Collect.this.runOnUiThread(() -> {
+                                    findViewById(R.id.progress_layout).setVisibility(View.INVISIBLE);
+                                    findViewById(R.id.progress_num_layout).setVisibility(View.INVISIBLE);
+                                    findViewById(R.id.fail_alert).setVisibility(View.VISIBLE);
+                                });
                             }
                         });
                 collectRequest.start();
@@ -273,19 +283,17 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         Collect.this.runOnUiThread(new Runnable() {
             public void run() {
                 TextView newText = new TextView(Collect.this);
-                newText.setText("No." + String.valueOf(splitInfo.size() + 1) + ": " + dinfo);
-                newText.setTextColor(Collect.this.getResources().getColor(R.color.black40));
-                newText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30);
-                newText.setGravity(Gravity.CENTER);
-
-                //newText.setLayoutParams(lp);
+                newText.setText(dinfo.substring(0, dinfo.length() - 9).replace('\n', ' '));
+                newText.setTextColor(Collect.this.getResources().getColor(R.color.white));
+                newText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
+                newText.setGravity(Gravity.CENTER_HORIZONTAL);
+                newText.setBackgroundResource(R.drawable.collect_tag);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
+                lp.setMargins(40,8,40,8);
+                newText.setLayoutParams(lp);
                 collectLL.addView(newText);
-                //Button newbtn = new Button(getActivity());
-                //newbtn.setText("狗币"+"账户");//这里应该是返回的币种类型
-                //newbtn.setTextSize(20);
-                //newbtn.setBackgroundResource(R.drawable.buttom_press);
-                ////newbtn.setOnClickListener(); 加一个监听列表
-                //accountll.addView(newbtn);
             }
         });
     }
@@ -326,6 +334,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
 
                 Collect.this.runOnUiThread(() -> {
                     int prog = (int) (splitInfo.size() / (float) wallet.getCoeK() * 100);
+                    progressText.setText(String.valueOf(prog + "%"));
                     waveProgress.startProgress(prog, 300, 0);
                 });
 
@@ -334,6 +343,11 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                 }
             }
             else {
+                Collect.this.runOnUiThread(() -> {
+                    findViewById(R.id.progress_layout).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.progress_num_layout).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.fail_alert).setVisibility(View.VISIBLE);
+                });
                 Looper.prepare();
                 Toast.makeText(Collect.this, "分存码异常", Toast.LENGTH_LONG).show();
                 Looper.loop();
