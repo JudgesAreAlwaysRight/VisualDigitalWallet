@@ -55,7 +55,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
     private ImageButton local;
     private ImageButton scan;
     private ImageButton bluetooth;
-    private Button collectK;
+    private ImageButton collectK;
     private LinearLayout collectLL;
     private WaveBallProgress waveProgress;
 

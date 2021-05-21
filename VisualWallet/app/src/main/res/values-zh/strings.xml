@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">可视化数字钱包</string>
+    <string name="app_name">魂器钱包Keycrux</string>
     <string name="title_home">主页</string>
     <string name="title_dashboard">概览</string>
     <string name="title_notifications">钱包</string>
