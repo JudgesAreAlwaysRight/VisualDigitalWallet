@@ -333,6 +333,9 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                 splitMat.add(pointMatrix);
 
                 Collect.this.runOnUiThread(() -> {
+                    findViewById(R.id.progress_layout).setVisibility(View.VISIBLE);
+                    findViewById(R.id.progress_num_layout).setVisibility(View.VISIBLE);
+                    findViewById(R.id.fail_alert).setVisibility(View.INVISIBLE);
                     int prog = (int) (splitInfo.size() / (float) wallet.getCoeK() * 100);
                     progressText.setText(String.valueOf(prog + "%"));
                     waveProgress.startProgress(prog, 300, 0);
