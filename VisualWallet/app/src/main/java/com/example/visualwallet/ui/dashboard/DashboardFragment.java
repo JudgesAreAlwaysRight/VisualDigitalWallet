@@ -1,6 +1,8 @@
 package com.example.visualwallet.ui.dashboard;
 
 import android.os.Bundle;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,21 +42,31 @@ public class DashboardFragment extends Fragment {
         key = editTextKey.getText().toString();
 
         transBtn = root.findViewById(R.id.button_trans);
-        transBtn.setOnClickListener(view_->{
+        transBtn.setOnClickListener(view_ -> {
+            Log.i("transfer", "click");
             TransRequest transRequest = new TransRequest(Constant.fromAddr, Constant.toAddr, Constant.value);
             transRequest.setNetCallback(new NetCallback() {
                 @Override
                 public void callBack(@Nullable @org.jetbrains.annotations.Nullable Map res) {
+                    String resCode = null;
+                    Log.i("transfer", "callback");
+                    if (res != null && res.get("code") != null) {
+                        resCode = (String) res.get("code");
+                        Log.i("transfer", resCode);
+                    }
+
+                    Looper.prepare();
+                    if (resCode != null && resCode.charAt(0) == '2') {
+                        Toast.makeText(getActivity(), "转账请求已发出，等待区块链确认", Toast.LENGTH_LONG).show();
+                    } else if (resCode != null) {
+                        Toast.makeText(getActivity(), "转账异常，错误" + resCode, Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getActivity(), "网络异常", Toast.LENGTH_LONG).show();
+                    }
+                    Looper.loop();
                 }
             });
-            if (key != null) {
-                try {
-                    Thread.sleep(300);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Toast.makeText(getActivity(), "转账请求已发出，等待区块链确认", Toast.LENGTH_LONG).show();
-            }
+            transRequest.start();
         });
 
         return root;

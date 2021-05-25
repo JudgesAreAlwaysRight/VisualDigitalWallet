@@ -7,11 +7,11 @@ import java.util.Map;
 
 public class TransRequest extends NetRequest {
 
-    private static final String transUrl = "/v1/bcy/test/txs/new";
+    private static final String transUrl = "/v1/btc/test3/txs/new";
     private static String url;
-    private String from;
-    private String to;
-    private long value;
+    private final String from;
+    private final String to;
+    private final long value;
 
     public TransRequest(String from, String to, long value) {
         url = Constant.blockchainTestDomain + transUrl;
@@ -31,14 +31,13 @@ public class TransRequest extends NetRequest {
         args.put("inputs", inputList);
 
         String[] toList = {to};
-        Map<String, String[]> output = new HashMap<>();
+        Map<String, Object> output = new HashMap<>();
         output.put("addresses", toList);
-        Map[] ouputList = {output};
-        args.put("outputs", ouputList);
+        output.put("value", value);
+        Map[] outputList = {output};
+        args.put("outputs", outputList);
 
-        args.put("value", value);
-
-        Map response = NetUtil.Post(url, args);
+        Map response = NetUtil.Post(url, args, false);
 
         callBack(response);
     }

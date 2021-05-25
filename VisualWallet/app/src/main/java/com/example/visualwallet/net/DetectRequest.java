@@ -26,7 +26,7 @@ public class DetectRequest extends NetRequest {
         args.put("index", index);
         args.put("keys", keys);
 
-        Map response = NetUtil.Post(subUrl, args);
+        Map response = NetUtil.Post(NetUtil.getUrlBase() + subUrl, args);
 
         callBack(response);
     }
