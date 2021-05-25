@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.example.visualwallet.common.Constant;
 
@@ -47,27 +48,27 @@ public class NetUtil {
         hex2bin.put('f', "1111");
     }
 
-    public static Map<String, Object> Get(String subUrlStr, Map<String, Object> args) {
+    public static Map<String, Object> Get(String urlStr, Map<String, Object> args) {
 
         HttpURLConnection connection = null;
         String response = null;
 
-        StringBuilder urlStr = new StringBuilder(urlBase + subUrlStr);
+        StringBuilder urlStrBuilder = new StringBuilder(urlStr);
         boolean firstArg = true;
         if (args != null) {
             for (Map.Entry<String, Object> it : args.entrySet()) {
-                urlStr.append(firstArg ? "?" : "&");
+                urlStrBuilder.append(firstArg ? "?" : "&");
                 if (firstArg) {
                     firstArg = false;
                 }
-                urlStr.append(it.getKey());
-                urlStr.append("=");
-                urlStr.append(args.get(it.getValue().toString()));
+                urlStrBuilder.append(it.getKey());
+                urlStrBuilder.append("=");
+                urlStrBuilder.append(args.get(it.getValue().toString()));
             }
         }
 
         try {
-            URL url = new URL(urlStr.toString());
+            URL url = new URL(urlStrBuilder.toString());
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(Constant.connectTimeout);
@@ -90,7 +91,12 @@ public class NetUtil {
         return JSONObject.parseObject(response);
     }
 
-    public static Map Post(String subUrlStr, Map<String, Object> args) {
+    public static Map Post(String urlStr, Map<String, Object> args) {
+        return Post(urlStr, args, true);
+    }
+
+
+    public static Map Post(String urlStr, Map<String, Object> args, boolean fixDash) {
 
         HttpURLConnection connection = null;
         String response;
@@ -99,11 +105,11 @@ public class NetUtil {
         String jsonString = JSON.toJSONString(args);
         byte[] argsByte = jsonString.getBytes();
 
-        Log.i("post url", urlBase + subUrlStr + "/");
+        Log.i("post url", urlStr + (fixDash ? "/" : ""));
         Log.i("post body", jsonString);
 
         try {
-            URL url = new URL(urlBase + subUrlStr + "/");
+            URL url = new URL(urlStr + (fixDash ? "/" : ""));
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setConnectTimeout(Constant.connectTimeout);
@@ -117,15 +123,18 @@ public class NetUtil {
             outputStream.write(argsByte, 0, argsByte.length);
 
             code = connection.getResponseCode();
-            InputStream in;
-            if (code == 200) {
-                in = connection.getInputStream(); // 得到网络返回的正确输入流
-            } else {
-                in = connection.getErrorStream(); // 得到网络返回的错误输入流
+            if (code != 200) {
+                Log.w("NetUtil", "post ret code: " + String.valueOf(code));
             }
+            InputStream in = connection.getInputStream(); // 得到网络返回的正确输入流
             InputStreamReader inputStreamReader = new InputStreamReader(in);
             BufferedReader reader = new BufferedReader(inputStreamReader);
-            response = reader.readLine();
+            StringBuilder resBuffer = new StringBuilder();
+            String line;
+            while((line=reader.readLine()) != null){
+                resBuffer.append(line).append("\n");
+            }
+            response = resBuffer.toString();
             Log.i("response", response);
 
         } catch (Exception e) {
@@ -137,15 +146,28 @@ public class NetUtil {
             }
         }
 
-        if (code == 200) {
-            Map resMap = (Map) JSONObject.parse(response);
-            resMap.put("code", "200");
-            return resMap;
+        if (code < 300) {
+            try {
+                Map resMap = (Map) JSONObject.parse(response);
+                resMap.put("code", String.valueOf(code));
+                return resMap;
+            }
+            catch (JSONException je) {
+                Log.e("NetUtil", "JSONException");
+                je.printStackTrace();
+                Map<String, String> resMap = new HashMap<>();
+                resMap.put("code", String.valueOf(code));
+                return resMap;
+            }
         } else {
             Map<String, String> errorMap = new HashMap<String, String>();
             errorMap.put("code", String.valueOf(code));
             return errorMap;
         }
+    }
+
+    public static String getUrlBase() {
+        return urlBase;
     }
 
     public static String key2bin(String keyStr) {
