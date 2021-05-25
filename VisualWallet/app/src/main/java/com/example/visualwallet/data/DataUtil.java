@@ -19,7 +19,7 @@ public class DataUtil {
 
     /*
      * 使用SharedPreferences进行数据持久化，存储的数据位于
-     *      /data/data/com.example.visualwallet/share.xml
+     *      /data/data/com.example.visualwallet/shared_prefs/share.xml
      */
 
     /*
