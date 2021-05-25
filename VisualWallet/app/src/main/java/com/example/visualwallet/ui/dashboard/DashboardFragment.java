@@ -45,16 +45,17 @@ public class DashboardFragment extends Fragment {
             transRequest.setNetCallback(new NetCallback() {
                 @Override
                 public void callBack(@Nullable @org.jetbrains.annotations.Nullable Map res) {
+                    if (res != null && res.get("code") != null && ((String)res.get("code")).equals("200")) {
+                        Toast.makeText(getActivity(), "转账请求已发出，等待区块链确认", Toast.LENGTH_LONG).show();
+                    }
+                    else if (res != null && res.get("code") != null) {
+                        Toast.makeText(getActivity(), "转账异常，错误" + ((String)res.get("code")), Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        Toast.makeText(getActivity(), "网络异常", Toast.LENGTH_LONG).show();
+                    }
                 }
             });
-            if (key != null) {
-                try {
-                    Thread.sleep(300);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Toast.makeText(getActivity(), "转账请求已发出，等待区块链确认", Toast.LENGTH_LONG).show();
-            }
         });
 
         return root;
