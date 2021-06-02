@@ -65,7 +65,7 @@ def makes(k, n):
             elif k >= n-p+1:
                     d0 += comb(n, p) * t0
                     d1 += comb(n, p) * t1
-        print("p=%d: d0=%d, d1 =%d" % (p, d0, d1))
+        # print("p=%d: d0=%d, d1 =%d" % (p, d0, d1))
         a0.append(t0)
         a1.append(t1)
         p += 1
@@ -90,7 +90,7 @@ def makes(k, n):
             elif k >= n-p+1:
                     d0 += comb(n, p) * t0
                     d1 += comb(n, p) * t1
-        print("p=%d: d0=%d, d1 =%d" % (p, d0, d1))
+        # print("p=%d: d0=%d, d1 =%d" % (p, d0, d1))
         a0.append(t0)
         a1.append(t1)
         p += 1
@@ -115,7 +115,7 @@ def makes(k, n):
     # 计算较为接近的平方便于扩充为 n*n的形式
     goal = ceil(sqrt(m)) ** 2
 
-    # 补全为1的行(之后转置为列)
+    # 补全为0的行(之后转置为列)
     e = [0 for i in range(n)]
     for i in range(goal - m2):
         s1.append(e)
@@ -124,9 +124,9 @@ def makes(k, n):
 
     s0 = np.array(s0).T
     s1 = np.array(s1).T
-    print(len(s1[1]))
-    print(s0)
-    print(s1)
+    # print(len(s1[1]))
+    # print(s0)
+    # print(s1)
     return s0, s1, goal, d0, d1
 
 
@@ -153,15 +153,52 @@ def decode(merge, m, d0, d1):
     return qr
 
 
+# 生成序列all[n][8]，只有all[0]是固定根据aid生成的，其他的都是随机，不重要。
+# 在使用时分存图n的第8*(n-1)到8*(n-1)+7位使用all[0]，其他分存图对应的位分别使用all[1:]，之外的其他部分正常使用
+def geneQueue(aID, n):
+    all = []
+    q = []
+    qlen = len(aID)
+    for i in range(qlen):
+        q.append(ord(aID[i]) % n)
+    print(q)
+    all.append(q)
+    for i in range(n-1):
+        temp = []
+        j = len(temp)
+        while j < qlen:
+            a = random.randint(0, n-1)
+            join = True
+            for x in range(len(all)):
+                if a == all[x][j]:
+                    join = False
+                    break
+            if join:
+                temp.append(a)
+            j = len(temp)
+        all.append(temp)
+    print(all)
+    return all
+
+
 if __name__ == "__main__":
-    k, n = eval(input("Set K, N(max 5) for your QR code: "))
+    # k, n = eval(input("Set K, N(max 5) for your QR code: "))
+    k = 2
+    n = 3
     s0, s1, m, d0, d1 = makes(k, n)
-    print(d0)
-    print(d1)
+    # print(d0)
+    # print(d1)
     lenm = int(sqrt(m))
     # 每个像素扩充成lenm*lenm
     newx = int(x * lenm)
     newy = int(y * lenm)
+
+    # 这里应该接收一个androidID(64bit)，str格式
+    androidID = "abcdefgh"
+    # 不要求这里啥格式，弄个str就行，要保存在carrier里
+    time = "12345678"
+    # 生成随机序列
+    queue = geneQueue(androidID, n)
 
     # 合并图和分存图
     split = []
@@ -172,30 +209,38 @@ if __name__ == "__main__":
     # 这个part有优化空间，可以搞成并行的
     # 原图的横轴
     # print(m)
-    randlistblack = random.sample(range(0, m), m)
-    randlistwhite = random.sample(range(0, m), m)
+
     # print(randlist)
+    # 第x个像素点
+    pixel = 0
     for i in range(x):
-        # 原图的纵轴
         for j in range(y):
-            # print(bin[i, j])
-            # print("any %d" % j, bin[i, j].any())
-            # print("all %d" % j, bin[i, j].all())
             if bin[i, j].all() == False:
-                # 每一张分存图
                 for c in range(n):
                     for o in range(len(s0[0])):
-                        split[c][lenm * i + floor(o / lenm), lenm * j + o % lenm] = (1 - s1[c][randlistblack[o]]) * 255
-
+                        if pixel < n*8:
+                            split[c][lenm * i + floor(o / lenm), lenm * j + o % lenm] = \
+                                (1 - s1[queue[(-c + n + pixel // 8) % n][pixel % 8]][o]) * 255
+                        else:
+                            split[c][lenm * i + floor(o / lenm), lenm * j + o % lenm] = \
+                                (1 - s1[c][o]) * 255
             if bin[i, j].all() == True:
                 for c in range(n):
                     for o in range(len(s0[0])):
-                        split[c][lenm * i + floor(o / lenm), lenm * j + o % lenm] = (1 - s0[c][randlistwhite[o]]) * 255
-
+                        if pixel < n*8:
+                            split[c][lenm * i + floor(o / lenm), lenm * j + o % lenm] = \
+                                (1 - s0[queue[(-c + n + pixel // 8) % n][pixel % 8]][o]) * 255
+                        else:
+                            split[c][lenm * i + floor(o / lenm), lenm * j + o % lenm] = \
+                                (1 - s0[c][o]) * 255
+            pixel += 1
+    print(x)
+    print(y)
+    print(pixel)
     for i in range(n):
         cv2.imwrite(address + "split" + str(i) + ".png", split[i])
 
-    # 图像合并
+    # 图像合并，这部分之后会改成c
     r = random.sample(range(0, n), k)
     # print(k)
     # print(r)
