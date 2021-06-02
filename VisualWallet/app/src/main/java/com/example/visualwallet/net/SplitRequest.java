@@ -43,7 +43,7 @@ public class SplitRequest extends NetRequest {
         args.put("android_id", androidId);
         args.put("curType", curType);
 
-        Map response = NetUtil.Post(subUrl, args);
+        Map response = NetUtil.Post(NetUtil.getUrlBase() + subUrl, args);
 
         callBack(response);
     }

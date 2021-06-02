@@ -6,6 +6,11 @@ android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
+    packagingOptions {
+        exclude 'META-INF/NOTICE.md'
+        exclude 'META-INF/LICENSE.md'
+    }
+
     defaultConfig {
         applicationId "com.example.visualwallet"
         minSdkVersion 22
@@ -38,16 +43,32 @@ dependencies {
     implementation group: 'com.alibaba', name: 'fastjson', version: '1.2.76'
 
     implementation 'com.yanzhenjie:permission:2.0.0-rc4'
-    implementation 'androidx.percentlayout:percentlayout:1.0.0'
-    implementation 'com.google.android.material:material:1.2.1'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'androidx.navigation:navigation-fragment:2.2.2'
-    implementation 'androidx.navigation:navigation-ui:2.2.2'
+
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.navigation:navigation-fragment:2.3.1'
+    implementation 'androidx.navigation:navigation-ui:2.3.1'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
+    implementation 'androidx.percentlayout:percentlayout:1.0.0'
+
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.madgag:sc-light-jdk15on:1.47.0.3'
+    implementation 'commons-collections:commons-collections:3.0'
+    implementation 'commons-io:commons-io:2.4'
+    implementation 'commons-lang:commons-lang:2.6'
+    implementation 'javax.websocket:javax.websocket-api:1.1'
+    implementation 'javax.ws.rs:javax.ws.rs-api:2.0'
+    implementation('org.glassfish.jersey.core:jersey-client:2.9') {
+        exclude group: "org.glassfish.hk2.external",module: "javax.inject"
+    }
+
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    testImplementation 'org.glassfish.jersey.core:jersey-server:2.9'
+    testImplementation 'org.glassfish.jersey.containers:jersey-container-jdk-http:2.9'
+    testImplementation 'org.glassfish.tyrus:tyrus-client:1.8'
+    testImplementation 'org.glassfish.tyrus:tyrus-server:1.8'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }

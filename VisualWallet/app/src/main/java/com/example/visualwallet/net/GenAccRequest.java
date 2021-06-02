@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class GenAccRequest extends NetRequest {
 
-    private static final String genAccUrl = "/v1/bcy/test/addrs";
+    private static final String genAccUrl = "/v1/btc/test3/addrs";
     private static String url;
 
     public GenAccRequest() {
@@ -15,7 +15,7 @@ public class GenAccRequest extends NetRequest {
 
     @Override
     public void run() {
-        Map response = NetUtil.Post(url, null);
+        Map response = NetUtil.Post(url, null, false);
         callBack(response);
     }
 }
