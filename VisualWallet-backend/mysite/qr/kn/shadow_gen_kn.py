@@ -61,6 +61,7 @@ def alter(carry, split, k, n):
 def embedding(logo, carry):
     carrier = carry
     image = cv2.imread(logo, -1)
+    image = image[:, :, :3]
     l, w = image.shape[0:2]
     shadow = cv2.resize(image, (l*ES, w*ES), interpolation=cv2.INTER_NEAREST)
     carrier.flags.writeable = True
@@ -301,7 +302,7 @@ def apiFirst(msg, k, n, carriermsg, logo, boxsize):
     for i in range(n):
         img = carrierGenerate(carriermsg[i], k)
         img.save(CARRIERPATH+str(i)+".png")
-        os.chmod(CARRIERPATH+str(i)+".png",stat.S_IRWXU|stat.S_IRWXG|stat.S_IRWXO)
+        os.chmod(CARRIERPATH+str(i)+".png", stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
         img = cv2.imread(CARRIERPATH+str(i)+".png")
         carrier_list.append(img)
         carrier_list[i] = embedding(logo, carrier_list[i])
@@ -347,7 +348,17 @@ def api1(msg, k, n, devicemsg, currencymsg):
     if currencymsg == "BTC":
         logo = BTCLOGO
     elif currencymsg == "ETH":
-        logo = ETHDOTLOGO
+        logo = ETHLOGO
+    elif currencymsg == "LTC":
+        logo = LTCLOGO
+    elif currencymsg == "XRP":
+        logo = XRPLOGO
+    elif currencymsg == "USDT":
+        logo = USDTLOGO
+    elif currencymsg == "CNY":
+        logo = CNYLOGO
+    elif currencymsg == "USD":
+        logo = USDLOGO
     else:
         logo = BTCLOGO
     data_matrix, carrier_matrix, length, width, c1, c2, c3, splithash = apiFirst(msg, k, n, cmsg, logo, ES)
