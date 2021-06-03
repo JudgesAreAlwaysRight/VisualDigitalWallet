@@ -35,7 +35,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp">
 
-        <com.example.visualwallet.common.WaveBallProgress
+        <com.visualwallet.common.WaveBallProgress
             android:id="@+id/wave_progress"
             android:layout_width="200dp"
             android:layout_height="200dp"
