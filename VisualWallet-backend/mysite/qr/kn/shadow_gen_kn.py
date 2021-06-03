@@ -11,7 +11,7 @@ from qr.kn.global_var import *
 import hashlib
 import pickle
 import random
-
+import json
 
 def datamatGenerate(msg):
     idx = 0
@@ -67,6 +67,32 @@ def embedding(logo, carry):
     carrier.flags.writeable = True
     carrier[15*ES:15*ES+l*ES, 15*ES:15*ES+w*ES] = shadow
     return carrier
+
+
+def genQueue(aID, n):
+    all = []
+    q = []
+    qlen = len(aID)
+    for i in range(qlen):
+        q.append(ord(aID[i]) % n)
+    # print(q)
+    all.append(q)
+    for i in range(n-1):
+        temp = []
+        j = len(temp)
+        while j < qlen:
+            a = random.randint(0, n-1)
+            join = True
+            for x in range(len(all)):
+                if a == all[x][j]:
+                    join = False
+                    break
+            if join:
+                temp.append(a)
+            j = len(temp)
+        all.append(temp)
+    # print(all)
+    return all
 
 
 def makes(k, n):
@@ -164,7 +190,7 @@ def makes(k, n):
     return s0, s1, goal, d0, d1
 
 
-def generateSplit(s0, s1, m, x, y, k, n, bin):
+def generateSplit(s0, s1, m, x, y, k, n, bin, queue):
     lenm = int(sqrt(m))
     # 每个像素扩充成lenm*lenm
     newx = int(x*lenm)
@@ -174,10 +200,11 @@ def generateSplit(s0, s1, m, x, y, k, n, bin):
     split = []
     for i in range(n):
         split.append(np.zeros((newx, newy, 3), np.uint8))
-    randlistblack = random.sample(range(0, m), m)
-    randlistwhite = random.sample(range(0, m), m)
+    # randlistblack = random.sample(range(0, m), m)
+    # randlistwhite = random.sample(range(0, m), m)
     # 这个part有优化空间，可以搞成并行的
     # 原图的横轴
+    pixel = 0
     for i in range(x):
         # 原图的纵轴
         for j in range(y):
@@ -185,13 +212,22 @@ def generateSplit(s0, s1, m, x, y, k, n, bin):
                 # 每一张分存图
                 for c in range(n):
                     for o in range(len(s0[0])):
-                        split[c][lenm*i + floor(o/lenm), lenm*j + o % lenm] = (1 - s1[c][randlistblack[o]]) * 255
-
+                        if pixel < n * 8:
+                            split[c][lenm * i + floor(o / lenm), lenm * j + o % lenm] = \
+                                (1 - s1[queue[(-c + n + pixel // 8) % n][pixel % 8]][o]) * 255
+                        else:
+                            split[c][lenm * i + floor(o / lenm), lenm * j + o % lenm] = \
+                                (1 - s1[c][o]) * 255
             if bin[i, j].all():
                 for c in range(n):
                     for o in range(len(s0[0])):
-                        split[c][lenm*i + floor(o/lenm), lenm*j + o % lenm] = (1 - s0[c][randlistwhite[o]]) * 255
-
+                        if pixel < n * 8:
+                            split[c][lenm * i + floor(o / lenm), lenm * j + o % lenm] = \
+                                (1 - s0[queue[(-c + n + pixel // 8) % n][pixel % 8]][o]) * 255
+                        else:
+                            split[c][lenm * i + floor(o / lenm), lenm * j + o % lenm] = \
+                                (1 - s0[c][o]) * 255
+            pixel += 1
     split_enlarged = []
     finx, finy = newx * ES, newy * ES
     for i in range(n):
@@ -287,11 +323,21 @@ def validate(result, skhash):
         return sk, flag
 
 
-def apiFirst(msg, k, n, carriermsg, logo, boxsize):
+def apiFirst(msg, k, n, carriermsg, android_id, logo, boxsize):
     secret, x, y = datamatGenerate(msg)
     s0, s1, m, d0, d1 = makes(k, n)
-    split, splithash = generateSplit(s0, s1, m, x, y, k, n, secret)
+    queue = genQueue(android_id, n)
+    split, splithash = generateSplit(s0, s1, m, x, y, k, n, secret, queue)
     retx, rety = split[0].shape[0:2]
+    # for k1 in [2, 3, 4, 5]:
+    #     for n1 in [3, 4, 5]:
+    #         s0, s1, _, __, ___ = makes(k1, n1)
+    #         res = {'k': k1, 'n': n1, 's0': s0.tolist(), 's1': s1.tolist()}
+    #         res = json.dumps(res)
+    #         filename = PATH + str(n1) + str(k1) + ".json"
+    #         file = open(filename, 'w')
+    #         file.write(res)
+    #         file.close()
     # coefficients that needs to be saved
     d = d0
     alpha = d1
@@ -361,7 +407,7 @@ def api1(msg, k, n, devicemsg, currencymsg):
         logo = USDLOGO
     else:
         logo = BTCLOGO
-    data_matrix, carrier_matrix, length, width, c1, c2, c3, splithash = apiFirst(msg, k, n, cmsg, logo, ES)
+    data_matrix, carrier_matrix, length, width, c1, c2, c3, splithash = apiFirst(msg, k, n, cmsg, devicemsg, logo, ES)
     return data_matrix, carrier_matrix, length, width, c1, c2, c3, splithash
 
 
