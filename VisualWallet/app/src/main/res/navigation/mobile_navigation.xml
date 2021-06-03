@@ -7,13 +7,13 @@
 
     <fragment
         android:id="@+id/overview"
-        android:name="com.example.visualwallet.ui.dashboard.DashboardFragment"
+        android:name="com.visualwallet.ui.dashboard.DashboardFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
         android:id="@+id/wallet"
-        android:name="com.example.visualwallet.ui.notifications.NotificationsFragment"
+        android:name="com.visualwallet.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
 </navigation>
