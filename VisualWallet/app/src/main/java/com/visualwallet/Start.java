@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.WindowManager;
 
 import com.visualwallet.data.DataUtil;
@@ -11,13 +12,18 @@ import com.visualwallet.net.SplitRequest;
 
 public class Start extends AppCompatActivity {
 
+    public static String androidId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);//状态栏隐藏
         getSupportActionBar().hide();//标题栏隐藏
         setContentView(R.layout.activity_start);
+
+        androidId = Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         SplitRequest.setAndroidId(Start.this);
+
         DataUtil.initData(Start.this);
         Thread myThread = new Thread()  //子线程
         {

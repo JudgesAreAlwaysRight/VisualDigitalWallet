@@ -27,6 +27,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.visualwallet.common.WaveBallProgress;
+import com.visualwallet.cpplib.CppLib;
+import com.visualwallet.data.DataUtil;
 import com.visualwallet.entity.Wallet;
 import com.visualwallet.net.CollectRequest;
 import com.visualwallet.net.DetectRequest;
@@ -69,6 +71,9 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
     private List<String> splitInfo;
     private List<int[][]> splitMat;
 
+    // 是否使用本地数据进行分存图验证过程
+    private boolean localMode;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +85,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         local.setOnClickListener(this);
         scan = findViewById(R.id.scan);
         scan.setOnClickListener(this);
-        bluetooth =findViewById(R.id.bluetooth);
+        bluetooth = findViewById(R.id.bluetooth);
         bluetooth.setOnClickListener(this);
         collectK = findViewById(R.id.collectK);
         collectK.setOnClickListener(this);
@@ -94,7 +99,8 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         splitMat = new ArrayList<>();
 
         waveProgress = findViewById(R.id.wave_progress);
-//        waveProgress.startProgress(50, 500, 50);
+
+        localMode = true;
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -288,7 +294,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT);
-                lp.setMargins(40,8,40,8);
+                lp.setMargins(40, 8, 40, 8);
                 newText.setLayoutParams(lp);
                 collectLL.addView(newText);
             }
@@ -306,23 +312,34 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         Log.i("point matrix size", String.format("%dx%d", pointMatrix.length, pointMatrix[0].length));
         //Log.i("point matrix", " \n" + pointMatrix.replace("1", "#").replace("0", " "));
 
-        DetectRequest detectRequest = new DetectRequest(wallet.getId(), picIndex, pointMatrix);
-        detectRequest.setNetCallback(res -> {
-            if (res == null) {
+        // 检测分存码是否重复
+        for (int i : splitIndex) {
+            if (i == picIndex) {
                 Looper.prepare();
-                Toast.makeText(Collect.this, "网络异常，无返回信息", Toast.LENGTH_LONG).show();
+                Toast.makeText(Collect.this, "分存码重复", Toast.LENGTH_LONG).show();
                 Looper.loop();
                 return;
             }
-            Integer DetectRes = (Integer) res.get("flag");
-            if (DetectRes == null) {
-                Looper.prepare();
-                Toast.makeText(Collect.this, "网络异常，返回信息错误", Toast.LENGTH_LONG).show();
-                Looper.loop();
-                return;
-            }
+        }
 
-            if (DetectRes == 1) {
+        if (localMode) {
+            int[][] s0 = DataUtil.getS0(wallet.getCoeK(), wallet.getCoeN());
+            int[][] s1 = DataUtil.getS1(wallet.getCoeK(), wallet.getCoeN());
+
+            // c++动态链接调用
+            boolean suc = CppLib.detect(
+                    Start.androidId.getBytes(),
+                    wallet.getCoeN(),
+                    picIndex,
+                    s0,
+                    s1,
+                    s0.length,
+                    s0[0].length,
+                    pointMatrix,
+                    pointMatrix.length
+            );
+
+            if (suc) {
                 addinfo(content);
 
                 splitIndex.add(picIndex);
@@ -341,17 +358,58 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                 if (splitInfo.size() == wallet.getCoeK()) {
                     Collect.this.runOnUiThread(() -> collectK.setVisibility(View.VISIBLE));
                 }
-            }
-            else {
-                Collect.this.runOnUiThread(() -> {
-                    findViewById(R.id.progress_layout).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.progress_num_layout).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.fail_alert).setVisibility(View.VISIBLE);
-                });
+            } else {
                 Looper.prepare();
                 Toast.makeText(Collect.this, "分存码异常", Toast.LENGTH_LONG).show();
                 Looper.loop();
             }
-        }).start();
+        } else {
+            DetectRequest detectRequest = new DetectRequest(wallet.getId(), picIndex, pointMatrix);
+            detectRequest.setNetCallback(res -> {
+                if (res == null) {
+                    Looper.prepare();
+                    Toast.makeText(Collect.this, "网络异常，无返回信息", Toast.LENGTH_LONG).show();
+                    Looper.loop();
+                    return;
+                }
+                Integer DetectRes = (Integer) res.get("flag");
+                if (DetectRes == null) {
+                    Looper.prepare();
+                    Toast.makeText(Collect.this, "网络异常，返回信息错误", Toast.LENGTH_LONG).show();
+                    Looper.loop();
+                    return;
+                }
+
+                if (DetectRes == 1) {
+                    addinfo(content);
+
+                    splitIndex.add(picIndex);
+                    splitInfo.add(content);
+                    splitMat.add(pointMatrix);
+
+                    Collect.this.runOnUiThread(() -> {
+                        findViewById(R.id.progress_layout).setVisibility(View.VISIBLE);
+                        findViewById(R.id.progress_num_layout).setVisibility(View.VISIBLE);
+                        findViewById(R.id.fail_alert).setVisibility(View.INVISIBLE);
+                        int prog = (int) (splitInfo.size() / (float) wallet.getCoeK() * 100);
+                        progressText.setText(String.valueOf(prog + "%"));
+                        waveProgress.startProgress(prog, 300, 0);
+                    });
+
+                    if (splitInfo.size() == wallet.getCoeK()) {
+                        Collect.this.runOnUiThread(() -> collectK.setVisibility(View.VISIBLE));
+                    }
+                } else {
+                    Collect.this.runOnUiThread(() -> {
+                        findViewById(R.id.progress_layout).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.progress_num_layout).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.fail_alert).setVisibility(View.VISIBLE);
+                    });
+                    Looper.prepare();
+                    Toast.makeText(Collect.this, "分存码异常", Toast.LENGTH_LONG).show();
+                    Looper.loop();
+                }
+            }).start();
+        }
     }
 }
