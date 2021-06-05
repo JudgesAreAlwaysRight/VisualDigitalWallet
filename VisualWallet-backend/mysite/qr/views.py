@@ -136,6 +136,7 @@ def validate(request):
                         if coeN == 5:
                             carrier_matrix.append(carryFetch(target.carry4))
             start2 = time.time()
+            print(splitNo)
             sk, text = api2(skhash, splitNo, data_matrix, carrier_matrix, length, width, c1, c2, c3, coeK, coeN)
             end2 = time.time()
             print("apitime")

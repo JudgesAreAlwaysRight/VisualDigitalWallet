@@ -373,7 +373,7 @@ def apiFirst(msg, k, n, carriermsg, android_id, logo, boxsize):
 
 def apiSecond(skhash, split_no, mat, carrier, x, y, d0, d1, lenm, coeK, coeN):
     split = []
-    for i in split_no:
+    for i in range(len(split_no)):
         mat[i] = mat[i] * 255
         mat[i] = cv2.cvtColor(mat[i], cv2.COLOR_GRAY2BGR)
         res = retrieveSplit(mat[i], carrier[i], x, y, coeK, coeN)
