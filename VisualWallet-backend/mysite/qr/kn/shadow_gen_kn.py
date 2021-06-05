@@ -376,7 +376,7 @@ def apiSecond(skhash, split_no, mat, carrier, x, y, d0, d1, lenm, coeK, coeN):
     for i in range(len(split_no)):
         mat[i] = mat[i] * 255
         mat[i] = cv2.cvtColor(mat[i], cv2.COLOR_GRAY2BGR)
-        res = retrieveSplit(mat[i], carrier[i], x, y, coeK, coeN)
+        res = retrieveSplit(mat[i], carrier[split_no[i]], x, y, coeK, coeN)
         split.append(res)
     qr = mergeSplit(split, x, y, d0, d1, lenm)
     return validate(qr, skhash)

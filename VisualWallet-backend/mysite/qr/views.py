@@ -110,6 +110,7 @@ def validate(request):
             index = info['id']
             splitNo = info['index']
             data_matrix = info['keys']
+            print(splitNo)
             for i in range(len(data_matrix)):
                 data_matrix[i] = np.array(data_matrix[i], dtype=np.uint8)
             carrier_matrix = []
@@ -136,7 +137,6 @@ def validate(request):
                         if coeN == 5:
                             carrier_matrix.append(carryFetch(target.carry4))
             start2 = time.time()
-            print(splitNo)
             sk, text = api2(skhash, splitNo, data_matrix, carrier_matrix, length, width, c1, c2, c3, coeK, coeN)
             end2 = time.time()
             print("apitime")
