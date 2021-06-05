@@ -1,0 +1,23 @@
+********************************EX1********************************
+Private key: cMkAudBwWfqhCC2rsBEMn1N4qcUk4nQookSd1hDqppZYEp2Jh2in
+Address: mgqFiTD5cqQESHdqVrAMdY7tCctVRkZgu1
+
+We sent 0.01590449 bitcoins to address
+mgqFiTD5cqQESHdqVrAMdY7tCctVRkZgu1
+
+tx: c6b838a5622857b54f6f192bea0d1861755f1f9f78dd2d15298b9d87d1ee5388
+Send coins back, when you don't need them anymore to the address
+
+return addr: mv4rnyY3Su5gjcDNzbMLKBQkBicCtHUtFB
+
+********************************EX2********************************
+Private key: cUWBLX3MED3QZ6qyyqEqbBPFSpDtNEXjeyNgcye1B2gC4PBYGPHD
+Address: mh3teTuR4bkykiFHxFuz6sikFFGtJhXhJC
+
+Private key: cVujYR6WZpDVE3LqytdHPUTR9CmWXSbm8wkearo2kYV2ZC448WzX
+Address: mqXhGueDsX5eV4SSZ3ZWmU15gr8HVfC6CH
+
+Private key: cRLhZKmE4drYTzd6QY2rd3ZbQLkTgzniJUG5Qm1YgMTdDR26CdiP
+Address: mr3CWybuo7tP7c3JxSx8MXtvqaN5LSVzd8
+
+

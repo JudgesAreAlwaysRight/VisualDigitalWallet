@@ -1,9 +1,0 @@
-<!--pages/panel/panel.wxml-->
-<view class="container">
-
-  <view class="operating-options">
-    <button class="main-page-button" bindtap="bindCollectTap" type="default" plain="true">扫码获取密钥</button>
-    <button class="main-page-button" bindtap="bindScatterTap"  type="default" plain="true">密钥分存</button>
-  </view>
-
-</view>
