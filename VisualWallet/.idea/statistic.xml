@@ -6,6 +6,8 @@
       <list>
         <option value="$PROJECT_DIR$/lzxing" />
         <option value="$PROJECT_DIR$/zxing" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/blockcypher" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/google" />
       </list>
     </option>
   </component>
