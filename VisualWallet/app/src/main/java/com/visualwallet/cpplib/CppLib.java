@@ -17,6 +17,6 @@ public class CppLib {
     // bool detect(char* androidID, int n, int splitID, int** s0, int** s1, int sRows, int sCols, int** toDetect, int detectSize);
 
     static {
-        System.loadLibrary("detect");
+        System.loadLibrary("cppFunc");
     }
 }
