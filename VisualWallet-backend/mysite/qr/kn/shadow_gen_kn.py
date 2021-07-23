@@ -95,8 +95,8 @@ def maskSplit(split, fixed_num, n):
     mask = cv2.resize(mask_img, (x, y), interpolation=cv2.INTER_NEAREST)
     for i in range(n - fixed_num):
         split[n-1-i] = cv2.bitwise_xor(mask, split[n-1-i])
-    for i in range(n):
-        cv2.imwrite(ADDRESS+"split"+str(i)+".png", split[i])
+    # for i in range(n):
+    #     cv2.imwrite(ADDRESS+"split"+str(i)+".png", split[i])
 
     splithash = []
     for i in range(n):
@@ -332,10 +332,10 @@ def mergeSplit(split, finx, finy, d0, d1, lenm):
                             merge[si, sj, sk] = 255
                         else:
                             merge[si, sj, sk] = 0
-    cv2.imwrite(ADDRESS + "merge.png", merge)
+    # cv2.imwrite(ADDRESS + "merge.png", merge)
     lastx, lasty = finx // lenm, finy // lenm
     qr = decode(merge, lastx, lasty, lenm, d0, d1)
-    cv2.imwrite(ADDRESS+"res.png", qr)
+    # cv2.imwrite(ADDRESS+"res.png", qr)
     return qr
 
 
