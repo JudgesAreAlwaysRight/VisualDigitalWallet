@@ -4,10 +4,11 @@ from django.urls import reverse
 from django.views import generic
 from .models import SKInfo
 import hashlib
-from qr.kn.shadow_gen_kn import api1, api2, api3, carryStore, carryFetch
+from qr.kn.shadow_gen_kn import api1, api2, api3, api4, carryStore, carryFetch
 import json
 import numpy as np
 import time
+import datetime
 import cv2
 
 
@@ -22,15 +23,16 @@ def genSplit(request):
             sk = skinfo['secretKey']
             k = skinfo['coeK']
             n = skinfo['coeN']
+            fixed_num = skinfo['fixed_num']
             android = skinfo['android_id']
             cur = skinfo['curType']
             startapi = time.time()
-            res, carrier, length, width, c1, c2, c3, splithash = api1(sk, k, n, android, cur)
+            res, carrier, length, width, c1, c2, c3, splithash, date_time = api1(sk, k, n, fixed_num, android, cur)
             endapi = time.time()
             for i in range(len(res)):
                 res[i] = res[i].tolist()
             startdb = time.time()
-            idx = SKInfo(coeK=k, coeN=n, length=length, width=width, c1=c1, c2=c2, c3=c3)
+            idx = SKInfo(coeK=k, coeN=n, fixed=fixed_num, length=length, width=width, c1=c1, c2=c2, c3=c3, date=date_time)
             num = len(carrier)
             if num >= 2:
                 idx.carry0 = carryStore(carrier[0])
@@ -101,7 +103,7 @@ def detect(request):
 def validate(request):
     if request.method == 'POST':  # 当提交表单时
         # 判断是否传参
-        start = time.time()
+        # start = time.time()
         postBody = request.body
         skinfo = json.loads(postBody.decode('utf-8'))
         flag = skinfo['reqFlag']
@@ -110,15 +112,15 @@ def validate(request):
             index = info['id']
             splitNo = info['index']
             data_matrix = info['keys']
-            print(splitNo)
+            # print(splitNo)
             for i in range(len(data_matrix)):
                 data_matrix[i] = np.array(data_matrix[i], dtype=np.uint8)
             carrier_matrix = []
-            start3 = time.time()
+            # start3 = time.time()
             target = SKInfo.objects.get(pk=index)
-            end3 = time.time()
-            print("dbtime")
-            print(end3-start3)
+            # end3 = time.time()
+            # print("dbtime")
+            # print(end3-start3)
             skhash = target.secretKeyHash
             length = target.length
             width = target.width
@@ -127,6 +129,8 @@ def validate(request):
             c2 = target.c2
             c3 = target.c3
             coeN = target.coeN
+            fixed = target.fixed
+            date_time = target.date
             if coeN >= 2:
                 carrier_matrix.append(carryFetch(target.carry0))
                 carrier_matrix.append(carryFetch(target.carry1))
@@ -136,16 +140,70 @@ def validate(request):
                         carrier_matrix.append(carryFetch(target.carry3))
                         if coeN == 5:
                             carrier_matrix.append(carryFetch(target.carry4))
-            start2 = time.time()
-            sk, text = api2(skhash, splitNo, data_matrix, carrier_matrix, length, width, c1, c2, c3, coeK, coeN)
-            end2 = time.time()
-            print("apitime")
-            print(end2-start2)
+            # start2 = time.time()
+            sk, text = api2(skhash, splitNo, data_matrix, carrier_matrix, length, width, c1, c2, c3, coeK, coeN, fixed, date_time)
+            # end2 = time.time()
+            # print("apitime")
+            # print(end2-start2)
             res = {"secretKey": sk, "flag": text}
             res = json.dumps(res)
-            end = time.time()
-            print("totaltime")
-            print(end-start)
+            # end = time.time()
+            # print("totaltime")
+            # print(end-start)
+        else:
+            res = "Wrong Request Flag!"
+        return HttpResponse(res)
+    else:
+        return HttpResponse('transfer failed!')
+
+
+def update(request):
+    if request.method == 'POST':  # 当提交表单时
+        # 判断是否传参
+        # start = time.time()
+        postBody = request.body
+        skinfo = json.loads(postBody.decode('utf-8'))
+        flag = skinfo['reqFlag']
+        if flag == "updateQR":
+            info = json.loads(postBody.decode('utf-8'))
+            index = info['id']
+            sk = skinfo['secretKey']
+            android = skinfo['android_id']
+            carrier_matrix = []
+            target = SKInfo.objects.get(pk=index)
+            skhash = target.secretKeyHash
+            coeK = target.coeK
+            coeN = target.coeN
+            fixed = target.fixed
+            if coeN >= 2:
+                carrier_matrix.append(carryFetch(target.carry0))
+                carrier_matrix.append(carryFetch(target.carry1))
+                if coeN >= 3:
+                    carrier_matrix.append(carryFetch(target.carry2))
+                    if coeN >= 4:
+                        carrier_matrix.append(carryFetch(target.carry3))
+                        if coeN == 5:
+                            carrier_matrix.append(carryFetch(target.carry4))
+            flag, update_res, date_time, splithash = api4(sk, coeK, coeN, fixed, skhash, carrier_matrix, android)
+            if flag == 1:
+                target.date = date_time
+                if coeN >= 2:
+                    target.hash0 = splithash[0]
+                    target.hash1 = splithash[1]
+                    if coeN >= 3:
+                        target.hash2 = splithash[2]
+                        if coeN >= 4:
+                            target.hash3 = splithash[3]
+                            if coeN == 5:
+                                target.hash4 = splithash[4]
+                            elif coeN >= 5:
+                                print("The Maximum N is 5!")
+                else:
+                    print("The Minimum N is 2!")
+            for i in range(len(update_res)):
+                update_res[i] = update_res[i].tolist()
+            res = {"flag": flag, "updated": update_res}
+            res = json.dumps(res)
         else:
             res = "Wrong Request Flag!"
         return HttpResponse(res)

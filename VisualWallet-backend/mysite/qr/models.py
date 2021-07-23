@@ -8,6 +8,7 @@ class SKInfo(models.Model):
     secretKeyHash = models.CharField(max_length=512)
     coeK = models.IntegerField()
     coeN = models.IntegerField()
+    fixed = models.IntegerField()
     carry0 = models.BinaryField()
     carry1 = models.BinaryField(blank=True)
     carry2 = models.BinaryField(blank=True)
@@ -23,3 +24,4 @@ class SKInfo(models.Model):
     c1 = models.IntegerField()
     c2 = models.IntegerField()
     c3 = models.IntegerField()
+    date = models.CharField(max_length=100)

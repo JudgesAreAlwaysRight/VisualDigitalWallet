@@ -2,16 +2,18 @@ from math import ceil, floor, sqrt
 from itertools import combinations
 from scipy.special import comb
 import cv2
-import os, sys, stat
+import os
+import stat
 import numpy as np
 import qrcode
-import pyzbar.pyzbar as pyzbar
-from PIL import Image
 from qr.kn.global_var import *
 import hashlib
 import pickle
 import random
+import time
+import datetime
 import json
+
 
 def datamatGenerate(msg):
     idx = 0
@@ -67,6 +69,64 @@ def embedding(logo, carry):
     carrier.flags.writeable = True
     carrier[15*ES:15*ES+l*ES, 15*ES:15*ES+w*ES] = shadow
     return carrier
+
+
+def maskSplit(split, fixed_num, n):
+    dt_ms = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+    obj = hashlib.sha256()
+    obj.update(dt_ms.encode("utf-8"))
+    if fixed_num == n:
+        splithash = []
+        for i in range(n):
+            splithash.append(hashlib.sha256(split[i].tobytes()).hexdigest())
+        return split, dt_ms, splithash
+    maskRef = bin(int(obj.hexdigest(), 16))[2:]
+    if len(maskRef) <= 256:
+        for i in range(256-len(maskRef)):
+            maskRef = maskRef + "0"
+    mask_img = np.zeros((16, 16, 3), np.uint8)
+    for i in range(16):
+        for j in range(16):
+            if maskRef[i*16+j] == '1':
+                mask_img[i, j] = [0, 0, 0]
+            else:
+                mask_img[i, j] = [255, 255, 255]
+    x, y = split[0].shape[0:2]
+    mask = cv2.resize(mask_img, (x, y), interpolation=cv2.INTER_NEAREST)
+    for i in range(n - fixed_num):
+        split[n-1-i] = cv2.bitwise_xor(mask, split[n-1-i])
+    for i in range(n):
+        cv2.imwrite(ADDRESS+"split"+str(i)+".png", split[i])
+
+    splithash = []
+    for i in range(n):
+        splithash.append(hashlib.sha256(split[i].tobytes()).hexdigest())
+
+    return split, dt_ms, splithash
+
+
+def unmaskSplit(date, split, fixed_num, n, split_no):
+    obj = hashlib.sha256()
+    obj.update(date.encode("utf-8"))
+    if fixed_num == n:
+        return split
+    maskRef = bin(int(obj.hexdigest(), 16))[2:]
+    if len(maskRef) <= 256:
+        for i in range(256 - len(maskRef)):
+            maskRef = maskRef + "0"
+    mask_img = np.zeros((16, 16, 3), np.uint8)
+    for i in range(16):
+        for j in range(16):
+            if maskRef[i * 16 + j] == '1':
+                mask_img[i, j] = [0, 0, 0]
+            else:
+                mask_img[i, j] = [255, 255, 255]
+    x, y = split[0].shape[0:2]
+    mask = cv2.resize(mask_img, (x, y), interpolation=cv2.INTER_NEAREST)
+    for i in range(len(split)):
+        if split_no[i] >= fixed_num:
+            split[i] = cv2.bitwise_xor(mask, split[i])
+    return split
 
 
 def genQueue(aID, n):
@@ -174,7 +234,7 @@ def makes(k, n):
     # 扩充为m个像素
     m1 = len(s0)
     m2 = len(s1)
-    m = max(m1,m2)
+    m = max(m1, m2)
     # 计算较为接近的平方便于扩充为 n*n的形式
     goal = ceil(sqrt(m)) ** 2
     # 补全为1的行(之后转置为列)
@@ -234,13 +294,8 @@ def generateSplit(s0, s1, m, x, y, k, n, bin, queue):
         split_enlarged.append(np.zeros((finx, finy, 3), np.uint8))
         split_enlarged[i] = cv2.resize(split[i], (finx, finy), interpolation=cv2.INTER_NEAREST)
 
-    for i in range(n):
-        cv2.imwrite(ADDRESS+"split"+str(i)+".png", split_enlarged[i])
 
-    splithash = []
-    for i in range(n):
-        splithash.append(hashlib.sha256(split_enlarged[i].tobytes()).hexdigest())
-    return split_enlarged, splithash
+    return split_enlarged
 
 
 def retrieveSplit(key, carry, x, y, K, N):
@@ -320,25 +375,17 @@ def validate(result, skhash):
         return sk, flag
     else:
         flag = 0
+        sk = ""
         return sk, flag
 
 
-def apiFirst(msg, k, n, carriermsg, android_id, logo, boxsize):
+def apiFirst(msg, k, n, fixed, carriermsg, android_id, logo, boxsize):
     secret, x, y = datamatGenerate(msg)
     s0, s1, m, d0, d1 = makes(k, n)
     queue = genQueue(android_id, n)
-    split, splithash = generateSplit(s0, s1, m, x, y, k, n, secret, queue)
+    split = generateSplit(s0, s1, m, x, y, k, n, secret, queue)
+    split, date_time, splithash = maskSplit(split, fixed, n)
     retx, rety = split[0].shape[0:2]
-    # for k1 in [2, 3, 4, 5]:
-    #     for n1 in [3, 4, 5]:
-    #         s0, s1, _, __, ___ = makes(k1, n1)
-    #         res = {'k': k1, 'n': n1, 's0': s0.tolist(), 's1': s1.tolist()}
-    #         res = json.dumps(res)
-    #         filename = PATH + str(n1) + str(k1) + ".json"
-    #         file = open(filename, 'w')
-    #         file.write(res)
-    #         file.close()
-    # coefficients that needs to be saved
     d = d0
     alpha = d1
     lenm = int(sqrt(m))
@@ -368,21 +415,22 @@ def apiFirst(msg, k, n, carriermsg, android_id, logo, boxsize):
     for i in range(n):
         carrier_store[i] = carrier_list[i]
 
-    return key_list, carrier_list, retx, rety, d, alpha, lenm, splithash
+    return key_list, carrier_list, retx, rety, d, alpha, lenm, splithash, date_time
 
 
-def apiSecond(skhash, split_no, mat, carrier, x, y, d0, d1, lenm, coeK, coeN):
+def apiSecond(skhash, split_no, mat, carrier, x, y, d0, d1, lenm, coeK, coeN, fixed, date_time):
     split = []
     for i in range(len(split_no)):
         mat[i] = mat[i] * 255
         mat[i] = cv2.cvtColor(mat[i], cv2.COLOR_GRAY2BGR)
         res = retrieveSplit(mat[i], carrier[split_no[i]], x, y, coeK, coeN)
         split.append(res)
+    split = unmaskSplit(date_time, split, fixed, coeN, split_no)
     qr = mergeSplit(split, x, y, d0, d1, lenm)
     return validate(qr, skhash)
 
 
-def api1(msg, k, n, devicemsg, currencymsg):
+def api1(msg, k, n, fixed, devicemsg, currencymsg):
     cmsg = []
     for i in range(5):
         msg1 = "Device ID: " + "MyDeviceId" + str(i) + "\n"
@@ -407,12 +455,12 @@ def api1(msg, k, n, devicemsg, currencymsg):
         logo = USDLOGO
     else:
         logo = BTCLOGO
-    data_matrix, carrier_matrix, length, width, c1, c2, c3, splithash = apiFirst(msg, k, n, cmsg, devicemsg, logo, ES)
-    return data_matrix, carrier_matrix, length, width, c1, c2, c3, splithash
+    data_matrix, carrier_matrix, length, width, c1, c2, c3, splithash, date_time = apiFirst(msg, k, n, fixed, cmsg, devicemsg, logo, ES)
+    return data_matrix, carrier_matrix, length, width, c1, c2, c3, splithash, date_time
 
 
-def api2(skhash, split_no, data_matrix, carrier_matrix, length, width, c1, c2, c3, coeK, coeN):
-    status = apiSecond(skhash, split_no, data_matrix, carrier_matrix, length, width, c1, c2, c3, coeK, coeN)
+def api2(skhash, split_no, data_matrix, carrier_matrix, length, width, c1, c2, c3, coeK, coeN, fixed, date_time):
+    status = apiSecond(skhash, split_no, data_matrix, carrier_matrix, length, width, c1, c2, c3, coeK, coeN, fixed, date_time)
     return status
 
 
@@ -423,6 +471,25 @@ def api3(splithash, split, carrier, length, width, coeK, coeN):
     res2 = splitCheck(res, splithash)
 
     return res2
+
+
+def api4(msg, k, n, fixed, skhash, carrier_matrix, android_id):
+    if skhash != hashlib.sha256(msg.encode("utf-8")).hexdigest():
+        return -1, [], "", []
+    elif fixed == n:
+        return 0, [], "", []
+    else:
+        secret, x, y = datamatGenerate(msg)
+        queue = genQueue(android_id, n)
+        s0, s1, m, d0, d1 = makes(k, n)
+        split = generateSplit(s0, s1, m, x, y, k, n, secret, queue)
+        split, date_time, splithash = maskSplit(split, fixed, n)
+        update_list = []
+        for i in range(n-fixed):
+            update_list.append(alter(carrier_matrix[fixed-1+i], split[fixed-1+i], k, n))
+            update_list[i] = cv2.cvtColor(update_list[i], cv2.COLOR_BGR2GRAY)
+            _, update_list[i] = cv2.threshold(update_list[i], 125, 1, cv2.THRESH_BINARY)
+        return 1, update_list, date_time, splithash
 
 
 def carryStore(carry):

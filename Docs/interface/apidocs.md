@@ -9,6 +9,7 @@
 | secretKey | str | 512 |私钥 仅限256bit字符串
 | coeK | int | \ | K
 | coeN | int | \ | N
+| fixed_num | int | \ | 固定图像数量
 | android_id | str |30 | android_id
 | curType | str | 10 | 货币类型
 <br />
@@ -20,6 +21,7 @@
     "secretKey": "111011010001001001111011010.....",
     "coeK":2,
     "coeN":3,
+    "fixed_num":1,
     "android_id":"23432",
     "curType":"BTC",}
 ```
@@ -102,4 +104,40 @@
 ### 示例
 ```json
 {"secretKey": "10100...", "flag": 1}
+```
+<br />
+## unfixed图像更新
+
+## **url: /vw/update/**
+### 请求参数说明(验证时)
+| 名称 | 类型 | 最大长度 | 说明 |
+| :-----| :----- | :----- | :----- |
+| reqFlag| str| \ | 更新-updateQR<br/>其他：页面返回Wrong Request Flag
+| id | int | \ |请求id, 与获取分存图时返回id对应
+| secretKey | str | 512 |私钥 仅限256bit字符串
+| android_id | str |30 | android_id
+<br />
+
+### 示例
+```json
+{   
+    "reqFlag": "updateQR",
+    "id": 227,
+    "secretKey": "111...",
+    "android_id" :"hdksjdfhsksdj"
+}
+```
+
+<br />
+
+### 返回参数说明（验证时）
+| 名称 | 类型 | 最大长度 | 说明 |
+| :-----| :----- | :----- | :----- |
+| flag | int |   \  | 1：更新成功<br/>0：所有图像均固定，无需更新 <br/>-1：私钥错误
+| updated | ndarray |   \  | 有结果：对应更新分存, 空：错误
+<br />
+
+### 示例
+```json
+{"flag": 1, "updated": [[[0, ...]]]}
 ```
