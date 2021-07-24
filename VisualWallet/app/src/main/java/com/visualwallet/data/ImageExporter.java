@@ -23,7 +23,7 @@ public class ImageExporter {
         for (int[][] img : bitImgList) {
             Bitmap imgBitmap = bitMat2Bitmap(img);
             Date date = new Date(System.currentTimeMillis());
-            saveBitmap(context, imgBitmap, String.format("%s_%d_%d", walName, index, simpleDateFormat.format(date)));
+            saveBitmap(context, imgBitmap, String.format("%s_%d_%s", walName, index, simpleDateFormat.format(date)));
             index++;
         }
         return true;

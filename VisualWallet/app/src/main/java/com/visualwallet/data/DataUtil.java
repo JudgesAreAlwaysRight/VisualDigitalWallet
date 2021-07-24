@@ -23,7 +23,8 @@ public class DataUtil {
 
     /*
      * 使用SharedPreferences进行数据持久化，存储的数据位于
-     *      /data/data/com.visualwallet/shared_prefs/share.xml
+     *      /data/data/com.visualwallet/shared_prefs/<prefName>.xml
+     * 其中<prefName>项可以为：base, offline, online
      */
 
     private static final Map<Integer, int[][]> s0 = new HashMap<>();
@@ -33,12 +34,12 @@ public class DataUtil {
      * 本地数据持久化模块初始化，如果没有存储过列表，就初始化一个空列表
      */
     public static void initData(Context context) {
-        SharedPreferences.Editor editor = context.getSharedPreferences("share", Context.MODE_PRIVATE).edit();
-        editor.apply();
-        Log.i("init data", "init share");
-        editor = context.getSharedPreferences("base", Context.MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = context.getSharedPreferences("base", Context.MODE_PRIVATE).edit();
         editor.apply();
         Log.i("init data", "init base");
+        editor = context.getSharedPreferences(WalletQuery.prefName, Context.MODE_PRIVATE).edit();
+        editor.apply();
+        Log.i("init data", "init share");
     }
 
     public static int[][] getS0(int k, int n) {

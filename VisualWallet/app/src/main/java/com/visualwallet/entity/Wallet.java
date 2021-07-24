@@ -6,14 +6,16 @@ public class Wallet implements Serializable {
     private String address;
     private int coeK;
     private int coeN;
+    private int coeF;
     private String curType;
     private String walName;
     private int id;
 
-    public Wallet(String address, int coeK, int coeN, String curType, String walName) {
+    public Wallet(String address, int coeK, int coeN, int coeF, String curType, String walName) {
         this.address = address;
         this.coeK = coeK;
         this.coeN = coeN;
+        this.coeF = coeF;
         this.curType = curType;
         this.walName = walName;
     }
@@ -64,5 +66,13 @@ public class Wallet implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getCoeF() {
+        return coeF;
+    }
+
+    public void setCoeF(int coeF) {
+        this.coeF = coeF;
     }
 }

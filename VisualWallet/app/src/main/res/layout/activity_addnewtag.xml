@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -210,7 +209,7 @@
         android:id="@+id/Warning"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/ant_type"
+        android:layout_below="@+id/ant_kn"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="20dp"
         android:layout_marginTop="6dp"
@@ -224,26 +223,25 @@
 
     <RelativeLayout
         android:id="@+id/ant_kn"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/Warning"
-        android:layout_centerVertical="false"
+        android:layout_below="@+id/ant_type"
+        android:layout_centerInParent="true"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
-        android:gravity="center_vertical"
         android:translationZ="10dp">
 
         <TextView
             android:id="@+id/ant_n_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="0dp"
             android:text="分存为"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
 
         <Spinner
             android:id="@+id/ant_n_spinner"
@@ -255,6 +253,7 @@
             android:entries="@array/valueN"
             android:gravity="center_vertical"
             android:spinnerMode="dialog"
+            android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:theme="@style/Spinner" />
 
@@ -267,8 +266,8 @@
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp"
             android:layout_toEndOf="@id/ant_n_spinner"
-            android:text="份，至少收集"
-            android:textSize="18sp" />
+            android:text="份，收集"
+            android:textSize="16sp" />
 
         <Spinner
             android:id="@+id/ant_k_spinner"
@@ -295,19 +294,19 @@
             android:layout_marginBottom="10dp"
             android:layout_toEndOf="@id/ant_k_spinner"
             android:text="份还原"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/ant_f_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
+            android:layout_below="@id/ant_k_spinner"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp"
-            android:layout_below="@id/ant_k_spinner"
             android:text="其中"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
 
         <Spinner
             android:id="@+id/ant_f_spinner"
@@ -328,14 +327,14 @@
             android:id="@+id/ant_fe_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/ant_f_tag"
             android:layout_marginStart="0dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
             android:layout_toEndOf="@id/ant_f_spinner"
-            android:layout_alignBaseline="@id/ant_f_tag"
-            android:text="份固定，其他使用后更新"
-            android:textSize="18sp" />
+            android:text="份固定，其余动态更新"
+            android:textSize="16sp" />
     </RelativeLayout>
 
 
@@ -346,10 +345,6 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:background="@drawable/commit"
-
-        android:translationZ="15dp">
-
-    </ImageButton>
-
+        android:translationZ="15dp" />
 
 </RelativeLayout>
