@@ -12,14 +12,17 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 
 public class ImageExporter {
 
     public static boolean export(Context context, String walName, int[][][] bitImgList) {
         int index = 1;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         for (int[][] img : bitImgList) {
             Bitmap imgBitmap = bitMat2Bitmap(img);
-            saveBitmap(context, imgBitmap, String.format("%s_%d", walName, index));
+            Date date = new Date(System.currentTimeMillis());
+            saveBitmap(context, imgBitmap, String.format("%s_%d_%d", walName, index, simpleDateFormat(date)));
             index++;
         }
         return true;

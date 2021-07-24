@@ -2,11 +2,14 @@ package com.visualwallet;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.WindowManager;
 
+import com.visualwallet.common.Constant;
+import com.visualwallet.data.AppModeUtil;
 import com.visualwallet.data.DataUtil;
 import com.visualwallet.net.SplitRequest;
 
@@ -21,25 +24,28 @@ public class Start extends AppCompatActivity {
         getSupportActionBar().hide();//标题栏隐藏
         setContentView(R.layout.activity_start);
 
+        // 各个子模块初始化
         androidId = Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        SplitRequest.setAndroidId(Start.this);
+        Constant.initAndroidId(Start.this);
 
         DataUtil.initData(Start.this);
-        Thread myThread = new Thread()  //子线程
+        AppModeUtil.initAppMode(Start.this);
+
+        // 一段时间后跳转
+        new Thread()  //子线程
         {
             @Override
             public void run() {
-                try {
-                    sleep(1000);
-                    Intent it = new Intent(getApplication(), MainActivity.class);
-                    startActivity(it);
-                    finish();
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
+            try {
+                sleep(300);
+                Intent it = new Intent(getApplication(), MainActivity.class);
+                startActivity(it);
+                finish();
             }
-        };
-        myThread.start();
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            }
+        }.start();
     }
 }

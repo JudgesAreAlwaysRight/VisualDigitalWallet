@@ -7,6 +7,8 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
+import com.visualwallet.common.Constant;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
@@ -33,7 +35,10 @@ public class DataUtil {
     public static void initData(Context context) {
         SharedPreferences.Editor editor = context.getSharedPreferences("share", Context.MODE_PRIVATE).edit();
         editor.apply();
-        Log.i("init data", "init");
+        Log.i("init data", "init share");
+        editor = context.getSharedPreferences("base", Context.MODE_PRIVATE).edit();
+        editor.apply();
+        Log.i("init data", "init base");
     }
 
     public static int[][] getS0(int k, int n) {

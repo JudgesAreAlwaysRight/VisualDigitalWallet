@@ -1,10 +1,20 @@
 package com.visualwallet.common;
 
+import android.content.Context;
+import android.provider.Settings;
+import android.util.Log;
+
+import com.visualwallet.net.SplitRequest;
+
 /**
  * Create by LuczyDoge @ 2021/4/28
  * app 常量
  */
 public class Constant {
+
+    // 公共变量
+    public static String androidId;
+
     // 网络相关
     public static final String protocol = "http";
     public static final String domain = "vw.milkyship.cn";
@@ -31,9 +41,22 @@ public class Constant {
     public static final String wif2 = "cR98asvVHabjoWnw8kYD8C2WWkqXrHTbJzCHkixr38AwfQzzZBbX";
     public static final String tx2 = "";
 
-
     // 关键字常量
     public static final String WALLET_ARG = "wallet_arg";
     public static final int REQUEST_ADD_ACC = 301;
     public static final int REQUEST_DEL_ACC = 302;
+
+    /* app运作模式
+     *  本地模式（随身安全）：0
+     *  在线模式（服务器）：1
+     */
+    public static int appMode;
+
+    /*
+     * 获取androidId，必须在使用前，由任何一个Activity调用进行初始化，传入Activity的this指针
+     */
+    public static void initAndroidId(Context context) {
+        androidId = Settings.System.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        Log.i("init android_id", androidId);
+    }
 }

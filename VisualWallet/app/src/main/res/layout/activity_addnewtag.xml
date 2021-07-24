@@ -84,7 +84,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="@string/add_acc_key"
-            android:textSize="22sp"></TextView>
+            android:textSize="22sp" />
 
         <EditText
             android:id="@+id/ant_pk_input"
@@ -118,7 +118,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="@string/add_acc_addr"
-            android:textSize="22sp"></TextView>
+            android:textSize="22sp" />
 
         <EditText
             android:id="@+id/ant_address_input"
@@ -153,7 +153,7 @@
             android:layout_margin="10dp"
 
             android:text="@string/add_acc_type"
-            android:textSize="22sp"></TextView>
+            android:textSize="22sp" />
 
         <EditText
             android:id="@+id/ant_type_input"
@@ -187,7 +187,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="@string/add_acc_name"
-            android:textSize="22sp"></TextView>
+            android:textSize="22sp" />
 
         <EditText
             android:id="@+id/ant_info_input"
@@ -215,7 +215,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="6dp"
         android:layout_marginEnd="10dp"
-        android:text="注意：门限数应当小于等于分存数"
+        android:text="注意：分存数≥收集数"
         android:textColor="#de1242"
         android:textSize="14sp"
         android:translationZ="10dp">
@@ -236,21 +236,45 @@
         android:translationZ="10dp">
 
         <TextView
-            android:id="@+id/ant_k_tag"
+            android:id="@+id/ant_n_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="0dp"
+            android:text="分存为"
+            android:textSize="20sp" />
+
+        <Spinner
+            android:id="@+id/ant_n_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/ant_n_tag"
+            android:layout_toEndOf="@id/ant_n_tag"
+            android:background="@drawable/add_new_spin"
+            android:entries="@array/valueN"
+            android:gravity="center_vertical"
+            android:spinnerMode="dialog"
+            android:textSize="14sp"
+            android:theme="@style/Spinner" />
+
+        <TextView
+            android:id="@+id/ant_k_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp"
-            android:text="门限数:"
-            android:textSize="20sp"></TextView>
+            android:layout_toEndOf="@id/ant_n_spinner"
+            android:text="份，至少收集"
+            android:textSize="20sp" />
 
         <Spinner
             android:id="@+id/ant_k_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/ant_k_tag"
+            android:layout_alignBaseline="@id/ant_k_tag"
             android:layout_marginTop="10dp"
             android:layout_toEndOf="@id/ant_k_tag"
             android:background="@drawable/add_new_spin"
@@ -262,28 +286,56 @@
             android:theme="@style/Spinner" />
 
         <TextView
-            android:id="@+id/ant_n_tag"
+            android:id="@+id/ant_kn_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="0dp"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="10dp"
             android:layout_toEndOf="@id/ant_k_spinner"
-            android:text="分存数:"
-            android:textSize="20sp"></TextView>
+            android:text="份还原"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/ant_f_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@id/ant_k_spinner"
+            android:text="其中"
+            android:textSize="20sp" />
 
         <Spinner
-            android:id="@+id/ant_n_spinner"
+            android:id="@+id/ant_f_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/ant_n_tag"
-            android:layout_toEndOf="@id/ant_n_tag"
+            android:layout_alignBaseline="@id/ant_f_tag"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@id/ant_f_tag"
             android:background="@drawable/add_new_spin"
-            android:entries="@array/valueN"
+            android:entries="@array/valueK"
             android:gravity="center_vertical"
             android:spinnerMode="dialog"
-            android:textSize="14sp"
-            android:theme="@style/Spinner"></Spinner>
+            android:textColor="#ffffff"
+            android:textSize="16sp"
+            android:theme="@style/Spinner" />
+
+        <TextView
+            android:id="@+id/ant_fe_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_toEndOf="@id/ant_f_spinner"
+            android:layout_alignBaseline="@id/ant_f_tag"
+            android:text="份固定，其他使用后更新"
+            android:textSize="20sp" />
     </RelativeLayout>
 
 

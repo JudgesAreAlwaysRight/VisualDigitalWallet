@@ -26,15 +26,18 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.alibaba.fastjson.JSONArray;
 import com.visualwallet.common.WaveBallProgress;
 import com.visualwallet.cpplib.CppLib;
 import com.visualwallet.data.DataUtil;
+import com.visualwallet.data.ImageExporter;
 import com.visualwallet.entity.Wallet;
 import com.visualwallet.net.CollectRequest;
 import com.visualwallet.net.DetectRequest;
 import com.visualwallet.net.NetCallback;
 import com.visualwallet.net.NetUtil;
 import com.google.zxing.Result;
+import com.visualwallet.net.UpdateRequest;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
 
@@ -71,9 +74,6 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
     private List<String> splitInfo;
     private List<int[][]> splitMat;
 
-    // 是否使用本地数据进行分存图验证过程
-    private boolean localMode;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,8 +99,6 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         splitMat = new ArrayList<>();
 
         waveProgress = findViewById(R.id.wave_progress);
-
-        localMode = true;
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -133,14 +131,14 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                         .permission(Permission.CAMERA, Permission.READ_EXTERNAL_STORAGE)
                         .onGranted(permissions -> {
                             Intent intent = new Intent(Collect.this, CaptureActivity.class);
-                            ZxingConfig config = new ZxingConfig();//可选的配置类
-                            //config.setPlayBeep(false);//是否播放扫描声音 默认为true
-                            //config.setShake(false);//是否震动  默认为true
-                            config.setDecodeBarCode(false);//是否扫描条形码 默认为true
-                            //config.setReactColor(R.color.colorAccent);//设置扫描框四个角的颜色 默认为白色
+                            ZxingConfig config = new ZxingConfig();         //可选的配置类
+                            //config.setPlayBeep(false);                    //是否播放扫描声音 默认为true
+                            //config.setShake(false);                       //是否震动  默认为true
+                            config.setDecodeBarCode(false);                 //是否扫描条形码 默认为true
+                            //config.setReactColor(R.color.colorAccent);    //设置扫描框四个角的颜色 默认为白色
                             //config.setFrameLineColor(R.color.colorAccent);//设置扫描框边框颜色 默认无色
-                            //config.setScanLineColor(R.color.colorAccent);//设置扫描线的颜色 默认白色
-                            //config.setFullScreenScan(false);//是否全屏扫描  默认为true 设为false则只会在扫描框中扫描
+                            //config.setScanLineColor(R.color.colorAccent); //设置扫描线的颜色 默认白色
+                            //config.setFullScreenScan(false);              //是否全屏扫描  默认为true 设为false则只会在扫描框中扫描
                             intent.putExtra(Constant.INTENT_ZXING_CONFIG, config);
                             startActivityForResult(intent, REQUEST_CODE_SCAN);
                         })
@@ -161,74 +159,78 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                 Log.i("Collect submit", "splitIndex" + String.valueOf(splitIndex.size()));
                 Log.i("Collect submit", "splitMat" + String.valueOf(splitIndex.size()));
                 // 提交内容到服务器计算Collect
-                CollectRequest collectRequest = (CollectRequest) new CollectRequest(wallet.getId(), splitIndex, splitMat)
-                        .setNetCallback(new NetCallback() {
-                            @Override
-                            public void callBack(Map res) {
-                                if (res == null || !res.get("code").equals("200")) {
-                                    String logInfo = "网络响应异常";
-                                    Log.e("Collect", "Net response illegal");
-                                    if (res != null && res.get("code") != null) {
-                                        logInfo += " " + res.get("code");
-                                        Log.e("Collect", "http code " + res.get("code"));
-                                    }
-                                    Looper.prepare();
-                                    Toast.makeText(Collect.this, logInfo, Toast.LENGTH_LONG).show();
-                                    Looper.loop();
-                                    return;
-                                }
-                                String flag = Objects.requireNonNull(res.get("flag")).toString();
-                                switch (flag) {
-                                    case "1":
-                                        String secretKey = Objects.requireNonNull(res.get("secretKey")).toString();
-                                        secretKey = NetUtil.key2hex(secretKey);
-                                        Looper.prepare();
-                                        AlertDialog.Builder alertdialogbuilder = new AlertDialog.Builder(Collect.this);
-                                        alertdialogbuilder.setMessage("私钥已找回：\n0x" + secretKey);
-                                        alertdialogbuilder.setPositiveButton("确定", null);
-                                        String finalSecretKey = secretKey;
-                                        alertdialogbuilder.setNeutralButton("复制到剪贴板", new DialogInterface.OnClickListener() {
-                                            @RequiresApi(api = Build.VERSION_CODES.M)
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                                                ClipData mClipData = ClipData.newPlainText("私钥", finalSecretKey);
-                                                cm.setPrimaryClip(mClipData);
-                                                Toast.makeText(Collect.this, "复制成功", Toast.LENGTH_LONG).show();
-                                            }
-                                        });
-                                        alertdialogbuilder.create().show();
-                                        Looper.loop();
-                                        return;
-                                    case "0":
-                                        Log.e("Collect", "Net flag 0, pics were modified");
-                                        Looper.prepare();
-                                        Toast.makeText(Collect.this, "分存图遭到篡改，请检查图片内容", Toast.LENGTH_LONG).show();
-                                        Looper.loop();
-                                        break;
-                                    case "-1":
-                                        Log.e("Collect", "Net flag -1, pics were not qrcode");
-                                        Looper.prepare();
-                                        Toast.makeText(Collect.this, "分存图无法识别", Toast.LENGTH_LONG).show();
-                                        Looper.loop();
-                                        break;
-                                    default:
-                                        Log.e("Collect", "Net flag illegal");
-                                        Looper.prepare();
-                                        Toast.makeText(Collect.this, "服务器响应异常", Toast.LENGTH_LONG).show();
-                                        Looper.loop();
-                                        break;
-                                }
-
-                                // 其它情况都认为存在错误，亮警示标
-                                Collect.this.runOnUiThread(() -> {
-                                    findViewById(R.id.progress_layout).setVisibility(View.INVISIBLE);
-                                    findViewById(R.id.progress_num_layout).setVisibility(View.INVISIBLE);
-                                    findViewById(R.id.fail_alert).setVisibility(View.VISIBLE);
-                                });
+                new CollectRequest(wallet.getId(), splitIndex, splitMat).setNetCallback(new NetCallback() {
+                    @Override
+                    public void callBack(Map res) {
+                        if (res == null || !res.get("code").equals("200")) {
+                            String logInfo = "网络响应异常";
+                            Log.e("Collect", "Net response illegal");
+                            if (res != null && res.get("code") != null) {
+                                logInfo += " " + res.get("code");
+                                Log.e("Collect", "http code " + res.get("code"));
                             }
+                            Looper.prepare();
+                            Toast.makeText(Collect.this, logInfo, Toast.LENGTH_LONG).show();
+                            Looper.loop();
+                            return;
+                        }
+                        String flag = Objects.requireNonNull(res.get("flag")).toString();
+                        switch (flag) {
+                            case "1":
+                                String secretKey = Objects.requireNonNull(res.get("secretKey")).toString();
+                                secretKey = NetUtil.key2hex(secretKey);
+
+                                Looper.prepare();
+                                // 后台更新分存图
+                                picUpdate(wallet.getId(), Objects.requireNonNull(res.get("secretKey")).toString());
+
+                                // 显示找回的私钥
+                                AlertDialog.Builder alertdialogbuilder = new AlertDialog.Builder(Collect.this);
+                                alertdialogbuilder.setMessage("私钥已找回：\n0x" + secretKey);
+                                alertdialogbuilder.setPositiveButton("确定", null);
+                                String finalSecretKey = secretKey;
+                                alertdialogbuilder.setNeutralButton("复制到剪贴板", new DialogInterface.OnClickListener() {
+                                    @RequiresApi(api = Build.VERSION_CODES.M)
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                                        ClipData mClipData = ClipData.newPlainText("私钥", finalSecretKey);
+                                        cm.setPrimaryClip(mClipData);
+                                        Toast.makeText(Collect.this, "复制成功", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                                alertdialogbuilder.create().show();
+                                Looper.loop();
+
+                                return;
+                            case "0":
+                                Log.e("Collect", "Net flag 0, pics were modified");
+                                Looper.prepare();
+                                Toast.makeText(Collect.this, "分存图遭到篡改，请检查图片内容", Toast.LENGTH_LONG).show();
+                                Looper.loop();
+                                break;
+                            case "-1":
+                                Log.e("Collect", "Net flag -1, pics were not qrcode");
+                                Looper.prepare();
+                                Toast.makeText(Collect.this, "分存图无法识别", Toast.LENGTH_LONG).show();
+                                Looper.loop();
+                                break;
+                            default:
+                                Log.e("Collect", "Net flag illegal");
+                                Looper.prepare();
+                                Toast.makeText(Collect.this, "服务器响应异常", Toast.LENGTH_LONG).show();
+                                Looper.loop();
+                                break;
+                        }
+
+                        // 其它情况都认为存在错误，亮警示标
+                        Collect.this.runOnUiThread(() -> {
+                            findViewById(R.id.progress_layout).setVisibility(View.INVISIBLE);
+                            findViewById(R.id.progress_num_layout).setVisibility(View.INVISIBLE);
+                            findViewById(R.id.fail_alert).setVisibility(View.VISIBLE);
                         });
-                collectRequest.start();
+                    }
+                }).start();
 
                 break;
             default:
@@ -322,7 +324,8 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
             }
         }
 
-        if (localMode) {
+        if (com.visualwallet.common.Constant.appMode == 0) {
+            // 本地模式
             int[][] s0 = DataUtil.getS0(wallet.getCoeK(), wallet.getCoeN());
             int[][] s1 = DataUtil.getS1(wallet.getCoeK(), wallet.getCoeN());
 
@@ -363,9 +366,9 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                 Toast.makeText(Collect.this, "分存码异常", Toast.LENGTH_LONG).show();
                 Looper.loop();
             }
-        } else {
-            DetectRequest detectRequest = new DetectRequest(wallet.getId(), picIndex, pointMatrix);
-            detectRequest.setNetCallback(res -> {
+        } else if (com.visualwallet.common.Constant.appMode == 1) {
+            // 在线模式
+            new DetectRequest(wallet.getId(), picIndex, pointMatrix).setNetCallback(res -> {
                 if (res == null) {
                     Looper.prepare();
                     Toast.makeText(Collect.this, "网络异常，无返回信息", Toast.LENGTH_LONG).show();
@@ -411,5 +414,33 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                 }
             }).start();
         }
+    }
+
+    private void picUpdate(int id, String secretKey) {
+        new UpdateRequest(id, secretKey).setNetCallback(res -> {
+            if (res == null) {
+                Looper.prepare();
+                Toast.makeText(Collect.this, "网络异常，更新分存图失败", Toast.LENGTH_LONG).show();
+                Looper.loop();
+                return;
+            }
+            Integer updateRes = (Integer) res.get("flag");
+            int[][][] updated = NetUtil.arrayJson2java((JSONArray) res.get("updated"));
+            if (updateRes == null || updateRes != 1 || updated == null) {
+                Looper.prepare();
+                Toast.makeText(Collect.this, "网络异常，更新分存图错误", Toast.LENGTH_LONG).show();
+                Looper.loop();
+                return;
+            }
+
+            // 保存新的图片
+            ImageExporter.export(Collect.this, wallet.getWalName(), updated);
+
+            // 提示用户新的图片已经保存
+            String resText = "动态分存图已刷新，" + String.valueOf(updated.length) + "张图片保存到本地，请注意更新";
+            Looper.prepare();
+            Toast.makeText(Collect.this, resText, Toast.LENGTH_LONG).show();
+            Looper.loop();
+        }).start();
     }
 }
