@@ -1,12 +1,20 @@
 package com.visualwallet;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -32,6 +40,7 @@ public class AddNewTag extends AppCompatActivity {
     private EditText viewName;
     private Spinner viewK;
     private Spinner viewN;
+    private Spinner viewF;
     private ImageButton submit;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -47,78 +56,93 @@ public class AddNewTag extends AppCompatActivity {
         viewName = findViewById(R.id.ant_info_input);
         viewK = findViewById(R.id.ant_k_spinner);
         viewN = findViewById(R.id.ant_n_spinner);
+        viewF = findViewById(R.id.ant_f_spinner);
 
         submit = findViewById(R.id.ant_submit);
-        submit.setOnClickListener(v -> {
-            WalletQuery walletQuery = new WalletQuery(AddNewTag.this);
+        submit.setOnClickListener(v -> {onAddClick();});
+    }
 
-            String address = viewAddress.getText().toString();
-            String keyHex = viewKey.getText().toString();
-            String key = NetUtil.key2bin(keyHex);
-            // key是否合法
-            if (key == null) {
-                Toast.makeText(AddNewTag.this, "私钥不合法", Toast.LENGTH_LONG).show();
-                return;
-            }
-            String name = viewName.getText().toString();
-            String type = viewType.getText().toString();
-            int K = Integer.parseInt(viewK.getSelectedItem().toString());
-            int N = Integer.parseInt(viewN.getSelectedItem().toString());
-            Wallet wallet = new Wallet(address, K, N, type, name);
+    @SuppressLint("UseCompatLoadingForDrawables")
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void onAddClick () {
+        WalletQuery walletQuery = new WalletQuery(AddNewTag.this);
 
-            Intent intent = getIntent();
-            AndPermission.with(this)
-                    .permission(Permission.WRITE_EXTERNAL_STORAGE)
-                    .onGranted(permissions -> {
-                        // 新建一个网络请求线程类并启动线程
-                        SplitRequest splitRequest = new SplitRequest(key, K, N, type);
-                        splitRequest.setNetCallback(res -> {
-                            String logInfo = "网络响应异常";
-                            if (res == null || !Objects.requireNonNull(res.get("code")).equals("200")) {
-                                Log.e("AddNewTag", "Net response illegal");
-                                if (res != null && res.get("code") != null) {
-                                    logInfo += " " + res.get("code");
-                                    Log.e("AddNewTag", "http code " + res.get("code"));
-                                }
-                                Looper.prepare();
-                                Toast.makeText(AddNewTag.this, logInfo, Toast.LENGTH_LONG).show();
-                                Looper.loop();
-                                return;
+        String address = viewAddress.getText().toString();
+        String keyHex = viewKey.getText().toString();
+        String key = NetUtil.key2bin(keyHex);
+        String name = viewName.getText().toString();
+        String type = viewType.getText().toString();
+        int K = Integer.parseInt(viewK.getSelectedItem().toString());
+        int N = Integer.parseInt(viewN.getSelectedItem().toString());
+        int F = Integer.parseInt(viewF.getSelectedItem().toString());
+
+        // 参数合法性校验
+        if (key == null) {
+            Toast.makeText(AddNewTag.this, "私钥不合法", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if(K>N||F>N||(N==5&&K>3)) {
+            Toast.makeText(AddNewTag.this, "输入分存参数不合法", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        Wallet wallet = new Wallet(address, K, N, F, type, name);
+
+        Intent intent = getIntent();
+        AndPermission.with(this)
+                .permission(Permission.WRITE_EXTERNAL_STORAGE)
+                .onGranted(permissions -> {
+
+//                    // 开始等待加载动画
+//                    View view = LayoutInflater.from(AddNewTag.this).inflate(R.layout.loading_layout,null);
+//                    final PopupWindow popupWindow = new PopupWindow(
+//                            view,
+//                            100,
+//                            150,
+//                            true);
+//                    popupWindow.showAtLocation(submit, Gravity.CENTER,0,0);
+
+                    // 新建一个网络请求线程类并启动线程
+                    SplitRequest splitRequest = new SplitRequest(key, K, N, F, type);
+                    splitRequest.setNetCallback(res -> {
+                        String logInfo = "网络响应异常";
+                        if (res == null || !Objects.requireNonNull(res.get("code")).equals("200")) {
+                            Log.e("AddNewTag", "Net response illegal");
+                            if (res != null && res.get("code") != null) {
+                                logInfo += " " + res.get("code");
+                                Log.e("AddNewTag", "http code " + res.get("code"));
                             }
+                            Looper.prepare();
+                            Toast.makeText(AddNewTag.this, logInfo, Toast.LENGTH_LONG).show();
+                            Looper.loop();
+                            return;
+                        }
 
-                            int id = (int) res.get("id");
-                            int[][][] split = NetUtil.arrayJson2java((JSONArray) res.get("split"));
-                            if (split == null) {
-                                Looper.prepare();
-                                Toast.makeText(AddNewTag.this, logInfo + " 无法获取分存图", Toast.LENGTH_LONG).show();
-                                Looper.loop();
-                                return;
-                            }
+                        int[][][] split = NetUtil.arrayJson2java((JSONArray) res.get("split"));
+                        if (split == null) {
+                            Looper.prepare();
+                            Toast.makeText(AddNewTag.this, logInfo + " 无法获取分存图", Toast.LENGTH_LONG).show();
+                            Looper.loop();
+                            return;
+                        }
 
+                        Integer id = (Integer) res.get("id");
+                        if (id != null) {
                             wallet.setId(id);
                             walletQuery.addWallet(wallet);  // 数据接口调用
                             ImageExporter.export(AddNewTag.this, name, split);  // 调用图像模块，直接全部保存到本地
-                        });
-                        splitRequest.start();
-
-                        try {
-                            splitRequest.join(0);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                        } else {
+                            Looper.prepare();
+                            Toast.makeText(AddNewTag.this, logInfo + " 无法获取id", Toast.LENGTH_LONG).show();
+                            Looper.loop();
                         }
-
-                        intent.putExtra("add", address);
-                        intent.putExtra("name", name);
-                        intent.putExtra("type", type);
-                        intent.putExtra("K", K);
-                        intent.putExtra("N", N);
-                    })
-                    .onDenied(permissions -> {
-                        Toast.makeText(AddNewTag.this, "没有权限无法保存分存图片", Toast.LENGTH_LONG).show();
-                    })
-                    .start();
-
-            finish();
-        });
+                    });
+                    splitRequest.start();
+                })
+                .onDenied(permissions -> {
+                    Toast.makeText(AddNewTag.this, "没有权限无法保存分存图片", Toast.LENGTH_LONG).show();
+                })
+                .start();
+        finish();
     }
 }

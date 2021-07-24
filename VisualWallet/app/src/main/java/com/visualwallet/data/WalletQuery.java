@@ -7,16 +7,28 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
+import com.visualwallet.common.Constant;
 import com.visualwallet.entity.Wallet;
 
 import java.io.IOException;
 import java.util.Map;
 
 public class WalletQuery {
+
     private final Context context;
+    public static String prefName;
 
     public WalletQuery(Context context) {
         this.context = context;
+    }
+
+    public static void initPrefName() {
+        if (Constant.appMode == 0)
+            prefName = "offline";
+        else if (Constant.appMode == 1)
+            prefName = "online";
+        else
+            prefName = "";
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -29,7 +41,7 @@ public class WalletQuery {
         }
         Log.i("data to save", walStr);
 
-        SharedPreferences.Editor editor = context.getSharedPreferences("share", Context.MODE_PRIVATE)
+        SharedPreferences.Editor editor = context.getSharedPreferences(prefName, Context.MODE_PRIVATE)
                 .edit();
         editor.putString(String.valueOf(wallet.getId()), walStr);
         editor.apply();
@@ -40,7 +52,7 @@ public class WalletQuery {
     }
 
     public int getAccNum() {
-        SharedPreferences pref = context.getSharedPreferences("share", Context.MODE_PRIVATE);
+        SharedPreferences pref = context.getSharedPreferences(prefName, Context.MODE_PRIVATE);
         Map<String, ?> datas = pref.getAll();
         return datas.size();
     }
@@ -48,7 +60,7 @@ public class WalletQuery {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public Wallet[] getWallets() {
 
-        SharedPreferences pref = context.getSharedPreferences("share", Context.MODE_PRIVATE);
+        SharedPreferences pref = context.getSharedPreferences(prefName, Context.MODE_PRIVATE);
 
         Map<String, ?> datas = pref.getAll();
         if (datas.isEmpty()) {
@@ -73,7 +85,7 @@ public class WalletQuery {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public Wallet getWallet(int walNo) {
 
-        SharedPreferences pref = context.getSharedPreferences("share", Context.MODE_PRIVATE);
+        SharedPreferences pref = context.getSharedPreferences(prefName, Context.MODE_PRIVATE);
 
         Map<String, ?> datas = pref.getAll();
         if (datas.isEmpty()) {

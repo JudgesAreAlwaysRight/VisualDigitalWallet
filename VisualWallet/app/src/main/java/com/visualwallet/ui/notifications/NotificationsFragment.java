@@ -46,23 +46,8 @@ public class NotificationsFragment extends Fragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == Constant.REQUEST_ADD_ACC) {
-            if (data == null) return; // 用户直接返回了
-            Wallet w = (Wallet) data.getSerializableExtra("wallet");
-
-            Log.i("add", w.getAddress());
-            Log.i("type", w.getCurType());
-            Log.i("name", w.getWalName());
-            Log.i("k", String.valueOf(w.getCoeK()));
-            Log.i("n", String.valueOf(w.getCoeN()));
-
-            addCtrl(w);
-        } else if (requestCode == Constant.REQUEST_DEL_ACC) {
-            // TODO: 删除账户
-        }
+    public void onResume() {
+        super.onResume();
         refreshScrollView();
     }
 
@@ -80,10 +65,9 @@ public class NotificationsFragment extends Fragment {
         }
     }
 
-    @SuppressLint({"DefaultLocale", "ResourceAsColor"})
     private void addCtrl(Wallet w) {
         Button newBtn = new Button(getActivity());
-        newBtn.setText(String.format("%s\t\t\t\t\t%s (%d/%d)", w.getWalName(), w.getCurType(), w.getCoeK(), w.getCoeN()));
+        newBtn.setText(String.format("%s\t\t\t\t\t\t%s (%d/%d-%d)", w.getWalName(), w.getCurType(), w.getCoeK(), w.getCoeN(), w.getCoeF()));
         newBtn.setTextSize(20);
         newBtn.setTextColor(Color.WHITE);
         newBtn.setBackgroundResource(R.drawable.button_account);
