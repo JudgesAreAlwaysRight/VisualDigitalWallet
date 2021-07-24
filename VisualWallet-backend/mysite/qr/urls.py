@@ -9,4 +9,6 @@ urlpatterns = [
     path('validate/', views.validate, name='validate'),
     path('detect/', views.detect, name='detect'),
     path('update/', views.update, name='update'),
+    path('upload/', views.upload, name='upload'),
+    path('download/', views.download, name='download'),
 ]

@@ -1,15 +1,17 @@
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, FileResponse, Http404
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
 from .models import SKInfo
 import hashlib
-from qr.kn.shadow_gen_kn import api1, api2, api3, api4, carryStore, carryFetch
+from qr.kn.shadow_gen_kn import api1, api1_2, api2, api3, api3_2, api4, carryStore, carryFetch
 import json
 import numpy as np
 import time
 import datetime
 import cv2
+import os
+from qr.kn.global_var import *
 
 
 def genSplit(request):
@@ -19,21 +21,19 @@ def genSplit(request):
         skinfo = json.loads(postBody.decode('utf-8'))
         flag = skinfo['reqFlag']
         if flag == "genSplit":
-            startall = time.time()
             sk = skinfo['secretKey']
             k = skinfo['coeK']
             n = skinfo['coeN']
             fixed_num = skinfo['fixed_num']
             android = skinfo['android_id']
             cur = skinfo['curType']
-            startapi = time.time()
-            res, carrier, length, width, c1, c2, c3, splithash, date_time = api1(sk, k, n, fixed_num, android, cur)
-            endapi = time.time()
+            needAudio = int(skinfo['needAudio'])
+            res, carrier, length, width, c1, c2, c3, splithash, date_time, audio_clip = api1(sk, k, n, fixed_num, android, cur)
             for i in range(len(res)):
                 res[i] = res[i].tolist()
-            startdb = time.time()
             idx = SKInfo(coeK=k, coeN=n, fixed=fixed_num, length=length, width=width, c1=c1, c2=c2, c3=c3, date=date_time)
             num = len(carrier)
+
             if num >= 2:
                 idx.carry0 = carryStore(carrier[0])
                 idx.carry1 = carryStore(carrier[1])
@@ -52,22 +52,23 @@ def genSplit(request):
                             print("The Maximum N is 5!")
             else:
                 print("The Minimum N is 2!")
-            enddb = time.time()
             sha = hashlib.sha256()
             sha.update(sk.encode("utf8"))
             skmd5 = sha.hexdigest()
             idx.secretKeyHash = skmd5
             idx.save()
             index = idx.id
+            if needAudio == 1:
+                name = skinfo['audioName']
+                pos = skinfo['type']
+                api1_2(audio_clip, name, index, pos)
             res = {'id': index, 'split': res}
             res = json.dumps(res)
-            endall = time.time()
-            print(endall-startall, endapi-startapi, enddb-startdb)
         else:
             res = "Wrong Request Flag!"
         return HttpResponse(res)
     else:
-        return HttpResponse('transfer fail!')
+        return HttpResponse("Generate Request Method Error")
 
 
 def detect(request):
@@ -80,7 +81,9 @@ def detect(request):
             index = info['id']
             splitNo = info['index']
             data_matrix = info['keys']
-            data_matrix = np.array(data_matrix, dtype=np.uint8)
+            isAudio = int(info['isAudio'])
+            if isAudio == 0:
+                data_matrix = np.array(data_matrix, dtype=np.uint8)
             target = SKInfo.objects.get(pk=index)
             carry_list = [target.carry0, target.carry1, target.carry2, target.carry3, target.carry4]
             hashlist = [target.hash0, target.hash1, target.hash2, target.hash3, target.hash4]
@@ -90,14 +93,19 @@ def detect(request):
             width = target.width
             coeK = target.coeK
             coeN = target.coeN
-            result = api3(skhash, data_matrix, carrier, length, width, coeK, coeN)
+            if isAudio == 0:
+                result = api3(skhash, data_matrix, carrier, length, width, coeK, coeN)
+            elif isAudio == 1:
+                type = info['type']
+                name = 'd_'+str(index)+type
+                result = api3_2(skhash, name, carrier, length, width, coeK, coeN)
         else:
             result = -1
         res = {"id": index, "flag": result}
         res = json.dumps(res)
         return HttpResponse(res)
     else:
-        return HttpResponse('transfer failed!')
+        return HttpResponse("Detect Request Method Error")
 
 
 def validate(request):
@@ -112,6 +120,8 @@ def validate(request):
             index = info['id']
             splitNo = info['index']
             data_matrix = info['keys']
+            hasAudio = int(info["hasAudio"])
+            pos = info["type"]
             # print(splitNo)
             for i in range(len(data_matrix)):
                 data_matrix[i] = np.array(data_matrix[i], dtype=np.uint8)
@@ -141,7 +151,11 @@ def validate(request):
                         if coeN == 5:
                             carrier_matrix.append(carryFetch(target.carry4))
             # start2 = time.time()
-            sk, text = api2(skhash, splitNo, data_matrix, carrier_matrix, length, width, c1, c2, c3, coeK, coeN, fixed, date_time)
+            if hasAudio == 1:
+                audioname = "v_" + str(index) + pos
+            else:
+                audioname = ""
+            sk, text = api2(skhash, splitNo, data_matrix, carrier_matrix, length, width, c1, c2, c3, coeK, coeN, fixed, date_time, audioname)
             # end2 = time.time()
             # print("apitime")
             # print(end2-start2)
@@ -154,7 +168,7 @@ def validate(request):
             res = "Wrong Request Flag!"
         return HttpResponse(res)
     else:
-        return HttpResponse('transfer failed!')
+        return HttpResponse("Validate Request Method Error")
 
 
 def update(request):
@@ -208,4 +222,51 @@ def update(request):
             res = "Wrong Request Flag!"
         return HttpResponse(res)
     else:
-        return HttpResponse('transfer failed!')
+        return HttpResponse("Update Request Method Error")
+
+
+def upload(request):
+    if request.method == 'POST':
+        flag = request.POST.get('reqFlag', None)
+        if flag != 'fileUpload':
+            return HttpResponse("Upload Flag Error")
+        file = request.FILES.get("file", None)
+        postfix = request.POST.get('type', None)
+        mode = int(request.POST.get('mode', None))
+        index_num = request.POST.get('id', None)
+        if mode == 0:
+            if not file:
+                return HttpResponse("no files for upload!")
+            file_name = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S-%f')
+
+        elif mode == 1:
+            file_name = "d_" + index_num
+        elif mode == 2:
+            file_name = "v_" + index_num
+        else:
+            return HttpResponse("Upload Mode Error")
+        file_name_pos = file_name + postfix
+        dest = open(os.path.join(AUDIOPATH, file_name_pos), "wb+")
+        for chunk in file.chunks():
+            dest.write(chunk)
+        dest.close()
+        res = {"file_name": file_name}
+        res = json.dumps(res)
+        return HttpResponse(res)
+    else:
+        return HttpResponse("Upload Request Method Error")
+
+
+def download(request):
+    if request.method == 'POST':
+        body = request.body
+        sheet = json.loads(body.decode('utf-8'))
+        filename = sheet['id']
+        pos = sheet['type']
+        filename = 'g_' + filename + pos
+        file = open(os.path.join(AUDIOPATH, filename), "rb")
+        response = FileResponse(file)
+
+        return response
+    else:
+        return HttpResponse("Download Request Method Error")

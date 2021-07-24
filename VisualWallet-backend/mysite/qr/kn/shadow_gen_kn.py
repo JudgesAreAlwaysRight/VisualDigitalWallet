@@ -10,6 +10,7 @@ from qr.kn.global_var import *
 import hashlib
 import pickle
 import random
+from qr.kn.audio import *
 import time
 import datetime
 import json
@@ -101,7 +102,6 @@ def maskSplit(split, fixed_num, n):
     splithash = []
     for i in range(n):
         splithash.append(hashlib.sha256(split[i].tobytes()).hexdigest())
-
     return split, dt_ms, splithash
 
 
@@ -293,8 +293,6 @@ def generateSplit(s0, s1, m, x, y, k, n, bin, queue):
     for i in range(n):
         split_enlarged.append(np.zeros((finx, finy, 3), np.uint8))
         split_enlarged[i] = cv2.resize(split[i], (finx, finy), interpolation=cv2.INTER_NEAREST)
-
-
     return split_enlarged
 
 
@@ -415,16 +413,34 @@ def apiFirst(msg, k, n, fixed, carriermsg, android_id, logo, boxsize):
     for i in range(n):
         carrier_store[i] = carrier_list[i]
 
-    return key_list, carrier_list, retx, rety, d, alpha, lenm, splithash, date_time
+    test = cv2.cvtColor(split[0], cv2.COLOR_BGR2GRAY)
+    _, test = cv2.threshold(test, 125, 1, cv2.THRESH_BINARY)
+    #
+    # xxx, yyy = test.shape[:2]
+    # audio_src = AUDIOPATH + "src.wav"
+    # audio_dest = AUDIOPATH + "dest.wav"
+    # wmadd(audio_src, test, audio_dest)
+    # result = wmget(audio_dest, xxx, yyy)
+    # result = np.array(result).reshape(xxx, yyy)
+    return key_list, carrier_list, retx, rety, d, alpha, lenm, splithash, date_time, test
 
 
-def apiSecond(skhash, split_no, mat, carrier, x, y, d0, d1, lenm, coeK, coeN, fixed, date_time):
+def apiSecond(skhash, split_no, mat, carrier, x, y, d0, d1, lenm, coeK, coeN, fixed, date_time, audio):
     split = []
+    if audio != "":
+        audio_name = AUDIOPATH + audio
+        split0 = wmget(audio_name, x, y)
+        split0 = split0 * 255
+        split0 = cv2.cvtColor(split0, cv2.COLOR_GRAY2BGR)
+        split.append(split0)
+
     for i in range(len(split_no)):
         mat[i] = mat[i] * 255
         mat[i] = cv2.cvtColor(mat[i], cv2.COLOR_GRAY2BGR)
         res = retrieveSplit(mat[i], carrier[split_no[i]], x, y, coeK, coeN)
         split.append(res)
+    if audio != "":
+        split_no.insert(0, 0)
     split = unmaskSplit(date_time, split, fixed, coeN, split_no)
     qr = mergeSplit(split, x, y, d0, d1, lenm)
     return validate(qr, skhash)
@@ -455,20 +471,38 @@ def api1(msg, k, n, fixed, devicemsg, currencymsg):
         logo = USDLOGO
     else:
         logo = BTCLOGO
-    data_matrix, carrier_matrix, length, width, c1, c2, c3, splithash, date_time = apiFirst(msg, k, n, fixed, cmsg, devicemsg, logo, ES)
-    return data_matrix, carrier_matrix, length, width, c1, c2, c3, splithash, date_time
+    data_matrix, carrier_matrix, length, width, c1, c2, c3, splithash, date_time, audio = apiFirst(msg, k, n, fixed, cmsg, devicemsg, logo, ES)
+    return data_matrix, carrier_matrix, length, width, c1, c2, c3, splithash, date_time, audio
 
 
-def api2(skhash, split_no, data_matrix, carrier_matrix, length, width, c1, c2, c3, coeK, coeN, fixed, date_time):
-    status = apiSecond(skhash, split_no, data_matrix, carrier_matrix, length, width, c1, c2, c3, coeK, coeN, fixed, date_time)
+def api1_2(split, audio_name, index, pos):
+    src = AUDIOPATH + audio_name + pos
+    dest = AUDIOPATH + "g_" + str(index) + pos
+    wmadd(src, split, dest)
+
+
+def api2(skhash, split_no, data_matrix, carrier_matrix, length, width, c1, c2, c3, coeK, coeN, fixed, date_time, audio):
+    status = apiSecond(skhash, split_no, data_matrix, carrier_matrix, length, width, c1, c2, c3, coeK, coeN, fixed, date_time, audio)
     return status
 
 
 def api3(splithash, split, carrier, length, width, coeK, coeN):
     split = split*255
     split = cv2.cvtColor(split, cv2.COLOR_GRAY2BGR)
+
     res = retrieveSplit(split, carrier, length, width, coeK, coeN)
     res2 = splitCheck(res, splithash)
+
+    return res2
+
+
+def api3_2(splithash, audio_name, carrier, length, width, coeK, coeN):
+    audio_name = AUDIOPATH + audio_name
+    split = wmget(audio_name, length, width)
+    split = split * 255
+    split = cv2.cvtColor(split, cv2.COLOR_GRAY2BGR)
+    # res = retrieveSplit(split, carrier, length, width, coeK, coeN)
+    res2 = splitCheck(split, splithash)
 
     return res2
 
