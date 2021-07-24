@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ImageExporter {
 
@@ -22,7 +23,7 @@ public class ImageExporter {
         for (int[][] img : bitImgList) {
             Bitmap imgBitmap = bitMat2Bitmap(img);
             Date date = new Date(System.currentTimeMillis());
-            saveBitmap(context, imgBitmap, String.format("%s_%d_%d", walName, index, simpleDateFormat(date)));
+            saveBitmap(context, imgBitmap, String.format("%s_%d_%d", walName, index, simpleDateFormat.format(date)));
             index++;
         }
         return true;

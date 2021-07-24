@@ -243,7 +243,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="0dp"
             android:text="分存为"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
 
         <Spinner
             android:id="@+id/ant_n_spinner"
@@ -268,7 +268,7 @@
             android:layout_marginBottom="10dp"
             android:layout_toEndOf="@id/ant_n_spinner"
             android:text="份，至少收集"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
 
         <Spinner
             android:id="@+id/ant_k_spinner"
@@ -295,7 +295,7 @@
             android:layout_marginBottom="10dp"
             android:layout_toEndOf="@id/ant_k_spinner"
             android:text="份还原"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/ant_f_tag"
@@ -307,7 +307,7 @@
             android:layout_marginBottom="10dp"
             android:layout_below="@id/ant_k_spinner"
             android:text="其中"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
 
         <Spinner
             android:id="@+id/ant_f_spinner"
@@ -335,7 +335,7 @@
             android:layout_toEndOf="@id/ant_f_spinner"
             android:layout_alignBaseline="@id/ant_f_tag"
             android:text="份固定，其他使用后更新"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
     </RelativeLayout>
 
 
