@@ -10,8 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -28,6 +30,7 @@ public class NotificationsFragment extends Fragment {
 
     private LinearLayout accountLL;
     private ImageButton wallet_add;
+    private Switch modeSwitch;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Nullable
@@ -41,6 +44,9 @@ public class NotificationsFragment extends Fragment {
             Intent intent = new Intent(getActivity(), AddNewTag.class);
             startActivityForResult(intent, Constant.REQUEST_ADD_ACC);
         });
+        modeSwitch = view.findViewById(R.id.switch1);
+        modeSwitch.setChecked(Constant.appMode == 1);
+        modeSwitch.setOnCheckedChangeListener(this::onCheckChanged);
         refreshScrollView();
         return view;
     }
@@ -81,5 +87,17 @@ public class NotificationsFragment extends Fragment {
         layoutParams.setMargins(20,8,20,8);
         newBtn.setLayoutParams(layoutParams);
         accountLL.addView(newBtn);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void onCheckChanged(CompoundButton buttonView, boolean isChecked) {
+        if (!buttonView.isPressed()) {
+            return;
+        }
+        if ((Constant.appMode == 1) != isChecked) {
+            Constant.appMode = (isChecked ? 1 : 0);
+            WalletQuery.initPrefName();
+            refreshScrollView();
+        }
     }
 }

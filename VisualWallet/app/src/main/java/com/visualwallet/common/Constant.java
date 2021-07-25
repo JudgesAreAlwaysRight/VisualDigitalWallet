@@ -14,14 +14,16 @@ public class Constant {
 
     // 公共变量
     public static String androidId;
+    public static String downloadPath = "/DCIM/VisualWallet/";
 
     // 网络相关
     public static final String protocol = "http";
     public static final String domain = "vw.milkyship.cn";
+//    public static final String domain = "10.130.93.165";
     public static final String port = "8000";
     public static final String projectRoot = "/vw";
-    public static final int connectTimeout = 15000;
-    public static final int readTimeout = 15000;
+    public static final int connectTimeout = 20000;
+    public static final int readTimeout = 20000;
 
     // 区块链接口相关
     public static final String blockchainTestDomain = "https://api.blockcypher.com";
@@ -45,6 +47,7 @@ public class Constant {
     public static final String WALLET_ARG = "wallet_arg";
     public static final int REQUEST_ADD_ACC = 301;
     public static final int REQUEST_DEL_ACC = 302;
+    public static final int FILE_SELECT_CODE = 401;
 
     /* app运作模式
      *  本地模式（随身安全）：0

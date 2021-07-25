@@ -12,17 +12,23 @@ import static com.visualwallet.Start.androidId;
 public class SplitRequest extends NetRequest {
     private static final String subUrl = "/generate";
     private static final String reqFlag = "genSplit";
-    private String secretKey;
-    private int coeK;
-    private int coeN;
-    private int coeF;
-    private String curType;
+    private final String secretKey;
+    private final int coeK;
+    private final int coeN;
+    private final int coeF;
+    private final int needAudio;
+    private final String audioName;
+    private final String type;
+    private final String curType;
 
-    public SplitRequest(String secretKey, int coeK, int coeN, int coeF, String curType) {
+    public SplitRequest(String secretKey, int coeK, int coeN, int coeF, int needAudio, String audioName, String type, String curType) {
         this.secretKey = secretKey;
         this.coeK = coeK;
         this.coeN = coeN;
         this.coeF = coeF;
+        this.needAudio = (needAudio > 0 ? 1 : 0);
+        this.audioName = audioName;
+        this.type = type;
         this.curType = curType;
     }
 
@@ -35,6 +41,9 @@ public class SplitRequest extends NetRequest {
         args.put("coeK", coeK);
         args.put("coeN", coeN);
         args.put("fixed_num", coeF);
+        args.put("needAudio", needAudio);
+        args.put("audioName", audioName);
+        args.put("type", type);
         args.put("android_id", androidId);
         args.put("curType", curType);
 

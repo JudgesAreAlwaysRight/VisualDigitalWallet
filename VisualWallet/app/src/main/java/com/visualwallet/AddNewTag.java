@@ -1,8 +1,10 @@
 package com.visualwallet;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
@@ -22,14 +24,19 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.alibaba.fastjson.JSONArray;
+import com.visualwallet.common.Constant;
 import com.visualwallet.data.ImageExporter;
 import com.visualwallet.data.WalletQuery;
 import com.visualwallet.entity.Wallet;
+import com.visualwallet.net.DownloadRequest;
 import com.visualwallet.net.NetUtil;
 import com.visualwallet.net.SplitRequest;
+import com.visualwallet.net.UpdateRequest;
+import com.visualwallet.net.UploadRequest;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
 
+import java.io.File;
 import java.util.Objects;
 
 public class AddNewTag extends AppCompatActivity {
@@ -41,7 +48,13 @@ public class AddNewTag extends AppCompatActivity {
     private Spinner viewK;
     private Spinner viewN;
     private Spinner viewF;
+    private Spinner viewFile;
     private ImageButton submit;
+    private ImageButton fileSelect;
+
+    private Wallet wallet;
+    private String audioPath;
+    private String audioName;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -57,14 +70,25 @@ public class AddNewTag extends AppCompatActivity {
         viewK = findViewById(R.id.ant_k_spinner);
         viewN = findViewById(R.id.ant_n_spinner);
         viewF = findViewById(R.id.ant_f_spinner);
+        viewFile = findViewById(R.id.ant_file_spinner);
 
         submit = findViewById(R.id.ant_submit);
-        submit.setOnClickListener(v -> {onAddClick();});
+        submit.setOnClickListener(v -> {
+            onAddClick();
+        });
+
+        fileSelect = findViewById(R.id.ant_file);
+        fileSelect.setOnClickListener(v -> {
+            onFileClick();
+        });
+
+        audioPath = "";
+        audioName = "";
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void onAddClick () {
+    private void onAddClick() {
         WalletQuery walletQuery = new WalletQuery(AddNewTag.this);
 
         String address = viewAddress.getText().toString();
@@ -75,18 +99,19 @@ public class AddNewTag extends AppCompatActivity {
         int K = Integer.parseInt(viewK.getSelectedItem().toString());
         int N = Integer.parseInt(viewN.getSelectedItem().toString());
         int F = Integer.parseInt(viewF.getSelectedItem().toString());
+        int fileNum = Integer.parseInt(viewFile.getSelectedItem().toString());
 
         // 参数合法性校验
         if (key == null) {
             Toast.makeText(AddNewTag.this, "私钥不合法", Toast.LENGTH_LONG).show();
             return;
         }
-        if(K>N||F>N||(N==5&&K>3)) {
+        if (K > N || F > N || (N == 5 && K > 3)) {
             Toast.makeText(AddNewTag.this, "输入分存参数不合法", Toast.LENGTH_LONG).show();
             return;
         }
 
-        Wallet wallet = new Wallet(address, K, N, F, type, name);
+        wallet = new Wallet(address, K, N, F, type, name);
 
         Intent intent = getIntent();
         AndPermission.with(this)
@@ -102,8 +127,11 @@ public class AddNewTag extends AppCompatActivity {
 //                            true);
 //                    popupWindow.showAtLocation(submit, Gravity.CENTER,0,0);
 
+                    // 上传音频文件（如果有）
+                    uploadAudio();
+
                     // 新建一个网络请求线程类并启动线程
-                    SplitRequest splitRequest = new SplitRequest(key, K, N, F, type);
+                    SplitRequest splitRequest = new SplitRequest(key, K, N, F, fileNum, audioName, ".wav", type);
                     splitRequest.setNetCallback(res -> {
                         String logInfo = "网络响应异常";
                         if (res == null || !Objects.requireNonNull(res.get("code")).equals("200")) {
@@ -131,6 +159,7 @@ public class AddNewTag extends AppCompatActivity {
                             wallet.setId(id);
                             walletQuery.addWallet(wallet);  // 数据接口调用
                             ImageExporter.export(AddNewTag.this, name, split);  // 调用图像模块，直接全部保存到本地
+                            downloadAudio();
                         } else {
                             Looper.prepare();
                             Toast.makeText(AddNewTag.this, logInfo + " 无法获取id", Toast.LENGTH_LONG).show();
@@ -144,5 +173,84 @@ public class AddNewTag extends AppCompatActivity {
                 })
                 .start();
         finish();
+    }
+
+    private void onFileClick() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("audio/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(intent, 1);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            Log.e("AddNewTag", "onActivityResult() error, resultCode: " + resultCode);
+        } else {
+            Uri uri = data.getData();
+            audioPath = uri.getPath();
+            Log.i("AddNewTag", "file path: " + audioPath);
+        }
+
+        new DownloadRequest(255, ".wav").start();
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void uploadAudio() {
+        int fileNum = Integer.parseInt(viewFile.getSelectedItem().toString());
+        UploadRequest uploadRequest = null;
+        if (fileNum > 0) {
+            if (audioPath.equals("")) {
+                Looper.prepare();
+                Toast.makeText(AddNewTag.this, "尚未选择音频文件", Toast.LENGTH_LONG).show();
+                Looper.loop();
+                return;
+            } else {
+                File audioFile = new File(audioPath);
+                uploadRequest = (UploadRequest) new UploadRequest(0, 0, ".wav", audioFile).setNetCallback(res -> {
+                    String logInfo = "网络响应异常";
+                    if (res == null || !Objects.requireNonNull(res.get("code")).equals("200") || res.get("file_name") == null) {
+                        Log.e("AddNewTag", "Net response illegal");
+                        if (res != null && res.get("code") != null) {
+                            logInfo += " " + res.get("code");
+                            Log.e("AddNewTag", "http code " + res.get("code"));
+                        }
+                        Looper.prepare();
+                        Toast.makeText(AddNewTag.this, logInfo, Toast.LENGTH_LONG).show();
+                        Looper.loop();
+                        return;
+                    }
+                    audioName = Objects.requireNonNull(res.get("file_name")).toString();
+                });
+                uploadRequest.start();
+            }
+        }
+        // 等文件上传完成再进行后续请求
+        if (uploadRequest != null) {
+            try {
+                uploadRequest.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void downloadAudio() {
+        int wid = wallet.getId();
+        int fileNum = Integer.parseInt(viewFile.getSelectedItem().toString());
+        if (fileNum > 0) {
+            DownloadRequest downloadRequest = new DownloadRequest(wid, ".wav");
+            downloadRequest.setNetCallback(res -> {
+                Looper.prepare();
+                Toast.makeText(AddNewTag.this, String.valueOf(fileNum) + "份编码音频已下载成功，保存位置", Toast.LENGTH_LONG).show();
+                Looper.loop();
+            }).start();
+            try {
+                downloadRequest.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

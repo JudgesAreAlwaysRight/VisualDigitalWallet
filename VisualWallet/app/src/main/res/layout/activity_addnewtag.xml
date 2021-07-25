@@ -37,7 +37,15 @@
         android:elevation="5dp"
         android:rotationX="180"
 
-        android:translationZ="5dp" />
+        android:translationZ="5dp" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/half_ridius_rect"
+            android:elevation="5dp"
+            android:translationZ="-3dp" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -60,13 +68,6 @@
         android:elevation="5dp"
         android:rotationX="180"
         android:translationZ="1dp" />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/ant_title"
-        android:background="@drawable/half_ridius_rect"
-        android:elevation="5dp"
-        android:translationZ="-3dp"/>
 
     <RelativeLayout
         android:id="@+id/ant_pk"
@@ -205,22 +206,6 @@
             android:textSize="16sp" />
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/Warning"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ant_kn"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginEnd="10dp"
-        android:text="注意：分存数≥收集数"
-        android:textColor="#de1242"
-        android:textSize="14sp"
-        android:translationZ="10dp">
-
-    </TextView>
-
     <RelativeLayout
         android:id="@+id/ant_kn"
         android:layout_width="wrap_content"
@@ -316,7 +301,7 @@
             android:layout_marginTop="10dp"
             android:layout_toEndOf="@id/ant_f_tag"
             android:background="@drawable/add_new_spin"
-            android:entries="@array/valueK"
+            android:entries="@array/valueF"
             android:gravity="center_vertical"
             android:spinnerMode="dialog"
             android:textColor="#ffffff"
@@ -335,8 +320,56 @@
             android:layout_toEndOf="@id/ant_f_spinner"
             android:text="份固定，其余动态更新"
             android:textSize="16sp" />
-    </RelativeLayout>
 
+        <TextView
+            android:id="@+id/ant_file_tag1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ant_f_spinner"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="10dp"
+            android:text="其中前"
+            android:textSize="16sp" />
+
+        <Spinner
+            android:id="@+id/ant_file_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/ant_file_tag1"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@id/ant_file_tag1"
+            android:background="@drawable/add_new_spin"
+            android:entries="@array/valueFile"
+            android:gravity="center_vertical"
+            android:spinnerMode="dialog"
+            android:textColor="#ffffff"
+            android:textSize="16sp"
+            android:theme="@style/Spinner" />
+
+        <TextView
+            android:id="@+id/ant_file_tag2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/ant_file_tag1"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_toEndOf="@id/ant_file_spinner"
+            android:text="份编码到音频"
+            android:textSize="16sp" />
+
+        <ImageButton
+            android:id="@+id/ant_file"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignTop="@id/ant_file_tag1"
+            android:layout_toEndOf="@id/ant_file_tag2"
+            android:background="@drawable/commit"
+            android:translationZ="15dp" />
+    </RelativeLayout>
 
     <ImageButton
         android:id="@+id/ant_submit"
