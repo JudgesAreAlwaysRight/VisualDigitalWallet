@@ -1,7 +1,7 @@
 import wave
 import struct
 import numpy as np
-
+import os, stat
 # # 这个函数需要改,目的是将分存内容转换成bit
 # def int2bit(data, bitlen=8):
 #     bits = []
@@ -70,7 +70,7 @@ def wmadd(src_path, wm_data, res_path):
     res_audio = wave.open(res_path, 'wb')
     res_audio.setparams((nchannels, sampwidth, framerate, nframenum, ncomptype, ncompname))
     res_audio.writeframes(struct.pack("%dh" % len(samples_marked), *samples_marked))
-
+    os.chmod(res_path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
 
 # 提取水印信息
 def wmget(marked_path, size1, size2):
