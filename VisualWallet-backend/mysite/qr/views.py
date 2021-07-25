@@ -11,6 +11,7 @@ import time
 import datetime
 import cv2
 import os
+import stat
 from qr.kn.global_var import *
 
 
@@ -249,6 +250,7 @@ def upload(request):
         dest = open(os.path.join(AUDIOPATH, file_name_pos), "wb+")
         for chunk in file.chunks():
             dest.write(chunk)
+        os.chmod(AUDIOPATH + file_name_pos, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
         dest.close()
         res = {"file_name": file_name}
         res = json.dumps(res)
