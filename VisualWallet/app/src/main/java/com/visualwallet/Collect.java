@@ -71,6 +71,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
     private List<Integer> splitIndex;
     private List<String> splitInfo;
     private List<int[][]> splitMat;
+    private String audioPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +99,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
         splitIndex = new ArrayList<>();
         splitInfo = new ArrayList<>();
         splitMat = new ArrayList<>();
+        audioPath = "";
 
         waveProgress = findViewById(R.id.wave_progress);
     }
@@ -163,6 +165,10 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                 Log.i("Collect submit", "id" + wallet.getId());
                 Log.i("Collect submit", "splitIndex" + splitIndex.size());
                 Log.i("Collect submit", "splitMat" + splitIndex.size());
+                // 如果有音频文件，应该先上传音频文件再collect
+                if (!audioPath.equals("")) {
+
+                }
                 // 提交内容到服务器计算Collect
                 new CollectRequest(wallet.getId(), splitIndex, splitMat).setNetCallback(res -> {
                     if (res == null || !Objects.requireNonNull(res.get("code")).equals("200")) {
@@ -278,7 +284,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                     Log.e("AddNewTag", "onActivityResult() error, resultCode: " + resultCode);
                 } else if (data != null) {
                     Uri uri = data.getData();
-                    String audioPath = uri.getPath();
+                    String audioPath = DataUtil.resolveAudioUri(Collect.this, uri);
                     Log.i("AddNewTag", "file path: " + audioPath);
 
                     File audioFile = new File(audioPath);
@@ -455,7 +461,7 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
 
     private void audioDetect(File audioFile) {
         // 上传待检测的音频文件
-        UploadRequest uploadRequest = new UploadRequest(0, 0, ".wav", audioFile);
+        UploadRequest uploadRequest = new UploadRequest(wallet.getId(), 1, ".wav", audioFile);
         uploadRequest.setNetCallback(resUpload -> {
             String logInfo = "网络响应异常";
             if (resUpload == null || !Objects.requireNonNull(resUpload.get("code")).equals("200")) {
@@ -480,10 +486,8 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                 if (Integer.parseInt(resDetect.get("flag").toString()) == 1) {
                     String content = "音频：" + audioFile.getName() + "\t\tType: " + wallet.getCurType();
                     addinfo(content);
-
-                    splitIndex.add(0);
                     splitInfo.add(content);
-                    splitMat.add(new int[][]{});
+                    audioPath = audioFile.getName();
 
                     Collect.this.runOnUiThread(() -> {
                         findViewById(R.id.progress_layout).setVisibility(View.VISIBLE);

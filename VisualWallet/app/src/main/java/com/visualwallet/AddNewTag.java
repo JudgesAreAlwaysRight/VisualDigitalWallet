@@ -3,20 +3,16 @@ package com.visualwallet;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -25,13 +21,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.alibaba.fastjson.JSONArray;
 import com.visualwallet.common.Constant;
+import com.visualwallet.data.DataUtil;
 import com.visualwallet.data.ImageExporter;
 import com.visualwallet.data.WalletQuery;
 import com.visualwallet.entity.Wallet;
 import com.visualwallet.net.DownloadRequest;
 import com.visualwallet.net.NetUtil;
 import com.visualwallet.net.SplitRequest;
-import com.visualwallet.net.UpdateRequest;
 import com.visualwallet.net.UploadRequest;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
@@ -82,6 +78,23 @@ public class AddNewTag extends AppCompatActivity {
             onFileClick();
         });
 
+        Button testButton = findViewById(R.id.testButton);
+        testButton.setOnClickListener(v -> {
+            int wid = 261;
+            int fileNum = 1;
+            DownloadRequest downloadRequest = new DownloadRequest(wid, ".wav");
+            downloadRequest.setNetCallback(res -> {
+                Looper.prepare();
+                Toast.makeText(AddNewTag.this,  "测试：" + fileNum + "份编码音频已下载成功，保存位置" + Constant.downloadPath, Toast.LENGTH_LONG).show();
+                Looper.loop();
+            }).start();
+            try {
+                downloadRequest.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
         audioPath = "";
         audioName = "";
     }
@@ -106,14 +119,17 @@ public class AddNewTag extends AppCompatActivity {
             Toast.makeText(AddNewTag.this, "私钥不合法", Toast.LENGTH_LONG).show();
             return;
         }
-        if (K > N || F > N || (N == 5 && K > 3)) {
+        if (K > N || F > N || (N == 5 && K > 3) || fileNum > F) {
             Toast.makeText(AddNewTag.this, "输入分存参数不合法", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (fileNum > 0 && audioName.equals("")) {
+            Toast.makeText(AddNewTag.this, "您设置了音频分存但是未上传文件或文件还在传输中", Toast.LENGTH_LONG).show();
             return;
         }
 
         wallet = new Wallet(address, K, N, F, type, name);
 
-        Intent intent = getIntent();
         AndPermission.with(this)
                 .permission(Permission.WRITE_EXTERNAL_STORAGE)
                 .onGranted(permissions -> {
@@ -126,9 +142,6 @@ public class AddNewTag extends AppCompatActivity {
 //                            150,
 //                            true);
 //                    popupWindow.showAtLocation(submit, Gravity.CENTER,0,0);
-
-                    // 上传音频文件（如果有）
-                    uploadAudio();
 
                     // 新建一个网络请求线程类并启动线程
                     SplitRequest splitRequest = new SplitRequest(key, K, N, F, fileNum, audioName, ".wav", type);
@@ -159,20 +172,18 @@ public class AddNewTag extends AppCompatActivity {
                             wallet.setId(id);
                             walletQuery.addWallet(wallet);  // 数据接口调用
                             ImageExporter.export(AddNewTag.this, name, split);  // 调用图像模块，直接全部保存到本地
-                            downloadAudio();
+                            downloadAudio(); // 下载音频
                         } else {
                             Looper.prepare();
                             Toast.makeText(AddNewTag.this, logInfo + " 无法获取id", Toast.LENGTH_LONG).show();
                             Looper.loop();
                         }
+                        finish();
                     });
                     splitRequest.start();
                 })
-                .onDenied(permissions -> {
-                    Toast.makeText(AddNewTag.this, "没有权限无法保存分存图片", Toast.LENGTH_LONG).show();
-                })
+                .onDenied(permissions -> Toast.makeText(AddNewTag.this, "没有权限无法保存分存图片", Toast.LENGTH_LONG).show())
                 .start();
-        finish();
     }
 
     private void onFileClick() {
@@ -188,27 +199,23 @@ public class AddNewTag extends AppCompatActivity {
             Log.e("AddNewTag", "onActivityResult() error, resultCode: " + resultCode);
         } else {
             Uri uri = data.getData();
-            audioPath = uri.getPath();
-            Log.i("AddNewTag", "file path: " + audioPath);
+            audioPath = DataUtil.resolveAudioUri(AddNewTag.this, uri);
+            Log.i("AddNewTag", "file path: " + uri.getPath());
+            uploadAudio(); // 选择好音频文件之后立刻上传，这一步是异步执行的。
         }
-
-        new DownloadRequest(255, ".wav").start();
-
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void uploadAudio() {
         int fileNum = Integer.parseInt(viewFile.getSelectedItem().toString());
-        UploadRequest uploadRequest = null;
         if (fileNum > 0) {
             if (audioPath.equals("")) {
                 Looper.prepare();
                 Toast.makeText(AddNewTag.this, "尚未选择音频文件", Toast.LENGTH_LONG).show();
                 Looper.loop();
-                return;
             } else {
                 File audioFile = new File(audioPath);
-                uploadRequest = (UploadRequest) new UploadRequest(0, 0, ".wav", audioFile).setNetCallback(res -> {
+                new UploadRequest(0, 0, ".wav", audioFile).setNetCallback(res -> {
                     String logInfo = "网络响应异常";
                     if (res == null || !Objects.requireNonNull(res.get("code")).equals("200") || res.get("file_name") == null) {
                         Log.e("AddNewTag", "Net response illegal");
@@ -222,18 +229,23 @@ public class AddNewTag extends AppCompatActivity {
                         return;
                     }
                     audioName = Objects.requireNonNull(res.get("file_name")).toString();
-                });
-                uploadRequest.start();
+                    Looper.prepare();
+                    Toast.makeText(AddNewTag.this, fileNum + "份音频已上传成功", Toast.LENGTH_LONG).show();
+                    Looper.loop();
+                }).start();
             }
         }
         // 等文件上传完成再进行后续请求
-        if (uploadRequest != null) {
-            try {
-                uploadRequest.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        // FIXME: 按理这里应该阻塞一下保证文件传输完成再做后续处理，
+        //  但是不知道为什么即便网络请求已经返回这里还是会继续阻塞，
+        //  所以只好做成异步的了
+//        if (uploadRequest != null) {
+//            try {
+//                uploadRequest.join();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     private void downloadAudio() {
@@ -243,7 +255,7 @@ public class AddNewTag extends AppCompatActivity {
             DownloadRequest downloadRequest = new DownloadRequest(wid, ".wav");
             downloadRequest.setNetCallback(res -> {
                 Looper.prepare();
-                Toast.makeText(AddNewTag.this, String.valueOf(fileNum) + "份编码音频已下载成功，保存位置", Toast.LENGTH_LONG).show();
+                Toast.makeText(AddNewTag.this, fileNum + "份编码音频已下载成功，保存位置" + Constant.downloadPath, Toast.LENGTH_LONG).show();
                 Looper.loop();
             }).start();
             try {

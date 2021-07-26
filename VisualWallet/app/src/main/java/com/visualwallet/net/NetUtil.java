@@ -179,7 +179,7 @@ public class NetUtil {
         HttpURLConnection connection = null;
         String response;
         int code;
-        String boundary = "----WebKitFormBoundary" + java.util.UUID.randomUUID().toString();
+        String boundary = "----WebKitFormBoundary" + java.util.UUID.randomUUID().toString().replace("-", "");
 
         try {
             URL url = new URL(urlStr + (fixDash ? "/" : ""));
@@ -199,7 +199,7 @@ public class NetUtil {
                     // 文件型数据
                     File file = (File) entry.getValue();
                     String fileName = file.getName();
-                    if (!fileName.substring(fileName.length() - 4).equals(".wav")) {
+                    if (!fileName.endsWith(".wav")) {
                         Log.e("filePost", "got unknown file type, name=\"" + fileName + "\"");
                     }
                     String fileType = "audio/wav";
@@ -210,7 +210,7 @@ public class NetUtil {
                     outStream.write(content.getBytes());
 
                     InputStream is = new FileInputStream(file);
-                    byte[] buffer = new byte[1024];
+                    byte[] buffer = new byte[5 * 1024 * 1024];
                     int len = 0;
                     while ((len = is.read(buffer)) != -1) {
                         outStream.write(buffer, 0, len);
@@ -275,11 +275,7 @@ public class NetUtil {
         }
     }
 
-    public static Map filePost(String urlStr, Map<String, Object> args, boolean fixDash, boolean download) {
-        if (!download) {
-            return filePost(urlStr, args, fixDash);
-        }
-
+    public static Map filePost(String urlStr, Map<String, Object> args, boolean fixDash, String downloadName) {
         // 纯下载型文件传输post（multipart/json格式，request参数仅包含普通文本参数，response为单一纯文件）
         HttpURLConnection connection = null;
         String response;
@@ -300,9 +296,10 @@ public class NetUtil {
             connection.setDoInput(true);
             connection.setDoOutput(true);
             connection.setUseCaches(false);
-            connection.setRequestProperty("accept", "*/*");
-            connection.setRequestProperty("connection", "Keep-Alive");
-            connection.setRequestProperty("charset", "utf-8");
+            connection.setRequestProperty("Accept", "*/*");
+            connection.setRequestProperty("Accept-Encoding", "gzip, deflate, br");
+            connection.setRequestProperty("Connection", "Keep-Alive");
+            connection.setRequestProperty("Charset", "utf-8");
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestMethod("POST");
 
@@ -316,20 +313,17 @@ public class NetUtil {
             }
             InputStream in = connection.getInputStream(); // 得到网络返回的正确输入流
             Map<String, List<String>> responseHeader = connection.getHeaderFields();
-            List<String> Content_Disposition = responseHeader.get("Content-Disposition");
-            String fileName = Objects.requireNonNull(responseHeader.get("Content-Disposition")).get(1);
-//            FileOutputStream fileOutput = new FileOutputStream();
-
-            InputStreamReader inputStreamReader = new InputStreamReader(in);
-            BufferedReader reader = new BufferedReader(inputStreamReader);
-            StringBuilder resBuffer = new StringBuilder();
-            String line;
-            while((line=reader.readLine()) != null){
-                resBuffer.append(line).append("\n");
+//            List<String> Content_Disposition = responseHeader.get("Content-Disposition");
+//            String fileName = Objects.requireNonNull(responseHeader.get("Content-Disposition")).get(1);
+            FileOutputStream fileOutput = new FileOutputStream(pathName + downloadName);
+            byte[] buf = new byte[5 * 1024 * 1024]; //分配缓冲区
+            int readNum = 0;
+            while ((readNum = in.read(buf)) >= 0) {
+                fileOutput.write(buf, 0, readNum);
             }
-            response = resBuffer.toString();
-            Log.i("response", response);
-
+            fileOutput.close();
+            in.close();
+            Log.i("response", "file response" + downloadName);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -339,24 +333,12 @@ public class NetUtil {
             }
         }
 
+        Map<String, String> resMap = new HashMap<>();
+        resMap.put("code", String.valueOf(code));
         if (code < 300) {
-            try {
-                Map resMap = (Map) JSONObject.parse(response);
-                resMap.put("code", String.valueOf(code));
-                return resMap;
-            }
-            catch (JSONException je) {
-                Log.e("NetUtil", "JSONException");
-                je.printStackTrace();
-                Map<String, String> resMap = new HashMap<>();
-                resMap.put("code", String.valueOf(code));
-                return resMap;
-            }
-        } else {
-            Map<String, String> errorMap = new HashMap<String, String>();
-            errorMap.put("code", String.valueOf(code));
-            return errorMap;
+            resMap.put("file", pathName + downloadName);
         }
+        return resMap;
     }
 
     public static String getUrlBase() {

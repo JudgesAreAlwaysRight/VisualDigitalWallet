@@ -2,16 +2,22 @@ package com.visualwallet.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
+import com.visualwallet.AddNewTag;
 import com.visualwallet.common.Constant;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -40,6 +46,39 @@ public class DataUtil {
         editor = context.getSharedPreferences(WalletQuery.prefName, Context.MODE_PRIVATE).edit();
         editor.apply();
         Log.i("init data", "init share");
+    }
+
+    public static String resolveAudioUri(Context context, Uri uri) {
+        final String docId = DocumentsContract.getDocumentId(uri);
+        final String[] split = docId.split(":");
+        Uri contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        final String selection = "_id=?";
+        final String[] selectionArgs = new String[] {
+                split[1]
+        };
+        return DataUtil.getDataColumn(context, contentUri, selection, selectionArgs);
+    }
+
+    private static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
+
+        Cursor cursor = null;
+        final String column = "_data";
+        final String[] projection = {
+                column
+        };
+
+        try {
+            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
+                    null);
+            if (cursor != null && cursor.moveToFirst()) {
+                final int index = cursor.getColumnIndexOrThrow(column);
+                return cursor.getString(index);
+            }
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return null;
     }
 
     public static int[][] getS0(int k, int n) {

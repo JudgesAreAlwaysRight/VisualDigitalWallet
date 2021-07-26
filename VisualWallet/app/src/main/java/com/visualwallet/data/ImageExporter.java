@@ -29,6 +29,14 @@ public class ImageExporter {
         return true;
     }
 
+    public static boolean export(Context context, String walName, int[][][] bitImgList, int audioNum) {
+        int newLen = bitImgList.length - audioNum;
+        int[][][] newBitImgList = new int[newLen][][];
+        if (newLen >= 0)
+            System.arraycopy(bitImgList, audioNum, newBitImgList, 0, bitImgList.length - audioNum);
+        return export(context, walName, newBitImgList);
+    }
+
     public static Bitmap bitMat2Bitmap(int[][] imgBitMat) {
         return bitMat2Bitmap(imgBitMat, 8, 16);
     }

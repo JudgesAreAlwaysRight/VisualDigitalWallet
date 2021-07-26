@@ -380,4 +380,13 @@
         android:background="@drawable/commit"
         android:translationZ="15dp" />
 
+    <Button
+        android:id="@+id/testButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:enabled="false"
+        android:text="测试专用"
+        android:visibility="invisible" />
+
 </RelativeLayout>
