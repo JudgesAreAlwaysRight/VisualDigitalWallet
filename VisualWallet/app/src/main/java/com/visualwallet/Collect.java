@@ -499,17 +499,25 @@ public class Collect extends AppCompatActivity implements View.OnClickListener {
                     picUpdate(wallet.getId(), Objects.requireNonNull(res.get("secretKey")).toString());
 
                     // 显示找回的私钥
-                    AlertDialog.Builder alertdialogbuilder = new AlertDialog.Builder(Collect.this);
-                    alertdialogbuilder.setMessage("私钥已找回：\n0x" + secretKey);
-                    alertdialogbuilder.setPositiveButton("确定", null);
+                    AlertDialog.Builder adBuilder = new AlertDialog.Builder(Collect.this);
+                    View adView = View.inflate(Collect.this, R.layout.alert_dialog, null);
+                    adBuilder.setView(adView);
+                    adBuilder.setCancelable(true);
+                    TextView msg= (TextView) adView.findViewById(R.id.msg);
+                    ImageButton cfBtn = adView.findViewById(R.id.btn_comfirm);
+                    cfBtn.setOnClickListener(v -> {
+                        finish();
+                    });
+                    msg.setText(String.format("私钥已找回：\n0x%s", secretKey));
+                    ImageButton copyBtn = adView.findViewById(R.id.btn_copy);
                     String finalSecretKey = secretKey;
-                    alertdialogbuilder.setNeutralButton("复制到剪贴板", (dialog, which) -> {
+                    copyBtn.setOnClickListener(v -> {
                         ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                         ClipData mClipData = ClipData.newPlainText("私钥", finalSecretKey);
                         cm.setPrimaryClip(mClipData);
                         Toast.makeText(Collect.this, "复制成功", Toast.LENGTH_LONG).show();
                     });
-                    alertdialogbuilder.create().show();
+                    adBuilder.create().show();
                     Looper.loop();
 
                     return;
