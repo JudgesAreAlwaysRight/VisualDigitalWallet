@@ -1,81 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/ant_title"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginBottom="20dp"
-        android:gravity="left"
-        android:text="添加账户"
-        android:textColor="@color/black80"
-        android:textSize="34sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center_vertical">
+
+        <ImageButton
+            android:id="@+id/ret_btn"
+            android:layout_width="20dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/ret_btn"
+            android:onClick="onReturnClick" />
+
+        <TextView
+            android:id="@+id/ant_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_toEndOf="@+id/ret_btn"
+            android:text="添加账户"
+            android:textColor="@color/black80"
+            android:textSize="34sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="40dp"
-
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="20dp"
         android:background="@drawable/half_ridius_rect_blue"
-        android:translationZ="5dp" />
+        android:gravity="center_horizontal"
+        android:translationZ="5dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="360dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="180dp"
-        android:layout_marginEnd="40dp"
-        android:background="@drawable/half_ridius_rect"
-        android:elevation="5dp"
-        android:rotationX="180"
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            app:srcCompat="@drawable/add_write" />
 
-        android:translationZ="5dp" >
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/half_ridius_rect"
-            android:elevation="5dp"
-            android:translationZ="-3dp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="380dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="180dp"
-        android:layout_marginEnd="40dp"
-        android:background="@drawable/half_ridius_rect"
-        android:elevation="5dp"
-        android:rotationX="180"
-        android:translationZ="3dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="180dp"
-        android:layout_marginEnd="40dp"
-        android:background="@drawable/half_ridius_rect"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="160dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/half_ridius_rect_m"
         android:elevation="5dp"
         android:rotationX="180"
         android:translationZ="1dp" />
+
+    <RelativeLayout
+        android:id="@+id/ant_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="190dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginStart="40dp"
+        android:translationZ="10dp">
+
+        <TextView
+            android:id="@+id/ant_info_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/add_acc_name"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/ant_info_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/ant_info_tag"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@id/ant_info_tag"
+            android:background="@drawable/add_new_input"
+            android:elevation="5dp"
+            android:gravity="center_vertical"
+            android:hint="输入备注信息"
+            android:lines="1"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textColor="#ffffff"
+            android:textSize="16sp" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/ant_pk"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ant_info"
-        android:layout_marginEnd="50dp"
-        android:layout_marginStart="50dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginStart="40dp"
         android:translationZ="10dp">
 
         <TextView
@@ -84,7 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="@string/add_acc_key"
-            android:textSize="22sp" />
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/ant_pk_input"
@@ -94,8 +130,9 @@
             android:layout_marginTop="10dp"
             android:layout_toEndOf="@id/ant_pk_tag"
             android:background="@drawable/add_new_input"
+            android:elevation="5dp"
             android:gravity="center_vertical"
-            android:hint="在这输入私钥"
+            android:hint="输入私钥"
             android:lines="1"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -108,8 +145,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ant_pk"
-        android:layout_marginEnd="50dp"
-        android:layout_marginStart="50dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginStart="40dp"
         android:translationZ="10dp">
 
         <TextView
@@ -118,7 +155,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="@string/add_acc_addr"
-            android:textSize="22sp" />
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/ant_address_input"
@@ -128,8 +165,9 @@
             android:layout_marginTop="10dp"
             android:layout_toEndOf="@id/ant_address_tag"
             android:background="@drawable/add_new_input"
+            android:elevation="5dp"
             android:gravity="center_vertical"
-            android:hint="在这输入地址"
+            android:hint="输入账户地址"
             android:lines="1"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -142,8 +180,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ant_address"
-        android:layout_marginEnd="50dp"
-        android:layout_marginStart="50dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginStart="40dp"
         android:translationZ="10dp">
 
         <TextView
@@ -153,7 +191,7 @@
             android:layout_margin="10dp"
 
             android:text="@string/add_acc_type"
-            android:textSize="22sp" />
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/ant_type_input"
@@ -163,42 +201,9 @@
             android:layout_marginTop="10dp"
             android:layout_toEndOf="@id/ant_type_tag"
             android:background="@drawable/add_new_input"
+            android:elevation="5dp"
             android:gravity="center_vertical"
-            android:hint="在这输入币种类型"
-            android:lines="1"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:textColor="#ffffff"
-            android:textSize="16sp" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/ant_info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
-        android:layout_marginEnd="50dp"
-        android:layout_marginStart="50dp"
-        android:translationZ="10dp">
-
-        <TextView
-            android:id="@+id/ant_info_tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="@string/add_acc_name"
-            android:textSize="22sp" />
-
-        <EditText
-            android:id="@+id/ant_info_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/ant_info_tag"
-            android:layout_marginTop="10dp"
-            android:layout_toEndOf="@id/ant_info_tag"
-            android:background="@drawable/add_new_input"
-            android:gravity="center_vertical"
-            android:hint="在这输入备注信息"
+            android:hint="输入币种类型"
             android:lines="1"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -208,14 +213,11 @@
 
     <RelativeLayout
         android:id="@+id/ant_kn"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/ant_type"
-        android:layout_centerInParent="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_below="@id/ant_type"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
         android:translationZ="10dp">
 
         <TextView
@@ -225,8 +227,8 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="0dp"
-            android:text="分存为"
-            android:textSize="16sp" />
+            android:text="分存总数："
+            android:textSize="18sp" />
 
         <Spinner
             android:id="@+id/ant_n_spinner"
@@ -235,9 +237,12 @@
             android:layout_alignBaseline="@id/ant_n_tag"
             android:layout_toEndOf="@id/ant_n_tag"
             android:background="@drawable/add_new_spin"
+            android:spinnerMode="dropdown"
+            android:dropDownWidth="40dp"
+            android:popupBackground="@drawable/add_new_spin"
+            android:elevation="5dp"
             android:entries="@array/valueN"
             android:gravity="center_vertical"
-            android:spinnerMode="dialog"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:theme="@style/Spinner" />
@@ -246,52 +251,53 @@
             android:id="@+id/ant_k_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="0dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp"
             android:layout_toEndOf="@id/ant_n_spinner"
-            android:text="份，收集"
-            android:textSize="16sp" />
+            android:text="找回需要："
+            android:textSize="18sp" />
 
         <Spinner
             android:id="@+id/ant_k_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/ant_k_tag"
-            android:layout_marginTop="10dp"
             android:layout_toEndOf="@id/ant_k_tag"
             android:background="@drawable/add_new_spin"
+            android:elevation="5dp"
             android:entries="@array/valueK"
             android:gravity="center_vertical"
-            android:spinnerMode="dialog"
+            android:spinnerMode="dropdown"
+            android:dropDownWidth="40dp"
+            android:popupBackground="@drawable/add_new_spin"
             android:textColor="#ffffff"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:theme="@style/Spinner" />
 
-        <TextView
-            android:id="@+id/ant_kn_tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="10dp"
-            android:layout_toEndOf="@id/ant_k_spinner"
-            android:text="份还原"
-            android:textSize="16sp" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/ant_fa"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ant_kn"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:translationZ="10dp">
 
         <TextView
             android:id="@+id/ant_f_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/ant_k_spinner"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp"
-            android:text="其中"
-            android:textSize="16sp" />
+            android:text="固定分存："
+            android:textSize="18sp" />
 
         <Spinner
             android:id="@+id/ant_f_spinner"
@@ -301,37 +307,27 @@
             android:layout_marginTop="10dp"
             android:layout_toEndOf="@id/ant_f_tag"
             android:background="@drawable/add_new_spin"
+            android:elevation="5dp"
             android:entries="@array/valueF"
             android:gravity="center_vertical"
-            android:spinnerMode="dialog"
+            android:spinnerMode="dropdown"
+            android:dropDownWidth="40dp"
+            android:popupBackground="@drawable/add_new_spin"
             android:textColor="#ffffff"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:theme="@style/Spinner" />
-
-        <TextView
-            android:id="@+id/ant_fe_tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/ant_f_tag"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_toEndOf="@id/ant_f_spinner"
-            android:text="份固定，其余动态更新"
-            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/ant_file_tag1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/ant_f_spinner"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp"
-            android:text="其中前"
-            android:textSize="16sp" />
+            android:layout_toEndOf="@id/ant_f_spinner"
+            android:text="音频分存："
+            android:textSize="18sp" />
 
         <Spinner
             android:id="@+id/ant_file_spinner"
@@ -341,40 +337,57 @@
             android:layout_marginTop="10dp"
             android:layout_toEndOf="@id/ant_file_tag1"
             android:background="@drawable/add_new_spin"
+            android:elevation="5dp"
             android:entries="@array/valueFile"
             android:gravity="center_vertical"
-            android:spinnerMode="dialog"
+            android:spinnerMode="dropdown"
+            android:dropDownWidth="40dp"
+            android:popupBackground="@drawable/add_new_spin"
             android:textColor="#ffffff"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:theme="@style/Spinner" />
 
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/ant_f"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ant_fa"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:gravity="center_horizontal"
+        android:translationZ="10dp">
+
         <TextView
-            android:id="@+id/ant_file_tag2"
+            android:id="@+id/ant_file_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/ant_file_tag1"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp"
-            android:layout_toEndOf="@id/ant_file_spinner"
-            android:text="份编码到音频"
+            android:text="选择本地音频文件："
             android:textSize="16sp" />
 
         <ImageButton
             android:id="@+id/ant_file"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignTop="@id/ant_file_tag1"
-            android:layout_toEndOf="@id/ant_file_tag2"
-            android:background="@drawable/commit"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignTop="@id/ant_file_tag"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/ant_file_tag"
+            android:background="@drawable/photo"
             android:translationZ="15dp" />
+
     </RelativeLayout>
 
     <ImageButton
         android:id="@+id/ant_submit"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:layout_marginBottom="40dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:background="@drawable/commit"

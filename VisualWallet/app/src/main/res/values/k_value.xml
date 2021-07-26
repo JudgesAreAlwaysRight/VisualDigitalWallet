@@ -22,10 +22,4 @@
         <item>0</item>
         <item>1</item>
     </string-array>
-    <style name="Spinner" parent="Widget.AppCompat.Light.DropDownItem.Spinner">
-        <item name="android:paddingStart">2dp</item>
-        <item name="android:paddingEnd">2dp</item>
-        <item name="android:textSize">20sp</item>
-        <item name="android:textColor">#4B4B4B</item>
-    </style>
 </resources>

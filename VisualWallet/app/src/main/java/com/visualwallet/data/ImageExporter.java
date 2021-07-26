@@ -31,10 +31,12 @@ public class ImageExporter {
 
     public static boolean export(Context context, String walName, int[][][] bitImgList, int audioNum) {
         int newLen = bitImgList.length - audioNum;
-        int[][][] newBitImgList = new int[newLen][][];
-        if (newLen >= 0)
+        if (newLen >= 0) {
+            int[][][] newBitImgList = new int[newLen][][];
             System.arraycopy(bitImgList, audioNum, newBitImgList, 0, bitImgList.length - audioNum);
-        return export(context, walName, newBitImgList);
+            return export(context, walName, newBitImgList);
+        }
+        return bitImgList.length == 0;
     }
 
     public static Bitmap bitMat2Bitmap(int[][] imgBitMat) {

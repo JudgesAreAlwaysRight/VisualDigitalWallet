@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -171,19 +172,19 @@ public class AddNewTag extends AppCompatActivity {
                         if (id != null) {
                             wallet.setId(id);
                             walletQuery.addWallet(wallet);  // 数据接口调用
-                            ImageExporter.export(AddNewTag.this, name, split);  // 调用图像模块，直接全部保存到本地
+                            ImageExporter.export(AddNewTag.this, name, split, fileNum);  // 调用图像模块，直接全部保存到本地
                             downloadAudio(); // 下载音频
                         } else {
                             Looper.prepare();
                             Toast.makeText(AddNewTag.this, logInfo + " 无法获取id", Toast.LENGTH_LONG).show();
                             Looper.loop();
                         }
-                        finish();
                     });
                     splitRequest.start();
                 })
                 .onDenied(permissions -> Toast.makeText(AddNewTag.this, "没有权限无法保存分存图片", Toast.LENGTH_LONG).show())
                 .start();
+        finish();
     }
 
     private void onFileClick() {
@@ -191,6 +192,10 @@ public class AddNewTag extends AppCompatActivity {
         intent.setType("audio/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         startActivityForResult(intent, 1);
+    }
+
+    public void onReturnClick(View v) {
+        finish();
     }
 
     @Override

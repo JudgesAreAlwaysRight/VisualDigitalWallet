@@ -48,7 +48,7 @@ public class WaveBallProgress extends View {
     /**
      * 波浪颜色
      */
-    private final int mWaveColor = 0x880000aa;
+    private final int mWaveColor = 0xaa5f96f2;
     /**
      * 波浪A的偏移
      */

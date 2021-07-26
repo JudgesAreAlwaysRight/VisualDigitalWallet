@@ -388,6 +388,9 @@ public class NetUtil {
     public static int[][][] arrayJson2java(JSONArray jsonArray) {
         if (jsonArray == null)
             return null;
+        if (jsonArray.size() == 0) {
+            return new int[][][]{};
+        }
         JSONArray mat = (JSONArray) jsonArray.get(0);
         JSONArray line = (JSONArray) mat.get(0);
         int[][][] arr = new int[jsonArray.size()][mat.size()][line.size()];

@@ -8,15 +8,21 @@
         <!-- Status Bar -->
 <!--        <item name="android:windowTranslucentStatus">true</item>-->
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">@color/black20</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/black40</item>
         <!-- Customize your theme here. -->
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowNoTitle">true</item>
+<!--        <item name="android:windowIsTranslucent">true</item>-->
+<!--        <item name="android:windowNoTitle">true</item>-->
         <item name="android:windowBackground">@color/bkg_gray</item>
+        <item name="android:navigationBarColor">@color/on_blue</item>
+    </style>
+    <style name="Spinner" parent="Widget.AppCompat.Light.DropDownItem.Spinner">
+        <item name="android:paddingStart">2dp</item>
+        <item name="android:paddingEnd">2dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/bkg_gray</item>
     </style>
     <style name="itemSpinnerStyle" parent="@android:style/Widget.TextView.SpinnerItem">
         <item name="android:textColor">@color/white</item>
         <item name="android:padding">8dp</item>
-
     </style>
 </resources>

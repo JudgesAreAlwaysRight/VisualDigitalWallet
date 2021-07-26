@@ -17,4 +17,5 @@
     <color name="darkBlue">#1D2450</color>
     <color name="red_warning">#DD0000</color>
     <color name="bkg_gray">#F5F5F5</color>
+    <color name="wave">#880000aa</color>
 </resources>

@@ -4,16 +4,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <RelativeLayout
         android:id="@+id/collect_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="40dp"
-        android:gravity="center|left"
-        android:text="私钥解锁"
-        android:textColor="@color/black80"
-        android:textSize="34sp" />
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center_vertical">
+
+        <ImageButton
+            android:id="@+id/ret_btn"
+            android:layout_width="20dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/ret_btn"
+            android:onClick="onReturnClick" />
+
+        <TextView
+            android:id="@+id/ant_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_toEndOf="@+id/ret_btn"
+            android:text="私钥找回"
+            android:textColor="@color/black80"
+            android:textSize="34sp" />
+
+    </RelativeLayout>
 
     <ImageView
         android:id="@+id/fail_alert"
@@ -24,8 +48,19 @@
         android:layout_marginTop="0dp"
         android:background="@drawable/fail_alert"
         android:gravity="center_horizontal"
+        android:translationZ="2dp"
         android:visibility="invisible" />
 
+    <ImageView
+        android:id="@+id/progress_circle"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_below="@id/collect_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/prog_circle"
+        android:gravity="center_horizontal"
+        android:translationZ="1dp" />
 
     <LinearLayout
         android:id="@+id/progress_layout"
@@ -39,8 +74,8 @@
             android:id="@+id/wave_progress"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:background="@color/bkg_gray"
-            />
+            android:background="@color/bkg_gray" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -57,14 +92,14 @@
             android:layout_height="80dp"
             android:gravity="center"
             android:text="0%"
-            android:textColor="@color/on_blue"
+            android:textColor="@color/main_blue"
             android:textSize="60sp" />
     </LinearLayout>
 
     <ScrollView
         android:id="@+id/info_scroll"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="160dp"
         android:layout_below="@id/progress_layout"
         android:layout_alignParentStart="true"
         android:layout_marginTop="20dp"
@@ -119,7 +154,7 @@
             android:layout_toRightOf="@id/scan"
             android:background="@drawable/blueteeth"
             android:text="蓝牙传输"
-            android:textSize="20dp" />
+            android:textSize="20sp" />
 
     </RelativeLayout>
 
@@ -129,8 +164,8 @@
         android:layout_height="80dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="40dp"
         android:background="@drawable/submit"
-        android:scrollbarAlwaysDrawHorizontalTrack="true"
         android:visibility="invisible">
     </ImageButton>
 

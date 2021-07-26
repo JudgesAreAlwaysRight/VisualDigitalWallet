@@ -10,10 +10,12 @@ public class CollectRequest extends NetRequest {
     private static final String subUrl = "/validate";
     private static final String reqFlag = "validQR";
     private int id;
+    private int hasAudio;
+    private String type;
     private List<Integer> index;
     private List<int[][]> keys;
 
-    public CollectRequest(int id, List<Integer> index, List<int[][]> keys) {
+    public CollectRequest(int id, List<Integer> index, List<int[][]> keys, int hasAudio) {
 
         if (index.size() != keys.size()) return;
 
@@ -22,6 +24,8 @@ public class CollectRequest extends NetRequest {
         this.index.addAll(index);
         this.keys = new ArrayList<>();
         this.keys.addAll(keys);
+        this.hasAudio = hasAudio;
+        this.type = ".wav";
     }
 
     @Override
@@ -30,6 +34,8 @@ public class CollectRequest extends NetRequest {
 
         args.put("reqFlag", reqFlag);
         args.put("id", id);
+        args.put("hasAudio", hasAudio);
+        args.put("type", type);
         args.put("index", index);
         args.put("keys", keys);
 

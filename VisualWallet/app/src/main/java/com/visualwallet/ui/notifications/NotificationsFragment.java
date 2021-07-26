@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +72,7 @@ public class NotificationsFragment extends Fragment {
 
     private void addCtrl(Wallet w) {
         Button newBtn = new Button(getActivity());
-        newBtn.setText(String.format("%s\t\t\t\t\t\t%s (%d/%d-%d)", w.getWalName(), w.getCurType(), w.getCoeK(), w.getCoeN(), w.getCoeF()));
+        newBtn.setText(String.format("%s\t\t\t\t\t%s", w.getWalName(), w.getCurType()));
         newBtn.setTextSize(20);
         newBtn.setTextColor(Color.WHITE);
         newBtn.setBackgroundResource(R.drawable.button_account);
@@ -83,21 +82,24 @@ public class NotificationsFragment extends Fragment {
             startActivityForResult(intent, Constant.REQUEST_DEL_ACC);
         });
         newBtn.setWidth(960);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(20,8,20,8);
+        newBtn.setElevation(5);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(20,10,20,10);
         newBtn.setLayoutParams(layoutParams);
         accountLL.addView(newBtn);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void onCheckChanged(CompoundButton buttonView, boolean isChecked) {
-        if (!buttonView.isPressed()) {
-            return;
-        }
-        if ((Constant.appMode == 1) != isChecked) {
-            Constant.appMode = (isChecked ? 1 : 0);
-            WalletQuery.initPrefName();
-            refreshScrollView();
+        if (buttonView.isPressed()) {
+            if ((Constant.appMode == 1) != isChecked) {
+                Constant.appMode = (isChecked ? 1 : 0);
+                modeSwitch.setText(isChecked ? "在线模式" : "本地模式");
+                WalletQuery.initPrefName();
+                refreshScrollView();
+            }
         }
     }
 }

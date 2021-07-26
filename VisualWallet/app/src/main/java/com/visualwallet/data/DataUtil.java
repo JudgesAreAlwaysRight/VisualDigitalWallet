@@ -49,14 +49,20 @@ public class DataUtil {
     }
 
     public static String resolveAudioUri(Context context, Uri uri) {
-        final String docId = DocumentsContract.getDocumentId(uri);
-        final String[] split = docId.split(":");
-        Uri contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        final String selection = "_id=?";
-        final String[] selectionArgs = new String[] {
-                split[1]
-        };
-        return DataUtil.getDataColumn(context, contentUri, selection, selectionArgs);
+        if (uri.getAuthority().equals("com.huawei.filemanager.share.fileprovider")) {
+            // 文件管理器
+            return uri.getPath().substring(5);
+        } else if (uri.getAuthority().equals("com.android.providers.media.documents")) {
+            // 媒体选择器
+            final String docId = DocumentsContract.getDocumentId(uri);
+            final String[] split = docId.split(":");
+            Uri contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+            final String selection = "_id=?";
+            final String[] selectionArgs = new String[] {
+                    split[1]
+            };
+            return DataUtil.getDataColumn(context, contentUri, selection, selectionArgs);
+        } else return null;
     }
 
     private static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
@@ -64,12 +70,11 @@ public class DataUtil {
         Cursor cursor = null;
         final String column = "_data";
         final String[] projection = {
-                column
+            column
         };
 
         try {
-            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
-                    null);
+            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
             if (cursor != null && cursor.moveToFirst()) {
                 final int index = cursor.getColumnIndexOrThrow(column);
                 return cursor.getString(index);

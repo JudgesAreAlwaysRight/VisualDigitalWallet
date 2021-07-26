@@ -6,110 +6,150 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/account_title"
-        android:text="@string/accountDetail"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/topPanel"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginBottom="20dp"
-        android:gravity="left"
-        android:textColor="@color/black80"
-        android:textSize="34sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center_vertical"
+        android:translationZ="15dp">
+
+        <ImageButton
+            android:id="@+id/ret_btn"
+            android:layout_width="20dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/ret_btn"
+            android:onClick="onReturnClick" />
+
+        <TextView
+            android:id="@+id/account_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_toEndOf="@+id/ret_btn"
+            android:text="@string/accountDetail"
+            android:textColor="@color/black80"
+            android:textSize="34sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/blue_header"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="40dp"
-
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="120dp"
+        android:layout_marginEnd="20dp"
         android:background="@drawable/half_ridius_rect_blue"
-        android:translationZ="5dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="360dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="180dp"
-        android:layout_marginEnd="40dp"
-        android:background="@drawable/half_ridius_rect"
-        android:elevation="5dp"
-        android:rotationX="180"
-
-        android:translationZ="5dp" />
+        android:orientation="horizontal" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="380dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="180dp"
-        android:layout_marginEnd="40dp"
-        android:background="@drawable/half_ridius_rect"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_below="@+id/blue_header"
+        android:background="@drawable/half_ridius_rect_m"
         android:elevation="5dp"
-        android:rotationX="180"
-        android:translationZ="3dp" />
+        android:rotationX="180" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="180dp"
-        android:layout_marginEnd="40dp"
-        android:background="@drawable/half_ridius_rect"
-        android:elevation="5dp"
-        android:rotationX="180"
-        android:translationZ="1dp" />
-    <LinearLayout
-        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/account_title"
+        android:layout_below="@+id/topPanel"
         android:background="@drawable/half_ridius_rect"
         android:elevation="5dp"
-        android:translationZ="-1dp"/>
+        android:translationZ="-10dp"/>
+
+    <TextView
+        android:id="@+id/account_type2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="70dp"
+        android:layout_below="@id/topPanel"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="34sp"
+        android:translationZ="10dp" />
+
+    <RelativeLayout
+        android:id="@+id/account_balance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topPanel"
+        android:stateListAnimator="@null"
+        android:layout_marginTop="150dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:translationZ="10dp">
+
+        <TextView
+            android:id="@+id/account_balance01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp"
+            android:text="@string/accountName"
+            android:textColor="@color/black80"
+            android:textSize="18sp" />
+        <TextView
+            android:id="@+id/account_balance02"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="70dp"
+            android:layout_toEndOf="@id/account_balance01"
+            android:textColor="@color/black80"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/account_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/account_balance"
-
         android:stateListAnimator="@null"
-
         android:layout_marginTop="30dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
         android:translationZ="10dp">
-
 
         <TextView
             android:id="@+id/account_address01"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp"
             android:text="@string/publicAddress"
             android:textColor="@color/black80"
-            android:textSize="18sp">
-
-        </TextView>
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/account_address02"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="70dp"
+            android:layout_marginEnd="70dp"
             android:layout_toEndOf="@id/account_address01"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/black80"
-            android:textSize="18sp"
-            tools:text="@tools:sample/date/day_of_week">
-
-        </TextView>
-
+            android:textSize="18sp" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -117,121 +157,133 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/account_address"
-
-        android:stateListAnimator="@null"
-
         android:layout_marginTop="30dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
         android:translationZ="10dp">
-
 
         <TextView
             android:id="@+id/account_type01"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp"
             android:text="@string/curType"
             android:textColor="@color/black80"
             android:textSize="18sp">
-
         </TextView>
 
         <TextView
             android:id="@+id/account_type02"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="70dp"
+            android:layout_marginEnd="70dp"
             android:layout_toEndOf="@id/account_type01"
             android:textColor="@color/black80"
-            android:textSize="18sp">
-
-        </TextView>
-
+            android:textSize="18sp" />
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/account_balance"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/account_title"
-        android:stateListAnimator="@null"
-        android:layout_marginTop="160dp"
-        android:translationZ="10dp">
-
-
-        <TextView
-            android:id="@+id/account_balance01"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="20dp"
-            android:text="@string/accountName"
-            android:textColor="@color/black80"
-            android:textSize="18sp">
-
-        </TextView>
-
-        <TextView
-            android:id="@+id/account_balance02"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="70dp"
-            android:layout_toEndOf="@id/account_balance01"
-            android:textColor="@color/black80"
-            android:textSize="18sp">
-
-        </TextView>
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/layout_collect"
+        android:id="@+id/account_n"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/account_type"
         android:layout_marginTop="30dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
         android:translationZ="10dp">
 
-        <Button
-            android:id="@+id/get_secret"
+        <TextView
+            android:id="@+id/account_n1"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="0dp"
-            android:background="@drawable/buttom_press"
-            android:text="获取私钥"
-            android:textSize="16sp"/>
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:text="● 分存总数："
+            android:textColor="@color/black80"
+            android:textSize="18sp">
+        </TextView>
+
+        <TextView
+            android:id="@+id/account_n2"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="140dp"
+            android:textColor="@color/main_blue"
+            android:textSize="18sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/account_k"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/account_n"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:translationZ="10dp">
+        <TextView
+            android:id="@+id/account_k1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:text="● 门限数："
+            android:textColor="@color/black80"
+            android:textSize="18sp">
+        </TextView>
+
+        <TextView
+            android:id="@+id/account_k2"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="140dp"
+            android:textColor="@color/main_blue"
+            android:textSize="18sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/account_ff"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/account_k"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:translationZ="10dp">
+
+        <TextView
+            android:id="@+id/account_f1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:text="● 固定分存数："
+            android:textColor="@color/black80"
+            android:textSize="18sp">
+        </TextView>
+
+        <TextView
+            android:id="@+id/account_f2"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="140dp"
+            android:textColor="@color/main_blue"
+            android:textSize="18sp" />
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/account_type2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="70dp"
-        android:layout_marginTop="120dp"
-        android:layout_marginEnd="70dp"
-        android:textAlignment="center"
-        android:textColor="@android:color/white"
-        android:textSize="34sp"
-        android:translationZ="10dp">
-    </TextView>
-
-    <Button
-        android:id="@+id/delete"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+    <ImageButton
+        android:id="@+id/get_secret"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="60dp"
+        android:layout_centerHorizontal="true"
         android:layout_marginBottom="60dp"
-        android:background="@drawable/sub_btn"
-        android:textColor="@color/black80"
-        android:textSize="16sp"
-        android:translationZ="10dp"
-        android:layout_centerHorizontal="true"/>
+        android:background="@drawable/submit"
+        android:text="获取私钥"
+        android:textSize="16sp" />
 
 </RelativeLayout>
