@@ -217,6 +217,7 @@ def update(request):
                                 print("The Maximum N is 5!")
                 else:
                     print("The Minimum N is 2!")
+            target.save()
             for i in range(len(update_res)):
                 update_res[i] = update_res[i].tolist()
             res = {"flag": flag, "updated": update_res}
