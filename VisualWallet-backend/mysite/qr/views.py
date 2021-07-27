@@ -153,7 +153,7 @@ def validate(request):
                             carrier_matrix.append(carryFetch(target.carry4))
             # start2 = time.time()
             if hasAudio == 1:
-                audioname = "v_" + str(index) + pos
+                audioname = "d_" + str(index) + pos
             else:
                 audioname = ""
             sk, text = api2(skhash, splitNo, data_matrix, carrier_matrix, length, width, c1, c2, c3, coeK, coeN, fixed, date_time, audioname)
@@ -265,7 +265,7 @@ def download(request):
         sheet = json.loads(body.decode('utf-8'))
         filename = sheet['id']
         pos = sheet['type']
-        filename = 'g_' + filename + pos
+        filename = 'g_' + str(filename) + pos
         file = open(os.path.join(AUDIOPATH, filename), "rb")
         response = FileResponse(file)
 

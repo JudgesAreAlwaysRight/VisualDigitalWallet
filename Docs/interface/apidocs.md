@@ -7,7 +7,7 @@
 | :-----| :----- | :----- | :----- |
 | reqFlag| str| \ | fileUpload|
 | id| int| \ | 仅mode为1或2时有用|
-|mode|int|\ | 0:generate 1:detect 2:validate|
+|mode|int|\ | 0:generate 1:detect&validate|
 |type|str| \ | 文件格式|
 |file|file| \ | 文件|
 <br />
