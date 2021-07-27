@@ -4,6 +4,8 @@ import android.content.Context;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.visualwallet.data.DataUtil;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +18,7 @@ public class SplitRequest extends NetRequest {
     private final int coeK;
     private final int coeN;
     private final int coeF;
+    private final String seed;
     private final int needAudio;
     private final String audioName;
     private final String type;
@@ -30,6 +33,7 @@ public class SplitRequest extends NetRequest {
         this.audioName = audioName;
         this.type = type;
         this.curType = curType;
+        this.seed = DataUtil.getRandomString(8);
     }
 
     @Override
@@ -38,6 +42,7 @@ public class SplitRequest extends NetRequest {
 
         args.put("reqFlag", reqFlag);
         args.put("secretKey", secretKey);
+        args.put("seed", seed);
         args.put("coeK", coeK);
         args.put("coeN", coeN);
         args.put("fixed_num", coeF);

@@ -1,6 +1,9 @@
 package com.visualwallet.ui.notifications;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -13,6 +16,8 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -20,10 +25,15 @@ import androidx.fragment.app.Fragment;
 
 import com.visualwallet.Account;
 import com.visualwallet.AddNewTag;
+import com.visualwallet.Collect;
+import com.visualwallet.MainActivity;
 import com.visualwallet.R;
 import com.visualwallet.common.Constant;
+import com.visualwallet.data.DataUtil;
 import com.visualwallet.data.WalletQuery;
 import com.visualwallet.entity.Wallet;
+
+import java.io.IOException;
 
 public class NotificationsFragment extends Fragment {
 
@@ -70,25 +80,46 @@ public class NotificationsFragment extends Fragment {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void addCtrl(Wallet w) {
-        Button newBtn = new Button(getActivity());
-        newBtn.setText(String.format("%s\t\t\t\t\t%s", w.getWalName(), w.getCurType()));
-        newBtn.setTextSize(20);
-        newBtn.setTextColor(Color.WHITE);
-        newBtn.setBackgroundResource(R.drawable.button_account);
-        newBtn.setOnClickListener(v -> {
+        View accView = View.inflate(getContext(), R.layout.layout_account_item, null);
+        TextView nameView = accView.findViewById(R.id.accName);
+        nameView.setText(w.getWalName());
+        TextView typeView = accView.findViewById(R.id.accType);
+        typeView.setText(w.getCurType());
+        ImageButton delBtn = accView.findViewById(R.id.accDel);
+        delBtn.setOnClickListener(v-> {
+            WalletQuery query = new WalletQuery(getActivity());
+            query.deleteWallet(w.getId());
+            refreshScrollView();
+        });
+        accView.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), Account.class);
             intent.putExtra(Constant.WALLET_ARG, w);
             startActivityForResult(intent, Constant.REQUEST_DEL_ACC);
         });
-        newBtn.setWidth(960);
-        newBtn.setElevation(5);
+        accView.setOnLongClickListener( v-> {
+            String accStr = null;
+            try {
+                accStr = DataUtil.serialize(w);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (accStr != null) {
+                ClipboardManager cm = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData mClipData = ClipData.newPlainText("Keycrux账户序列码", accStr);
+                cm.setPrimaryClip(mClipData);
+                Toast.makeText(getContext(), "账户序列码已复制到剪贴板", Toast.LENGTH_LONG).show();
+                return true;
+            }
+            return false;
+        });
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(20,10,20,10);
-        newBtn.setLayoutParams(layoutParams);
-        accountLL.addView(newBtn);
+        layoutParams.setMargins(20,20,20,20);
+        accView.setLayoutParams(layoutParams);
+        accountLL.addView(accView);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
