@@ -22,12 +22,11 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class NetUtil {
 
-    private static String urlBase;
-    private static HashMap<Character, String> hex2bin;
+    private static final String urlBase;
+    private static final HashMap<Character, String> hex2bin;
 
     static {
         urlBase = Constant.protocol

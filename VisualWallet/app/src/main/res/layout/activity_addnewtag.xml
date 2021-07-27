@@ -41,6 +41,32 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <RelativeLayout
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:onClick="onImpClick">
+
+            <ImageButton
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/imp_tag"
+                android:background="@drawable/imp" />
+
+            <TextView
+                android:id="@+id/imp_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:text="剪贴板\n  导入"
+                android:textColor="@color/main_blue"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
     </RelativeLayout>
 
     <LinearLayout

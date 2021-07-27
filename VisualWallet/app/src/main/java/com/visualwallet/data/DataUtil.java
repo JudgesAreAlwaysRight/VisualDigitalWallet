@@ -24,6 +24,7 @@ import java.io.ObjectOutputStream;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class DataUtil {
 
@@ -58,7 +59,7 @@ public class DataUtil {
             final String[] split = docId.split(":");
             Uri contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
             final String selection = "_id=?";
-            final String[] selectionArgs = new String[] {
+            final String[] selectionArgs = new String[]{
                     split[1]
             };
             return DataUtil.getDataColumn(context, contentUri, selection, selectionArgs);
@@ -70,7 +71,7 @@ public class DataUtil {
         Cursor cursor = null;
         final String column = "_data";
         final String[] projection = {
-            column
+                column
         };
 
         try {
@@ -84,6 +85,17 @@ public class DataUtil {
                 cursor.close();
         }
         return null;
+    }
+
+    public static String getRandomString(int length) {
+        String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            int number = random.nextInt(str.length());
+            sb.append(str.charAt(number));
+        }
+        return sb.toString();
     }
 
     public static int[][] getS0(int k, int n) {

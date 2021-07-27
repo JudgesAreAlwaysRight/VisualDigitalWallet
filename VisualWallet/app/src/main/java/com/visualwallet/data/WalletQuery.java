@@ -48,7 +48,10 @@ public class WalletQuery {
     }
 
     public void deleteWallet(int walId) {
-        // TODO 删除账户
+        SharedPreferences.Editor editor = context.getSharedPreferences(prefName, Context.MODE_PRIVATE)
+                .edit();
+        editor.remove(String.valueOf(walId));
+        editor.apply();
     }
 
     public int getAccNum() {

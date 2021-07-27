@@ -65,8 +65,6 @@ public class Collect extends AppCompatActivity {
     private static final int PICK_PHOTO = 102;
     private static final int REQUEST_CODE_SCAN = 111;
 
-    private Intent intent;
-
     private Wallet wallet;
     private List<Integer> splitIndex;
     private List<String> splitInfo;
@@ -95,7 +93,7 @@ public class Collect extends AppCompatActivity {
         progressText = findViewById(R.id.progress_text);
         waveProgress = findViewById(R.id.wave_progress);
 
-        intent = getIntent();
+        Intent intent = getIntent();
         this.wallet = (Wallet) intent.getSerializableExtra(com.visualwallet.common.Constant.WALLET_ARG);
 
         splitIndex = new ArrayList<>();
@@ -479,7 +477,7 @@ public class Collect extends AppCompatActivity {
                     return;
                 }
 
-                if (Integer.parseInt((String) resDetect.get("flag")) == 1) {
+                if (Integer.parseInt(resDetect.get("flag").toString()) == 1) {
                     String content = "音频：" + audioFile.getName() + "\t\tType: " + wallet.getCurType();
                     addinfo(content);
                     splitInfo.add(content);

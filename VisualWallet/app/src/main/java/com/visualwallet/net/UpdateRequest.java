@@ -1,5 +1,7 @@
 package com.visualwallet.net;
 
+import com.visualwallet.data.DataUtil;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,12 +11,14 @@ public class UpdateRequest extends NetRequest {
 
     private static final String subUrl = "/update";
     private static final String reqFlag = "updateQR";
-    private int id;
-    private String secretKey;
+    private final int id;
+    private final String seed;
+    private final String secretKey;
 
     public UpdateRequest(int id, String secretKey) {
         this.id = id;
         this.secretKey = secretKey;
+        this.seed = DataUtil.getRandomString(8);
     }
 
     @Override
@@ -23,6 +27,7 @@ public class UpdateRequest extends NetRequest {
 
         args.put("reqFlag", reqFlag);
         args.put("id", id);
+        args.put("seed", seed);
         args.put("secretKey", secretKey);
         args.put("android_id", androidId);
 

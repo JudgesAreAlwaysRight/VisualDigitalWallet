@@ -2,13 +2,14 @@ package com.visualwallet;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -34,7 +35,9 @@ import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
+import java.util.Queue;
 
 public class AddNewTag extends AppCompatActivity {
 
@@ -70,14 +73,10 @@ public class AddNewTag extends AppCompatActivity {
         viewFile = findViewById(R.id.ant_file_spinner);
 
         submit = findViewById(R.id.ant_submit);
-        submit.setOnClickListener(v -> {
-            onAddClick();
-        });
+        submit.setOnClickListener(this::onAddClick);
 
         fileSelect = findViewById(R.id.ant_file);
-        fileSelect.setOnClickListener(v -> {
-            onFileClick();
-        });
+        fileSelect.setOnClickListener(v -> onFileClick());
 
         Button testButton = findViewById(R.id.testButton);
         testButton.setOnClickListener(v -> {
@@ -102,7 +101,7 @@ public class AddNewTag extends AppCompatActivity {
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void onAddClick() {
+    public void onAddClick(View v) {
         WalletQuery walletQuery = new WalletQuery(AddNewTag.this);
 
         String address = viewAddress.getText().toString();
@@ -179,12 +178,12 @@ public class AddNewTag extends AppCompatActivity {
                             Toast.makeText(AddNewTag.this, logInfo + " 无法获取id", Toast.LENGTH_LONG).show();
                             Looper.loop();
                         }
+                        runOnUiThread(this::finish);
                     });
                     splitRequest.start();
                 })
                 .onDenied(permissions -> Toast.makeText(AddNewTag.this, "没有权限无法保存分存图片", Toast.LENGTH_LONG).show())
                 .start();
-        finish();
     }
 
     private void onFileClick() {
@@ -196,6 +195,28 @@ public class AddNewTag extends AppCompatActivity {
 
     public void onReturnClick(View v) {
         finish();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void onImpClick(View v) {
+        ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        String clipStr = (String) cm.getPrimaryClip().getItemAt(0).getText();
+        Log.i("AddNewTag", "got clip string: " + clipStr);
+        Wallet impW = null;
+        try {
+            impW = (Wallet) DataUtil.deserialize(clipStr);
+            Log.e("imp get W", String.format("wid=%d", impW.getId()));
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        if (impW != null) {
+            WalletQuery wQuery = new WalletQuery(AddNewTag.this);
+            wQuery.addWallet(impW);
+            Toast.makeText(AddNewTag.this,"导入成功，账户：" + impW.getWalName(), Toast.LENGTH_LONG).show();
+            finish();
+        } else {
+            Toast.makeText(AddNewTag.this,"导入失败，剪贴板数据无法识别", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -212,33 +233,30 @@ public class AddNewTag extends AppCompatActivity {
     }
 
     private void uploadAudio() {
-        int fileNum = Integer.parseInt(viewFile.getSelectedItem().toString());
-        if (fileNum > 0) {
-            if (audioPath.equals("")) {
-                Looper.prepare();
-                Toast.makeText(AddNewTag.this, "尚未选择音频文件", Toast.LENGTH_LONG).show();
-                Looper.loop();
-            } else {
-                File audioFile = new File(audioPath);
-                new UploadRequest(0, 0, ".wav", audioFile).setNetCallback(res -> {
-                    String logInfo = "网络响应异常";
-                    if (res == null || !Objects.requireNonNull(res.get("code")).equals("200") || res.get("file_name") == null) {
-                        Log.e("AddNewTag", "Net response illegal");
-                        if (res != null && res.get("code") != null) {
-                            logInfo += " " + res.get("code");
-                            Log.e("AddNewTag", "http code " + res.get("code"));
-                        }
-                        Looper.prepare();
-                        Toast.makeText(AddNewTag.this, logInfo, Toast.LENGTH_LONG).show();
-                        Looper.loop();
-                        return;
+        if (audioPath.equals("")) {
+            Looper.prepare();
+            Toast.makeText(AddNewTag.this, "尚未选择音频文件", Toast.LENGTH_LONG).show();
+            Looper.loop();
+        } else {
+            File audioFile = new File(audioPath);
+            new UploadRequest(0, 0, ".wav", audioFile).setNetCallback(res -> {
+                String logInfo = "网络响应异常";
+                if (res == null || !Objects.requireNonNull(res.get("code")).equals("200") || res.get("file_name") == null) {
+                    Log.e("AddNewTag", "Net response illegal");
+                    if (res != null && res.get("code") != null) {
+                        logInfo += " " + res.get("code");
+                        Log.e("AddNewTag", "http code " + res.get("code"));
                     }
-                    audioName = Objects.requireNonNull(res.get("file_name")).toString();
                     Looper.prepare();
-                    Toast.makeText(AddNewTag.this, fileNum + "份音频已上传成功", Toast.LENGTH_LONG).show();
+                    Toast.makeText(AddNewTag.this, logInfo, Toast.LENGTH_LONG).show();
                     Looper.loop();
-                }).start();
-            }
+                    return;
+                }
+                audioName = Objects.requireNonNull(res.get("file_name")).toString();
+                Looper.prepare();
+                Toast.makeText(AddNewTag.this, "音频已上传成功", Toast.LENGTH_LONG).show();
+                Looper.loop();
+            }).start();
         }
         // 等文件上传完成再进行后续请求
         // FIXME: 按理这里应该阻塞一下保证文件传输完成再做后续处理，
