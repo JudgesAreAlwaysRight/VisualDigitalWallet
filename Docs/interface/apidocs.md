@@ -7,7 +7,7 @@
 | :-----| :----- | :----- | :----- |
 | reqFlag| str| \ | fileUpload|
 | id| int| \ | 仅mode为1或2时有用|
-|mode|int|\ | 0:generate 1:detect 2:validate|
+|mode|int|\ | 0:generate 1:detect&validate|
 |type|str| \ | 文件格式|
 |file|file| \ | 文件|
 <br />
@@ -80,6 +80,7 @@
 | coeK | int | \ | K
 | coeN | int | \ | N
 | fixed_num | int | \ | 固定图像数量
+|seed| str | \ | random seed|
 | needAudio | int | \ | 是否需要音频存储 0-no 1-yes (默认第一个分存作为音频存储)
 | audioName | str | \ | 需要的介质音频名
 | type | str | \ | 音频类型
@@ -213,6 +214,7 @@
 | :-----| :----- | :----- | :----- |
 | reqFlag| str| \ | 更新-updateQR<br/>其他：页面返回Wrong Request Flag
 | id | int | \ |请求id, 与获取分存图时返回id对应
+|seed| str | \ | random seed|
 | secretKey | str | 512 |私钥 仅限256bit字符串
 | android_id | str |30 | android_id
 <br />

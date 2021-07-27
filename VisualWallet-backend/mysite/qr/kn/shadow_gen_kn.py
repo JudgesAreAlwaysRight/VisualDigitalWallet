@@ -72,15 +72,15 @@ def embedding(logo, carry):
     return carrier
 
 
-def maskSplit(split, fixed_num, n):
-    dt_ms = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+def maskSplit(split, fixed_num, n, seed):
+    # dt_ms = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
     obj = hashlib.sha256()
-    obj.update(dt_ms.encode("utf-8"))
+    obj.update(seed.encode("utf-8"))
     if fixed_num == n:
         splithash = []
         for i in range(n):
             splithash.append(hashlib.sha256(split[i].tobytes()).hexdigest())
-        return split, dt_ms, splithash
+        return split, splithash
     maskRef = bin(int(obj.hexdigest(), 16))[2:]
     if len(maskRef) <= 256:
         for i in range(256-len(maskRef)):
@@ -102,7 +102,7 @@ def maskSplit(split, fixed_num, n):
     splithash = []
     for i in range(n):
         splithash.append(hashlib.sha256(split[i].tobytes()).hexdigest())
-    return split, dt_ms, splithash
+    return split, splithash
 
 
 def unmaskSplit(date, split, fixed_num, n, split_no):
@@ -377,12 +377,12 @@ def validate(result, skhash):
         return sk, flag
 
 
-def apiFirst(msg, k, n, fixed, carriermsg, android_id, logo, boxsize):
+def apiFirst(msg, k, n, fixed, carriermsg, android_id, logo, boxsize, seed):
     secret, x, y = datamatGenerate(msg)
     s0, s1, m, d0, d1 = makes(k, n)
     queue = genQueue(android_id, n)
     split = generateSplit(s0, s1, m, x, y, k, n, secret, queue)
-    split, date_time, splithash = maskSplit(split, fixed, n)
+    split, splithash = maskSplit(split, fixed, n, seed)
     retx, rety = split[0].shape[0:2]
     d = d0
     alpha = d1
@@ -422,7 +422,7 @@ def apiFirst(msg, k, n, fixed, carriermsg, android_id, logo, boxsize):
     # wmadd(audio_src, test, audio_dest)
     # result = wmget(audio_dest, xxx, yyy)
     # result = np.array(result).reshape(xxx, yyy)
-    return key_list, carrier_list, retx, rety, d, alpha, lenm, splithash, date_time, test
+    return key_list, carrier_list, retx, rety, d, alpha, lenm, splithash, test
 
 
 def apiSecond(skhash, split_no, mat, carrier, x, y, d0, d1, lenm, coeK, coeN, fixed, date_time, audio):
@@ -446,7 +446,7 @@ def apiSecond(skhash, split_no, mat, carrier, x, y, d0, d1, lenm, coeK, coeN, fi
     return validate(qr, skhash)
 
 
-def api1(msg, k, n, fixed, devicemsg, currencymsg):
+def api1(msg, k, n, fixed, devicemsg, currencymsg, seed):
     cmsg = []
     for i in range(5):
         msg1 = "Device ID: " + "MyDeviceId" + str(i) + "\n"
@@ -471,8 +471,8 @@ def api1(msg, k, n, fixed, devicemsg, currencymsg):
         logo = USDLOGO
     else:
         logo = BTCLOGO
-    data_matrix, carrier_matrix, length, width, c1, c2, c3, splithash, date_time, audio = apiFirst(msg, k, n, fixed, cmsg, devicemsg, logo, ES)
-    return data_matrix, carrier_matrix, length, width, c1, c2, c3, splithash, date_time, audio
+    data_matrix, carrier_matrix, length, width, c1, c2, c3, splithash, audio = apiFirst(msg, k, n, fixed, cmsg, devicemsg, logo, ES, seed)
+    return data_matrix, carrier_matrix, length, width, c1, c2, c3, splithash, audio
 
 
 def api1_2(split, audio_name, index, pos):
@@ -507,7 +507,7 @@ def api3_2(splithash, audio_name, carrier, length, width, coeK, coeN):
     return res2
 
 
-def api4(msg, k, n, fixed, skhash, carrier_matrix, android_id):
+def api4(msg, k, n, fixed, skhash, carrier_matrix, android_id, seed):
     if skhash != hashlib.sha256(msg.encode("utf-8")).hexdigest():
         return -1, [], "", []
     elif fixed == n:
@@ -517,13 +517,13 @@ def api4(msg, k, n, fixed, skhash, carrier_matrix, android_id):
         queue = genQueue(android_id, n)
         s0, s1, m, d0, d1 = makes(k, n)
         split = generateSplit(s0, s1, m, x, y, k, n, secret, queue)
-        split, date_time, splithash = maskSplit(split, fixed, n)
+        split, splithash = maskSplit(split, fixed, n, seed)
         update_list = []
         for i in range(n-fixed):
             update_list.append(alter(carrier_matrix[fixed-1+i], split[fixed-1+i], k, n))
             update_list[i] = cv2.cvtColor(update_list[i], cv2.COLOR_BGR2GRAY)
             _, update_list[i] = cv2.threshold(update_list[i], 125, 1, cv2.THRESH_BINARY)
-        return 1, update_list, date_time, splithash
+        return 1, update_list, splithash
 
 
 def carryStore(carry):

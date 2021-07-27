@@ -2,6 +2,7 @@ import wave
 import struct
 import numpy as np
 import os, stat
+# from global_var import *
 # # 这个函数需要改,目的是将分存内容转换成bit
 # def int2bit(data, bitlen=8):
 #     bits = []
@@ -94,3 +95,11 @@ def wmget(marked_path, size1, size2):
     wm_data = np.array(wm_data).reshape(size1, size2).astype(np.uint8)
 
     return wm_data
+
+
+# if __name__ == "__main__":
+#     data = np.zeros([48, 48])
+#
+#     wmadd(AUDIOPATH+"10s.wav", data, AUDIOPATH+"test2.wav")
+#     res  = wmget(AUDIOPATH+"test2.wav", 48, 48)
+#     print(res == data).all()
