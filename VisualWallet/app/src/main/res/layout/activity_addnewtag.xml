@@ -6,6 +6,7 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
+        android:id="@+id/topPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -44,9 +45,17 @@
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/topPanel"
+        android:background="@drawable/half_ridius_rect"
+        android:elevation="5dp"
+        android:translationZ="-10dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="120dp"
         android:layout_marginEnd="20dp"
         android:background="@drawable/half_ridius_rect_blue"
         android:gravity="center_horizontal"
@@ -63,7 +72,7 @@
         android:layout_width="match_parent"
         android:layout_height="380dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="160dp"
+        android:layout_marginTop="200dp"
         android:layout_marginEnd="20dp"
         android:background="@drawable/half_ridius_rect_m"
         android:elevation="5dp"
@@ -74,7 +83,7 @@
         android:id="@+id/ant_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="190dp"
+        android:layout_marginTop="230dp"
         android:layout_marginEnd="40dp"
         android:layout_marginStart="40dp"
         android:translationZ="10dp">
@@ -373,12 +382,13 @@
 
         <ImageButton
             android:id="@+id/ant_file"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignTop="@id/ant_file_tag"
             android:layout_centerVertical="true"
+            android:layout_margin="10dp"
             android:layout_toEndOf="@id/ant_file_tag"
-            android:background="@drawable/photo"
+            android:background="@drawable/upload"
             android:translationZ="15dp" />
 
     </RelativeLayout>

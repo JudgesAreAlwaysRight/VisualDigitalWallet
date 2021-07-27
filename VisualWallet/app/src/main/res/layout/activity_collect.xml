@@ -130,7 +130,7 @@
             android:scaleType="fitXY"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
-            android:layout_toLeftOf="@id/scan"
+            android:layout_toStartOf="@id/scan"
             android:background="@drawable/photo" />
 
         <ImageButton
@@ -144,16 +144,14 @@
             android:background="@drawable/scan" />
 
         <ImageButton
-            android:id="@+id/bluetooth"
+            android:id="@+id/audio"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_centerHorizontal="true"
-            android:scaleType="fitXY"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
-            android:layout_toRightOf="@id/scan"
-            android:background="@drawable/blueteeth"
-            android:text="蓝牙传输"
+            android:layout_toEndOf="@id/scan"
+            android:background="@drawable/upload_btn"
             android:textSize="20sp" />
 
     </RelativeLayout>
