@@ -28,11 +28,12 @@ def genSplit(request):
             fixed_num = skinfo['fixed_num']
             android = skinfo['android_id']
             cur = skinfo['curType']
+            seed = skinfo['seed']
             needAudio = int(skinfo['needAudio'])
-            res, carrier, length, width, c1, c2, c3, splithash, date_time, audio_clip = api1(sk, k, n, fixed_num, android, cur)
+            res, carrier, length, width, c1, c2, c3, splithash, audio_clip = api1(sk, k, n, fixed_num, android, cur, seed)
             for i in range(len(res)):
                 res[i] = res[i].tolist()
-            idx = SKInfo(coeK=k, coeN=n, fixed=fixed_num, length=length, width=width, c1=c1, c2=c2, c3=c3, date=date_time)
+            idx = SKInfo(coeK=k, coeN=n, fixed=fixed_num, length=length, width=width, c1=c1, c2=c2, c3=c3, date=seed)
             num = len(carrier)
 
             if num >= 2:
@@ -184,6 +185,7 @@ def update(request):
             index = info['id']
             sk = skinfo['secretKey']
             android = skinfo['android_id']
+            seed = skinfo['seed']
             carrier_matrix = []
             target = SKInfo.objects.get(pk=index)
             skhash = target.secretKeyHash
@@ -199,9 +201,9 @@ def update(request):
                         carrier_matrix.append(carryFetch(target.carry3))
                         if coeN == 5:
                             carrier_matrix.append(carryFetch(target.carry4))
-            flag, update_res, date_time, splithash = api4(sk, coeK, coeN, fixed, skhash, carrier_matrix, android)
+            flag, update_res, splithash = api4(sk, coeK, coeN, fixed, skhash, carrier_matrix, android, seed)
             if flag == 1:
-                target.date = date_time
+                target.date = seed
                 if coeN >= 2:
                     target.hash0 = splithash[0]
                     target.hash1 = splithash[1]

@@ -2,7 +2,7 @@ import wave
 import struct
 import numpy as np
 import os, stat
-from global_var import *
+# from global_var import *
 # # 这个函数需要改,目的是将分存内容转换成bit
 # def int2bit(data, bitlen=8):
 #     bits = []
