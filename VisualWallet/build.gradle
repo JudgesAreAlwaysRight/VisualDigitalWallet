@@ -2,10 +2,10 @@
 buildscript {
     ext {
         signConfigs = [
-                storeFilePath: "visualwallet",
-                storePwd     : "sumingniubi",
-                keyAlias     : "visualwallet",
-                keypwd       : "sumingniubi"
+            storeFilePath: "visualwallet",
+            storePwd     : "sumingniubi",
+            keyAlias     : "visualwallet",
+            keypwd       : "sumingniubi"
         ]
     }
     repositories {
