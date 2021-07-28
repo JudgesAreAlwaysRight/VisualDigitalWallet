@@ -3,8 +3,6 @@ package com.visualwallet.net;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.visualwallet.Start.androidId;
-
 public class DownloadRequest extends NetRequest {
     private static final String subUrl = "/download";
     private static final String reqFlag = "fileDownload";

@@ -11,13 +11,9 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
-import com.visualwallet.AddNewTag;
-import com.visualwallet.common.Constant;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
-import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

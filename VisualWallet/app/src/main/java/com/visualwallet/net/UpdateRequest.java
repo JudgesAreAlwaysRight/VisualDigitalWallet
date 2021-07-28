@@ -5,7 +5,7 @@ import com.visualwallet.data.DataUtil;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.visualwallet.Start.androidId;
+import static com.visualwallet.ui.Start.androidId;
 
 public class UpdateRequest extends NetRequest {
 

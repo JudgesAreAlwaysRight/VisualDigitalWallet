@@ -291,7 +291,7 @@
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp"
             android:layout_toEndOf="@id/ant_n_spinner"
-            android:text="找回需要："
+            android:text="门限数量："
             android:textSize="18sp" />
 
         <Spinner
@@ -331,7 +331,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp"
-            android:text="固定分存："
+            android:text="静态分存："
             android:textSize="18sp" />
 
         <Spinner
@@ -361,7 +361,7 @@
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp"
             android:layout_toEndOf="@id/ant_f_spinner"
-            android:text="音频分存："
+            android:text="静态音频："
             android:textSize="18sp" />
 
         <Spinner
