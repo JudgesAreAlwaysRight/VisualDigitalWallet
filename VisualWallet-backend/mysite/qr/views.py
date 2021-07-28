@@ -204,20 +204,12 @@ def update(request):
             flag, update_res, splithash = api4(sk, coeK, coeN, fixed, skhash, carrier_matrix, android, seed)
             if flag == 1:
                 target.date = seed
-                if coeN >= 2:
-                    target.hash0 = splithash[0]
-                    target.hash1 = splithash[1]
-                    if coeN >= 3:
-                        target.hash2 = splithash[2]
-                        if coeN >= 4:
-                            target.hash3 = splithash[3]
-                            if coeN == 5:
-                                target.hash4 = splithash[4]
-                            elif coeN >= 5:
-                                print("The Maximum N is 5!")
-                else:
-                    print("The Minimum N is 2!")
-            target.save()
+                hashlist = [target.hash0, target.hash1, target.hash2, target.hash3, target.hash4]
+                for i in range(fixed, coeN):
+                    hashlist[i] = splithash[i]
+                target.save()
+            else:
+                update_res = []
             for i in range(len(update_res)):
                 update_res[i] = update_res[i].tolist()
             res = {"flag": flag, "updated": update_res}
