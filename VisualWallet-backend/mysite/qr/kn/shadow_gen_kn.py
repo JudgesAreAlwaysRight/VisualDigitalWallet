@@ -73,7 +73,6 @@ def embedding(logo, carry):
 
 
 def maskSplit(split, fixed_num, n, seed):
-    # dt_ms = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
     obj = hashlib.sha256()
     obj.update(seed.encode("utf-8"))
     if fixed_num == n:
@@ -96,9 +95,6 @@ def maskSplit(split, fixed_num, n, seed):
     mask = cv2.resize(mask_img, (x, y), interpolation=cv2.INTER_NEAREST)
     for i in range(n - fixed_num):
         split[n-1-i] = cv2.bitwise_xor(mask, split[n-1-i])
-    # for i in range(n):
-    #     cv2.imwrite(ADDRESS+"split"+str(i)+".png", split[i])
-
     splithash = []
     for i in range(n):
         splithash.append(hashlib.sha256(split[i].tobytes()).hexdigest())
@@ -133,9 +129,9 @@ def genQueue(aID, n):
     all = []
     q = []
     qlen = len(aID)
+    random.seed(6666)
     for i in range(qlen):
         q.append(ord(aID[i]) % n)
-    # print(q)
     all.append(q)
     for i in range(n-1):
         temp = []
@@ -151,7 +147,6 @@ def genQueue(aID, n):
                 temp.append(a)
             j = len(temp)
         all.append(temp)
-    # print(all)
     return all
 
 
@@ -415,13 +410,7 @@ def apiFirst(msg, k, n, fixed, carriermsg, android_id, logo, boxsize, seed):
 
     test = cv2.cvtColor(split[0], cv2.COLOR_BGR2GRAY)
     _, test = cv2.threshold(test, 125, 1, cv2.THRESH_BINARY)
-    #
-    # xxx, yyy = test.shape[:2]
-    # audio_src = AUDIOPATH + "src.wav"
-    # audio_dest = AUDIOPATH + "dest.wav"
-    # wmadd(audio_src, test, audio_dest)
-    # result = wmget(audio_dest, xxx, yyy)
-    # result = np.array(result).reshape(xxx, yyy)
+
     return key_list, carrier_list, retx, rety, d, alpha, lenm, splithash, test
 
 
@@ -507,7 +496,7 @@ def api3_2(splithash, audio_name, carrier, length, width, coeK, coeN):
     return res2
 
 
-def api4(msg, k, n, fixed, skhash, carrier_matrix, android_id, seed):
+def api4(msg, k, n, fixed, skhash, carrier_matrix, android_id, seed, currencymsg):
     if skhash != hashlib.sha256(msg.encode("utf-8")).hexdigest():
         return -1, [], "", []
     elif fixed == n:
@@ -519,10 +508,12 @@ def api4(msg, k, n, fixed, skhash, carrier_matrix, android_id, seed):
         split = generateSplit(s0, s1, m, x, y, k, n, secret, queue)
         split, splithash = maskSplit(split, fixed, n, seed)
         update_list = []
-        for i in range(n-fixed):
-            update_list.append(alter(carrier_matrix[fixed-1+i], split[fixed-1+i], k, n))
-            update_list[i] = cv2.cvtColor(update_list[i], cv2.COLOR_BGR2GRAY)
-            _, update_list[i] = cv2.threshold(update_list[i], 125, 1, cv2.THRESH_BINARY)
+        index = 0
+        for i in range(fixed, n):
+            update_list.append(alter(carrier_matrix[i], split[i], k, n))
+            update_list[index] = cv2.cvtColor(update_list[index], cv2.COLOR_BGR2GRAY)
+            _, update_list[index] = cv2.threshold(update_list[index], 125, 1, cv2.THRESH_BINARY)
+            index += 1
         return 1, update_list, splithash
 
 

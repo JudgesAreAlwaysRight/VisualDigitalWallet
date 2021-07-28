@@ -22,6 +22,5 @@ USDTLOGO = PATH + "template/usdt.png"
 USDLOGO = PATH + "template/dollar.png"
 CNYLOGO = PATH + "template/ecny.png"
 
-
 KEY_TYPE_ERROR = -1
 KEY_LENGTH_ERROR = -2

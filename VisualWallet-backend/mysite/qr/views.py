@@ -111,9 +111,7 @@ def detect(request):
 
 
 def validate(request):
-    if request.method == 'POST':  # 当提交表单时
-        # 判断是否传参
-        # start = time.time()
+    if request.method == 'POST':
         postBody = request.body
         skinfo = json.loads(postBody.decode('utf-8'))
         flag = skinfo['reqFlag']
@@ -124,15 +122,13 @@ def validate(request):
             data_matrix = info['keys']
             hasAudio = int(info["hasAudio"])
             pos = info["type"]
-            # print(splitNo)
+
             for i in range(len(data_matrix)):
                 data_matrix[i] = np.array(data_matrix[i], dtype=np.uint8)
             carrier_matrix = []
-            # start3 = time.time()
+
             target = SKInfo.objects.get(pk=index)
-            # end3 = time.time()
-            # print("dbtime")
-            # print(end3-start3)
+
             skhash = target.secretKeyHash
             length = target.length
             width = target.width
@@ -158,14 +154,10 @@ def validate(request):
             else:
                 audioname = ""
             sk, text = api2(skhash, splitNo, data_matrix, carrier_matrix, length, width, c1, c2, c3, coeK, coeN, fixed, date_time, audioname)
-            # end2 = time.time()
-            # print("apitime")
-            # print(end2-start2)
+
             res = {"secretKey": sk, "flag": text}
             res = json.dumps(res)
-            # end = time.time()
-            # print("totaltime")
-            # print(end-start)
+
         else:
             res = "Wrong Request Flag!"
         return HttpResponse(res)
@@ -186,6 +178,8 @@ def update(request):
             sk = skinfo['secretKey']
             android = skinfo['android_id']
             seed = skinfo['seed']
+            # currency = skinfo['curType']
+            currency = "1111"
             carrier_matrix = []
             target = SKInfo.objects.get(pk=index)
             skhash = target.secretKeyHash
@@ -201,12 +195,17 @@ def update(request):
                         carrier_matrix.append(carryFetch(target.carry3))
                         if coeN == 5:
                             carrier_matrix.append(carryFetch(target.carry4))
-            flag, update_res, splithash = api4(sk, coeK, coeN, fixed, skhash, carrier_matrix, android, seed)
+            flag, update_res, splithash = api4(sk, coeK, coeN, fixed, skhash, carrier_matrix, android, seed, currency)
             if flag == 1:
                 target.date = seed
                 hashlist = [target.hash0, target.hash1, target.hash2, target.hash3, target.hash4]
                 for i in range(fixed, coeN):
                     hashlist[i] = splithash[i]
+                target.hash0 = hashlist[0]
+                target.hash1 = hashlist[1]
+                target.hash2 = hashlist[2]
+                target.hash3 = hashlist[3]
+                target.hash4 = hashlist[4]
                 target.save()
             else:
                 update_res = []
