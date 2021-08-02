@@ -276,13 +276,13 @@ def transact(request):
         if flag != "testTransact":
             res = {"flag": 0, "content": ""}
         else:
-            send_tx = "bitcoin-cli -regtest sendtoaddress bcrt1ql5jtgq74u5kr20hltj365sdz2vzqfsvf5gwplk 10 \"bitcoin transact test\""
-            confirm_tx = "bitcoin-cli -regtest generate 1"
+            send_tx = "bitcoin-cli -regtest sendtoaddress bcrt1ql5jtgq74u5kr20hltj365sdz2vzqfsvf5gwplk 10"
+            confirm_tx = "bitcoin-cli -regtest -generate 1"
             get_tx = "bitcoin-cli -regtest listreceivedbyaddress"
             os.system(send_tx)
             os.system(confirm_tx)
             result = os.popen(get_tx)
-            res = {"flag": 1, "content": result}
+            res = {"flag": 1, "content": result.read()}
         res = json.dumps(res)
         return HttpResponse(res)
     else:
