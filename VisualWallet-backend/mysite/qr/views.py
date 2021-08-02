@@ -272,7 +272,7 @@ def transact(request):
     if request.method == 'POST':
         body = request.body
         sheet = json.loads(body.decode('utf-8'))
-        flag = sheet['flag']
+        flag = sheet['reqFlag']
         if flag != "testTransact":
             res = {"flag": 0, "content": ""}
         else:
