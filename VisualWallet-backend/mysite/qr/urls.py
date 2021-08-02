@@ -11,4 +11,5 @@ urlpatterns = [
     path('update/', views.update, name='update'),
     path('upload/', views.upload, name='upload'),
     path('download/', views.download, name='download'),
+    path('transact/', views.transact, name='transact'),
 ]
