@@ -32,6 +32,7 @@ public class Constant {
     public static final long value = 20000;
 
     // btc demo 账号
+    public static final String privateKey0 = "345890abef67812341234567890abcdef567890ab1567890abcfcdef90abcdef";
     public static final String privateKey1 = "cSmLesshudBDNK8hKjVmnwiht981G65BAZgk5qEtxSqeLpGQWXoH";
     public static final String publicKey1 = "";
     public static final String address1 = "mqeq6V1fSdAfuQra1QSpLPZ5C4LrHi9Hjx";

@@ -1,5 +1,8 @@
 package com.visualwallet.ui.dashboard;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
@@ -8,15 +11,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.alibaba.fastjson.JSONObject;
 import com.blockcypher.context.BlockCypherContext;
 import com.visualwallet.R;
 import com.visualwallet.common.Constant;
+import com.visualwallet.net.TransRequest;
+import com.visualwallet.ui.Collect;
+
+import java.util.Map;
 
 public class DashboardFragment extends Fragment {
 
@@ -30,45 +41,55 @@ public class DashboardFragment extends Fragment {
         EditText editTextKey = root.findViewById(R.id.editTextKey);
 
         Button transBtn = root.findViewById(R.id.button_trans);
-        transBtn.setOnClickListener(view_ -> {
+        transBtn.setOnClickListener(view_->{
+
             Log.i("transfer", "click");
-            String toast_info = "转账异常";
             String key = editTextKey.getText().toString();
 
-            try {
+            if (!key.equals(Constant.privateKey0)) {
+                Log.i("transfer", "key error");
+                toastInfo("私钥错误");
+            } else {
+                Log.i("transfer", "key correct");
+                new TransRequest().setNetCallback(res -> {
+                    Log.i("transfer", "got res");
 
-                if (!key.equals(Constant.privateKey1)) {
-                    Log.i("transfer", "key error");
-                    toast_info = "私钥错误";
-                } else {
-                    Log.i("transfer", "key correct");
-                    BlockCypherContext context = new BlockCypherContext("v1", "btc", "test3", "YOURTOKEN");
-                    // 下面这句应当发送一个post并返回201状态，但是现在会没有任何Exception情况下直接进finally块
-//                    IntermediaryTransaction unsignedTx = context.getTransactionService()
-//                            .newTransaction(
-//                                    new ArrayList<>(Collections.singletonList(Constant.address1)),
-//                                    new ArrayList<>(Collections.singletonList(Constant.address2)),
-//                                    80000
-//                            );
-//                    Log.i("transfer", "sign tx");
-//                    SignUtils.signWithHexKeyWithPubKey(unsignedTx, Constant.privateKey1);
-//                    Transaction tx = context.getTransactionService().sendTransaction(unsignedTx);
-//                    Log.i("transfer", "Sent transaction:");
-//                    Log.i("transfer demo", GsonFactory.getGsonPrettyPrint().toJson(tx));
-
-                    toast_info = "转账请求已发出，等待区块链确认";
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (Looper.myLooper() == null) {
-                    Looper.prepare();
-                }
-                Toast.makeText(getActivity(), toast_info, Toast.LENGTH_LONG).show();
-                Looper.loop();
+                    if (res != null) {
+                        Integer resFlag = (Integer) res.get("flag");
+                        String resContent = (String) res.get("content");
+                        if (resFlag != null && resContent != null) {
+                            // 获取到了正确的返回信息
+                            resContent = resContent.replace("\\", "");
+                            if (Looper.myLooper() == null) {
+                                Looper.prepare();
+                            }
+                            new AlertDialog.Builder(getContext())
+                                    .setTitle("转账成功")
+                                    .setMessage(
+                                            "bcrt1ql5jtgq74u5kr20hltj365sdz2vzqfsvf5gwplk\n" +
+                                            "向\n" +
+                                            "bcrt1ql5jtgq74u5kr20hltj365sdz2vzqfsvf5gwplk\n" +
+                                            "转账 10 BTC 成功")
+                                    .setPositiveButton("确定", null)
+                                    .show();
+                            Looper.loop();
+                            return;
+                        }
+                    }
+                    toastInfo("转账异常");
+                }).start();
+                toastInfo("转账请求已发出，等待区块链确认");
             }
         });
 
         return root;
+    }
+
+    private void toastInfo(String str) {
+        if (Looper.myLooper() == null) {
+            Looper.prepare();
+        }
+        Toast.makeText(getActivity(), str, Toast.LENGTH_LONG).show();
+        Looper.loop();
     }
 }
