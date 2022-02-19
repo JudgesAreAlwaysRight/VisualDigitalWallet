@@ -1,5 +1,5 @@
 ES = 1  # enlarge_scale: 分存图放大倍数
-PATHLOCALE = r"E:/CISCN/VisualDigitalWallet/VisualWallet-backend/mysite/qr/kn/imgs/"
+PATHLOCALE = r"D:/Projects/Workspace/VisualDigitalWallet/VisualWallet-backend/mysite/qr/kn/imgs/"
 PATHREMOTE = r"/data/django/mysite_git/VisualWallet-backend/mysite/qr/kn/imgs/"
 REMOTE = 1
 PATH = ""

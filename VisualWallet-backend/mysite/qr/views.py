@@ -30,7 +30,10 @@ def genSplit(request):
             cur = skinfo['curType']
             seed = skinfo['seed']
             needAudio = int(skinfo['needAudio'])
+            start_t = time.time()
             res, carrier, length, width, c1, c2, c3, splithash, audio_clip = api1(sk, k, n, fixed_num, android, cur, seed)
+            print("split:{:.4f}".format((time.time()-start_t)*1000))
+
             for i in range(len(res)):
                 res[i] = res[i].tolist()
             idx = SKInfo(coeK=k, coeN=n, fixed=fixed_num, length=length, width=width, c1=c1, c2=c2, c3=c3, date=seed)
@@ -63,7 +66,9 @@ def genSplit(request):
             if needAudio == 1:
                 name = skinfo['audioName']
                 pos = skinfo['type']
+                start_t = time.time()
                 api1_2(audio_clip, name, index, pos)
+                print("extra audio:{:.4f}".format((time.time()-start_t)*1000))
             res = {'id': index, 'split': res}
             res = json.dumps(res)
         else:
@@ -95,12 +100,14 @@ def detect(request):
             width = target.width
             coeK = target.coeK
             coeN = target.coeN
+            start_t = time.time()
             if isAudio == 0:
                 result = api3(skhash, data_matrix, carrier, length, width, coeK, coeN)
             elif isAudio == 1:
                 type = info['type']
                 name = 'd_'+str(index)+type
                 result = api3_2(skhash, name, carrier, length, width, coeK, coeN)
+            print("detect:{:.4f}".format((time.time()-start_t)*1000))
         else:
             result = -1
         res = {"id": index, "flag": result}
@@ -153,8 +160,9 @@ def validate(request):
                 audioname = "d_" + str(index) + pos
             else:
                 audioname = ""
+            start_t = time.time()
             sk, text = api2(skhash, splitNo, data_matrix, carrier_matrix, length, width, c1, c2, c3, coeK, coeN, fixed, date_time, audioname)
-
+            print("validate:{:.4f}".format((time.time()-start_t)*1000))
             res = {"secretKey": sk, "flag": text}
             res = json.dumps(res)
 
@@ -195,7 +203,9 @@ def update(request):
                         carrier_matrix.append(carryFetch(target.carry3))
                         if coeN == 5:
                             carrier_matrix.append(carryFetch(target.carry4))
+            start_t = time.time()
             flag, update_res, splithash = api4(sk, coeK, coeN, fixed, skhash, carrier_matrix, android, seed, currency)
+            print("update:{:.4f}ms".format((time.time()-start_t)*1000))
             if flag == 1:
                 target.date = seed
                 hashlist = [target.hash0, target.hash1, target.hash2, target.hash3, target.hash4]
