@@ -32,7 +32,7 @@ def genSplit(request):
             needAudio = int(skinfo['needAudio'])
             start_t = time.time()
             res, carrier, length, width, c1, c2, c3, splithash, audio_clip = api1(sk, k, n, fixed_num, android, cur, seed)
-            print(f'split:{(time.time()-start_t)*1000:.4f}ms')
+            print("split:{:.4f}".format((time.time()-start_t)*1000))
 
             for i in range(len(res)):
                 res[i] = res[i].tolist()
@@ -68,7 +68,7 @@ def genSplit(request):
                 pos = skinfo['type']
                 start_t = time.time()
                 api1_2(audio_clip, name, index, pos)
-                print(f'extra audio:{(time.time() - start_t) * 1000:.4f}ms')
+                print("extra audio:{:.4f}".format((time.time()-start_t)*1000))
             res = {'id': index, 'split': res}
             res = json.dumps(res)
         else:
@@ -107,7 +107,7 @@ def detect(request):
                 type = info['type']
                 name = 'd_'+str(index)+type
                 result = api3_2(skhash, name, carrier, length, width, coeK, coeN)
-            print(f'detect:{(time.time() - start_t) * 1000:.4f}ms')
+            print("detect:{:.4f}".format((time.time()-start_t)*1000))
         else:
             result = -1
         res = {"id": index, "flag": result}
@@ -162,7 +162,7 @@ def validate(request):
                 audioname = ""
             start_t = time.time()
             sk, text = api2(skhash, splitNo, data_matrix, carrier_matrix, length, width, c1, c2, c3, coeK, coeN, fixed, date_time, audioname)
-            print(f'validate:{(time.time() - start_t) * 1000:.4f}ms')
+            print("validate:{:.4f}".format((time.time()-start_t)*1000))
             res = {"secretKey": sk, "flag": text}
             res = json.dumps(res)
 
@@ -205,7 +205,7 @@ def update(request):
                             carrier_matrix.append(carryFetch(target.carry4))
             start_t = time.time()
             flag, update_res, splithash = api4(sk, coeK, coeN, fixed, skhash, carrier_matrix, android, seed, currency)
-            print(f'update:{(time.time() - start_t) * 1000:.4f}ms')
+            print("update:{:.4f}ms".format((time.time()-start_t)*1000))
             if flag == 1:
                 target.date = seed
                 hashlist = [target.hash0, target.hash1, target.hash2, target.hash3, target.hash4]
