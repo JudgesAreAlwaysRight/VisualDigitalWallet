@@ -337,7 +337,7 @@ public class Collect extends AppCompatActivity {
             int[][] s0 = DataUtil.getS0(wallet.getCoeK(), wallet.getCoeN());
             int[][] s1 = DataUtil.getS1(wallet.getCoeK(), wallet.getCoeN());
 
-//            long beginTime = System.nanoTime();;
+            long beginTime = System.nanoTime();
 
             // c++动态链接调用
             boolean suc = CppLib.detect(
@@ -351,10 +351,10 @@ public class Collect extends AppCompatActivity {
                     pointMatrix,
                     pointMatrix.length
             );
-//
-//            long endTime = System.nanoTime();
-//            long costTime = (endTime - beginTime);
-//            Log.i("Timer", String.format("Detect function cpp call, cost %d us", costTime));
+
+            long endTime = System.nanoTime();
+            long costTime = (endTime - beginTime);
+            Log.i("Timer", String.format("Detect function cpp call, cost %d ns", costTime));
 
             if (suc) {
                 addinfo(content);
