@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.alibaba.fastjson.JSONArray;
 import com.google.zxing.Result;
 import com.visualwallet.R;
+import com.visualwallet.common.GlobalVariable;
 import com.visualwallet.common.WaveBallProgress;
 import com.visualwallet.cpplib.CppLib;
 import com.visualwallet.data.DataUtil;
@@ -85,7 +86,7 @@ public class Collect extends AppCompatActivity {
         scan.setOnClickListener(this::onScanClick);
         audioBtn = findViewById(R.id.audio);
         audioBtn.setOnClickListener(this::onAudioClick);
-        if (com.visualwallet.common.Constant.appMode != 1) {
+        if (GlobalVariable.appMode != 1) {
             audioBtn.setEnabled(false);
         }
         collectK = findViewById(R.id.collectK);
@@ -332,7 +333,7 @@ public class Collect extends AppCompatActivity {
             }
         }
 
-        if (com.visualwallet.common.Constant.appMode == 0) {
+        if (GlobalVariable.appMode == 0) {
             // 本地模式
             int[][] s0 = DataUtil.getS0(visualWallet.getCoeK(), visualWallet.getCoeN());
             int[][] s1 = DataUtil.getS1(visualWallet.getCoeK(), visualWallet.getCoeN());
@@ -381,7 +382,7 @@ public class Collect extends AppCompatActivity {
                 Toast.makeText(Collect.this, "分存码异常", Toast.LENGTH_LONG).show();
                 Looper.loop();
             }
-        } else if (com.visualwallet.common.Constant.appMode == 1) {
+        } else if (GlobalVariable.appMode == 1) {
             // 在线模式
             new DetectRequest(visualWallet.getId(), picIndex, pointMatrix).setNetCallback(res -> {
                 if (res == null) {

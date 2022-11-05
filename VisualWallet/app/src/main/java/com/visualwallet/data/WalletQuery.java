@@ -7,7 +7,7 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
-import com.visualwallet.common.Constant;
+import com.visualwallet.common.GlobalVariable;
 import com.visualwallet.entity.VisualWallet;
 
 import java.io.IOException;
@@ -23,9 +23,9 @@ public class WalletQuery {
     }
 
     public static void initPrefName() {
-        if (Constant.appMode == 0)
+        if (GlobalVariable.appMode == 0)
             prefName = "offline";
-        else if (Constant.appMode == 1)
+        else if (GlobalVariable.appMode == 1)
             prefName = "online";
         else
             prefName = "";

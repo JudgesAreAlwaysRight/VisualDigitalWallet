@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import com.visualwallet.common.GlobalVariable;
 import com.visualwallet.entity.VisualWallet;
 import com.visualwallet.ui.Account;
 import com.visualwallet.ui.AddNewTag;
@@ -50,7 +51,7 @@ public class NotificationsFragment extends Fragment {
             startActivityForResult(intent, Constant.REQUEST_ADD_ACC);
         });
         modeSwitch = view.findViewById(R.id.switch1);
-        modeSwitch.setChecked(Constant.appMode == 1);
+        modeSwitch.setChecked(GlobalVariable.appMode == 1);
         modeSwitch.setOnCheckedChangeListener(this::onCheckChanged);
         refreshScrollView();
         return view;
@@ -121,8 +122,8 @@ public class NotificationsFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void onCheckChanged(CompoundButton buttonView, boolean isChecked) {
         if (buttonView.isPressed()) {
-            if ((Constant.appMode == 1) != isChecked) {
-                Constant.appMode = (isChecked ? 1 : 0);
+            if ((GlobalVariable.appMode == 1) != isChecked) {
+                GlobalVariable.appMode = (isChecked ? 1 : 0);
                 modeSwitch.setText(isChecked ? "在线模式" : "本地模式");
                 WalletQuery.initPrefName();
                 refreshScrollView();

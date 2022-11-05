@@ -3,9 +3,7 @@ package com.visualwallet.data;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.visualwallet.common.Constant;
-
-import java.util.Map;
+import com.visualwallet.common.GlobalVariable;
 
 public class AppModeUtil {
 
@@ -15,7 +13,7 @@ public class AppModeUtil {
             mode = 1;
             setAppMode(context, 1);
         }
-        Constant.appMode = mode;
+        GlobalVariable.appMode = mode;
     }
 
     public static int getAppMode(Context context) {

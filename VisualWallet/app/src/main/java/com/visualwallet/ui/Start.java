@@ -8,7 +8,7 @@ import android.provider.Settings;
 import android.view.Window;
 
 import com.visualwallet.R;
-import com.visualwallet.common.Constant;
+import com.visualwallet.common.GlobalVariable;
 import com.visualwallet.data.AppModeUtil;
 import com.visualwallet.data.DataUtil;
 import com.visualwallet.data.WalletQuery;
@@ -30,7 +30,7 @@ public class Start extends AppCompatActivity {
 
         // 各个子模块初始化
         androidId = Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        Constant.initAndroidId(Start.this);
+        GlobalVariable.initAndroidId(Start.this);
         AppModeUtil.initAppMode(Start.this);
         DataUtil.initData(Start.this);
         WalletQuery.initPrefName();
