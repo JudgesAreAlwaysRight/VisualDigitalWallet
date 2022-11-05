@@ -117,7 +117,7 @@ public class ImageUtils {
     }
 
     public static int[][] encodeBitMat(String qrCodeText) throws WriterException {
-        // TODO xyk
+        // TODO xyk - 需要最高纠错等级H， k < 4 版本=28， k >= 4 版本=32，boxsize=1， border=0
         Hashtable<EncodeHintType, Object> hints = new Hashtable<EncodeHintType, Object>();
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
         hints.put(EncodeHintType.MARGIN, 0);
