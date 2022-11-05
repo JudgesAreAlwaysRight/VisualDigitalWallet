@@ -21,13 +21,13 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import com.visualwallet.entity.VisualWallet;
 import com.visualwallet.ui.Account;
 import com.visualwallet.ui.AddNewTag;
 import com.visualwallet.R;
 import com.visualwallet.common.Constant;
 import com.visualwallet.data.DataUtil;
 import com.visualwallet.data.WalletQuery;
-import com.visualwallet.entity.Wallet;
 
 import java.io.IOException;
 
@@ -68,8 +68,8 @@ public class NotificationsFragment extends Fragment {
         accountLL.removeAllViews();
         // 读取数据并显示到scroll view
         WalletQuery query = new WalletQuery(getActivity());
-        Wallet[] wallets = query.getWallets();
-        for (Wallet w : wallets) {
+        VisualWallet[] visualWallets = query.getWallets();
+        for (VisualWallet w : visualWallets) {
             if (w != null) {
                 addCtrl(w);
             }
@@ -77,7 +77,7 @@ public class NotificationsFragment extends Fragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void addCtrl(Wallet w) {
+    private void addCtrl(VisualWallet w) {
         View accView = View.inflate(getContext(), R.layout.layout_account_item, null);
         TextView nameView = accView.findViewById(R.id.accName);
         nameView.setText(w.getWalName());

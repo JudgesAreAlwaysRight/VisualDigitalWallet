@@ -2,7 +2,7 @@ package com.visualwallet.entity;
 
 import java.io.Serializable;
 
-public class Wallet implements Serializable {
+public class VisualWallet implements Serializable {
     private String address;
     private int coeK;
     private int coeN;
@@ -11,7 +11,7 @@ public class Wallet implements Serializable {
     private String walName;
     private int id;
 
-    public Wallet(String address, int coeK, int coeN, int coeF, String curType, String walName) {
+    public VisualWallet(String address, int coeK, int coeN, int coeF, String curType, String walName) {
         this.address = address;
         this.coeK = coeK;
         this.coeN = coeN;

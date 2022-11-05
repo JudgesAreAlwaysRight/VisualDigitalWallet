@@ -31,7 +31,7 @@ import com.visualwallet.common.WaveBallProgress;
 import com.visualwallet.cpplib.CppLib;
 import com.visualwallet.data.DataUtil;
 import com.visualwallet.data.ImageExporter;
-import com.visualwallet.entity.Wallet;
+import com.visualwallet.entity.VisualWallet;
 import com.visualwallet.net.CollectRequest;
 import com.visualwallet.net.DetectRequest;
 import com.visualwallet.net.NetUtil;
@@ -66,7 +66,7 @@ public class Collect extends AppCompatActivity {
     private static final int PICK_PHOTO = 102;
     private static final int REQUEST_CODE_SCAN = 111;
 
-    private Wallet wallet;
+    private VisualWallet visualWallet;
     private List<Integer> splitIndex;
     private List<String> splitInfo;
     private List<int[][]> splitMat;
@@ -95,7 +95,7 @@ public class Collect extends AppCompatActivity {
         waveProgress = findViewById(R.id.wave_progress);
 
         Intent intent = getIntent();
-        this.wallet = (Wallet) intent.getSerializableExtra(com.visualwallet.common.Constant.WALLET_ARG);
+        this.visualWallet = (VisualWallet) intent.getSerializableExtra(com.visualwallet.common.Constant.WALLET_ARG);
 
         splitIndex = new ArrayList<>();
         splitInfo = new ArrayList<>();
@@ -155,13 +155,13 @@ public class Collect extends AppCompatActivity {
     }
 
     public void onCollect(View vCollect) {
-        Log.i("Collect submit", "id" + wallet.getId());
+        Log.i("Collect submit", "id" + visualWallet.getId());
         Log.i("Collect submit", "splitIndex" + splitIndex.size());
         Log.i("Collect submit", "splitMat" + splitIndex.size());
 
         // 提交内容到服务器计算Collect
         int hasAudio = (audioPath.equals("") ? 0 : 1);
-        new CollectRequest(wallet.getId(), splitIndex, splitMat, hasAudio).setNetCallback(res -> {
+        new CollectRequest(visualWallet.getId(), splitIndex, splitMat, hasAudio).setNetCallback(res -> {
             if (res == null || !Objects.requireNonNull(res.get("code")).equals("200")) {
                 String logInfo = "网络响应异常";
                 Log.e("Collect", "Net response illegal");
@@ -182,7 +182,7 @@ public class Collect extends AppCompatActivity {
 
                     Looper.prepare();
                     // 后台更新分存图
-                    picUpdate(wallet.getId(), Objects.requireNonNull(res.get("secretKey")).toString());
+                    picUpdate(visualWallet.getId(), Objects.requireNonNull(res.get("secretKey")).toString());
 
                     // 显示找回的私钥
                     AlertDialog.Builder adBuilder = new AlertDialog.Builder(Collect.this);
@@ -334,15 +334,15 @@ public class Collect extends AppCompatActivity {
 
         if (com.visualwallet.common.Constant.appMode == 0) {
             // 本地模式
-            int[][] s0 = DataUtil.getS0(wallet.getCoeK(), wallet.getCoeN());
-            int[][] s1 = DataUtil.getS1(wallet.getCoeK(), wallet.getCoeN());
+            int[][] s0 = DataUtil.getS0(visualWallet.getCoeK(), visualWallet.getCoeN());
+            int[][] s1 = DataUtil.getS1(visualWallet.getCoeK(), visualWallet.getCoeN());
 
             long beginTime = System.nanoTime();
 
             // c++动态链接调用
             boolean suc = CppLib.detect(
                     Start.androidId.getBytes(),
-                    wallet.getCoeN(),
+                    visualWallet.getCoeN(),
                     picIndex,
                     s0,
                     s1,
@@ -367,13 +367,13 @@ public class Collect extends AppCompatActivity {
                     findViewById(R.id.progress_layout).setVisibility(View.VISIBLE);
                     findViewById(R.id.progress_num_layout).setVisibility(View.VISIBLE);
                     findViewById(R.id.fail_alert).setVisibility(View.INVISIBLE);
-                    int progressNum = (int) (splitInfo.size() / (float) wallet.getCoeK() * 100);
+                    int progressNum = (int) (splitInfo.size() / (float) visualWallet.getCoeK() * 100);
                     String progressStr = progressNum + "%";
                     progressText.setText(progressStr);
                     waveProgress.startProgress(progressNum, 300, 0);
                 });
 
-                if (splitInfo.size() == wallet.getCoeK()) {
+                if (splitInfo.size() == visualWallet.getCoeK()) {
                     Collect.this.runOnUiThread(() -> collectK.setVisibility(View.VISIBLE));
                 }
             } else {
@@ -383,7 +383,7 @@ public class Collect extends AppCompatActivity {
             }
         } else if (com.visualwallet.common.Constant.appMode == 1) {
             // 在线模式
-            new DetectRequest(wallet.getId(), picIndex, pointMatrix).setNetCallback(res -> {
+            new DetectRequest(visualWallet.getId(), picIndex, pointMatrix).setNetCallback(res -> {
                 if (res == null) {
                     Looper.prepare();
                     Toast.makeText(Collect.this, "网络异常，无返回信息", Toast.LENGTH_LONG).show();
@@ -409,13 +409,13 @@ public class Collect extends AppCompatActivity {
                         findViewById(R.id.progress_layout).setVisibility(View.VISIBLE);
                         findViewById(R.id.progress_num_layout).setVisibility(View.VISIBLE);
                         findViewById(R.id.fail_alert).setVisibility(View.INVISIBLE);
-                        int progress = (int) (splitInfo.size() / (float) wallet.getCoeK() * 100);
+                        int progress = (int) (splitInfo.size() / (float) visualWallet.getCoeK() * 100);
                         String progressStr = progress + "%";
                         progressText.setText(progressStr);
                         waveProgress.startProgress(progress, 300, 0);
                     });
 
-                    if (splitInfo.size() == wallet.getCoeK()) {
+                    if (splitInfo.size() == visualWallet.getCoeK()) {
                         Collect.this.runOnUiThread(() -> collectK.setVisibility(View.VISIBLE));
                     }
                 } else {
@@ -450,7 +450,7 @@ public class Collect extends AppCompatActivity {
             }
 
             // 保存新的图片
-            ImageExporter.export(Collect.this, wallet.getWalName(), updated);
+            ImageExporter.export(Collect.this, visualWallet.getWalName(), updated);
 
             // 提示用户新的图片已经保存
             if (updated.length > 0) {
@@ -464,7 +464,7 @@ public class Collect extends AppCompatActivity {
 
     private void audioDetect(File audioFile) {
         // 上传待检测的音频文件
-        UploadRequest uploadRequest = new UploadRequest(wallet.getId(), 1, ".wav", audioFile);
+        UploadRequest uploadRequest = new UploadRequest(visualWallet.getId(), 1, ".wav", audioFile);
         uploadRequest.setNetCallback(resUpload -> {
             String logInfo = "网络响应异常";
             if (resUpload == null || !Objects.requireNonNull(resUpload.get("code")).equals("200")) {
@@ -478,7 +478,7 @@ public class Collect extends AppCompatActivity {
                 Looper.loop();
             }
             // 等文件上传完成再进行后续请求
-            new DetectRequest(wallet.getId(), 0).setNetCallback(resDetect -> {
+            new DetectRequest(visualWallet.getId(), 0).setNetCallback(resDetect -> {
                 if (resDetect == null || resDetect.get("flag") == null) {
                     Looper.prepare();
                     Toast.makeText(Collect.this, "网络异常，返回信息错误", Toast.LENGTH_LONG).show();
@@ -487,7 +487,7 @@ public class Collect extends AppCompatActivity {
                 }
 
                 if (Integer.parseInt(resDetect.get("flag").toString()) == 1) {
-                    String content = "音频：" + audioFile.getName() + "\t\tType: " + wallet.getCurType();
+                    String content = "音频：" + audioFile.getName() + "\t\tType: " + visualWallet.getCurType();
                     addinfo(content);
                     splitInfo.add(content);
                     audioPath = audioFile.getName();
@@ -496,12 +496,12 @@ public class Collect extends AppCompatActivity {
                         findViewById(R.id.progress_layout).setVisibility(View.VISIBLE);
                         findViewById(R.id.progress_num_layout).setVisibility(View.VISIBLE);
                         findViewById(R.id.fail_alert).setVisibility(View.INVISIBLE);
-                        int prog = (int) (splitInfo.size() / (float) wallet.getCoeK() * 100);
+                        int prog = (int) (splitInfo.size() / (float) visualWallet.getCoeK() * 100);
                         progressText.setText(String.valueOf(prog + "%"));
                         waveProgress.startProgress(prog, 300, 0);
                     });
 
-                    if (splitInfo.size() == wallet.getCoeK()) {
+                    if (splitInfo.size() == visualWallet.getCoeK()) {
                         Collect.this.runOnUiThread(() -> collectK.setVisibility(View.VISIBLE));
                     }
                 } else {

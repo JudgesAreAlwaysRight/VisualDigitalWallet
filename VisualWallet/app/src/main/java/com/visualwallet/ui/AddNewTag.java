@@ -26,7 +26,7 @@ import com.visualwallet.common.Constant;
 import com.visualwallet.data.DataUtil;
 import com.visualwallet.data.ImageExporter;
 import com.visualwallet.data.WalletQuery;
-import com.visualwallet.entity.Wallet;
+import com.visualwallet.entity.VisualWallet;
 import com.visualwallet.net.DownloadRequest;
 import com.visualwallet.net.NetUtil;
 import com.visualwallet.net.SplitRequest;
@@ -51,7 +51,7 @@ public class AddNewTag extends AppCompatActivity {
     private ImageButton submit;
     private ImageButton fileSelect;
 
-    private Wallet wallet;
+    private VisualWallet visualWallet;
     private String audioPath;
     private String audioName;
 
@@ -127,7 +127,7 @@ public class AddNewTag extends AppCompatActivity {
             return;
         }
 
-        wallet = new Wallet(address, K, N, F, type, name);
+        visualWallet = new VisualWallet(address, K, N, F, type, name);
 
         AndPermission.with(this)
                 .permission(Permission.WRITE_EXTERNAL_STORAGE)
@@ -168,8 +168,8 @@ public class AddNewTag extends AppCompatActivity {
 
                         Integer id = (Integer) res.get("id");
                         if (id != null) {
-                            wallet.setId(id);
-                            walletQuery.addWallet(wallet);  // 数据接口调用
+                            visualWallet.setId(id);
+                            walletQuery.addWallet(visualWallet);  // 数据接口调用
                             ImageExporter.export(AddNewTag.this, name, split, fileNum);  // 调用图像模块，直接全部保存到本地
                             downloadAudio(); // 下载音频
                         } else {
@@ -201,9 +201,9 @@ public class AddNewTag extends AppCompatActivity {
         ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         String clipStr = (String) cm.getPrimaryClip().getItemAt(0).getText();
         Log.i("AddNewTag", "got clip string: " + clipStr);
-        Wallet impW = null;
+        VisualWallet impW = null;
         try {
-            impW = (Wallet) DataUtil.deserialize(clipStr);
+            impW = (VisualWallet) DataUtil.deserialize(clipStr);
             Log.e("imp get W", String.format("wid=%d", impW.getId()));
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -271,7 +271,7 @@ public class AddNewTag extends AppCompatActivity {
     }
 
     private void downloadAudio() {
-        int wid = wallet.getId();
+        int wid = visualWallet.getId();
         int fileNum = Integer.parseInt(viewFile.getSelectedItem().toString());
         if (fileNum > 0) {
             DownloadRequest downloadRequest = new DownloadRequest(wid, ".wav");

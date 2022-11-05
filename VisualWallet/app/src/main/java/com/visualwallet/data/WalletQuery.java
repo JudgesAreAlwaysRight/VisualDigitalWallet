@@ -8,7 +8,7 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 
 import com.visualwallet.common.Constant;
-import com.visualwallet.entity.Wallet;
+import com.visualwallet.entity.VisualWallet;
 
 import java.io.IOException;
 import java.util.Map;
@@ -32,10 +32,10 @@ public class WalletQuery {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void addWallet(Wallet wallet) {
+    public void addWallet(VisualWallet visualWallet) {
         String walStr = null;
         try {
-            walStr = DataUtil.serialize(wallet);
+            walStr = DataUtil.serialize(visualWallet);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -43,7 +43,7 @@ public class WalletQuery {
 
         SharedPreferences.Editor editor = context.getSharedPreferences(prefName, Context.MODE_PRIVATE)
                 .edit();
-        editor.putString(String.valueOf(wallet.getId()), walStr);
+        editor.putString(String.valueOf(visualWallet.getId()), walStr);
         editor.apply();
     }
 
@@ -61,20 +61,20 @@ public class WalletQuery {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public Wallet[] getWallets() {
+    public VisualWallet[] getWallets() {
 
         SharedPreferences pref = context.getSharedPreferences(prefName, Context.MODE_PRIVATE);
 
         Map<String, ?> datas = pref.getAll();
         if (datas.isEmpty()) {
-            return new Wallet[0];
+            return new VisualWallet[0];
         }
 
-        Wallet[] wallets = new Wallet[datas.size()];
+        VisualWallet[] visualWallets = new VisualWallet[datas.size()];
         int ind = 0;
         for (Map.Entry<String, ?> entry : datas.entrySet()) {
             try {
-                wallets[ind] = (Wallet) DataUtil.deserialize((String) entry.getValue());
+                visualWallets[ind] = (VisualWallet) DataUtil.deserialize((String) entry.getValue());
             } catch (IOException | ClassNotFoundException e) {
                 Log.e("get Ws", String.format("accNum=%d, index=%s", datas.size(), entry.getKey()));
                 e.printStackTrace();
@@ -82,11 +82,11 @@ public class WalletQuery {
             ind++;
         }
 
-        return wallets;
+        return visualWallets;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public Wallet getWallet(int walNo) {
+    public VisualWallet getWallet(int walNo) {
 
         SharedPreferences pref = context.getSharedPreferences(prefName, Context.MODE_PRIVATE);
 
@@ -98,7 +98,7 @@ public class WalletQuery {
         String accStr = pref.getString(String.valueOf(walNo), "");
 
         try {
-            return (Wallet) DataUtil.deserialize(accStr);
+            return (VisualWallet) DataUtil.deserialize(accStr);
         } catch (IOException | ClassNotFoundException e) {
             Log.e("get Ws", String.format("accNum=%d, index=%d", datas.size(), walNo));
             e.printStackTrace();
