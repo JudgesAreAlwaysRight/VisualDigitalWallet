@@ -9,8 +9,8 @@ public class Algorithm {
     // detect混合在还原里了
     // 分存用的矩阵，就是那个S0S1一串01的那个
     public class splitMatrix{
-        ArrayList<ArrayList<Integer>> S0;
-        ArrayList<ArrayList<Integer>> S1;
+        public ArrayList<ArrayList<Integer>> S0;
+        public ArrayList<ArrayList<Integer>> S1;
         int thresh0;
         int thresh1;
         public splitMatrix(){
@@ -379,7 +379,7 @@ public class Algorithm {
         int m0 = (int)Math.ceil((double)Math.sqrt(col0));
         int col1 = s.S1.size(); // 转置后S1的列数
         int m1 = (int)Math.ceil((double)Math.sqrt(col1));
-        int m = (m1>m0)?m1:m0;
+        int m = Math.max(m1, m0);
         int newcol = m*m; // 膨胀为平方数
         // System.out.print("\n");
 

@@ -8,14 +8,27 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.widget.ImageView;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.visualwallet.ui.AddNewTag;
+
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Hashtable;
 
-public class ImageExporter {
+import cn.milkyship.zxing.android.Intents;
+
+public class ImageUtils {
 
     public static boolean export(Context context, String walName, int[][][] bitImgList) {
         int index = 1;
@@ -27,6 +40,11 @@ public class ImageExporter {
             index++;
         }
         return true;
+    }
+
+    public static int[][][] upsample(int[][][] bitImgList, int boxSize) {
+        // TODO xyk
+        return bitImgList;
     }
 
     public static boolean export(Context context, String walName, int[][][] bitImgList, int audioNum) {
@@ -96,6 +114,18 @@ public class ImageExporter {
         // 发送广播，通知刷新图库的显示
         context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + fileName)));
 
+    }
+
+    public static int[][] encodeBitMat(String qrCodeText) throws WriterException {
+        // TODO xyk
+        Hashtable<EncodeHintType, Object> hints = new Hashtable<EncodeHintType, Object>();
+        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+        hints.put(EncodeHintType.MARGIN, 0);
+
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        BitMatrix bitMatrix = qrCodeWriter.encode(qrCodeText, BarcodeFormat.QR_CODE, 25,25);
+        saveBitmap(null, bitMat2Bitmap(bitMatrix.getArray()), "test");
+        return bitMatrix.getArray();
     }
 
 }

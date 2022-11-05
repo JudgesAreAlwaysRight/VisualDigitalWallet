@@ -30,7 +30,7 @@ import com.visualwallet.R;
 import com.visualwallet.common.WaveBallProgress;
 import com.visualwallet.cpplib.CppLib;
 import com.visualwallet.data.DataUtil;
-import com.visualwallet.data.ImageExporter;
+import com.visualwallet.data.ImageUtils;
 import com.visualwallet.entity.Wallet;
 import com.visualwallet.net.CollectRequest;
 import com.visualwallet.net.DetectRequest;
@@ -450,7 +450,7 @@ public class Collect extends AppCompatActivity {
             }
 
             // 保存新的图片
-            ImageExporter.export(Collect.this, wallet.getWalName(), updated);
+            ImageUtils.export(Collect.this, wallet.getWalName(), updated);
 
             // 提示用户新的图片已经保存
             if (updated.length > 0) {
