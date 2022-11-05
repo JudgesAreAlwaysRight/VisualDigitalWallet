@@ -52,6 +52,7 @@ public class NotificationsFragment extends Fragment {
         });
         modeSwitch = view.findViewById(R.id.switch1);
         modeSwitch.setChecked(GlobalVariable.appMode == 1);
+        modeSwitch.setText(GlobalVariable.appMode == 1 ? "在线模式" : "本地模式");
         modeSwitch.setOnCheckedChangeListener(this::onCheckChanged);
         refreshScrollView();
         return view;
@@ -60,6 +61,8 @@ public class NotificationsFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void onResume() {
         super.onResume();
+        modeSwitch.setChecked(GlobalVariable.appMode == 1);
+        modeSwitch.setText(GlobalVariable.appMode == 1 ? "在线模式" : "本地模式");
         refreshScrollView();
     }
 
