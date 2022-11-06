@@ -284,11 +284,13 @@ def transact(request):
         sheet = json.loads(body.decode('utf-8'))
         flag = sheet['reqFlag']
         chain = sheet['chain']
+        address = sheet['address']
+        num = sheet['num']
         if flag != "testTransact":
             res = {"flag": 0, "content": ""}
         else:
             if chain == "test":
-                send_tx = "bitcoin-cli -regtest sendtoaddress bcrt1ql5jtgq74u5kr20hltj365sdz2vzqfsvf5gwplk 10"
+                send_tx = "bitcoin-cli -regtest sendtoaddress " + address + " " + num
                 confirm_tx = "bitcoin-cli -regtest -generate 1"
                 get_tx = "bitcoin-cli -regtest listreceivedbyaddress"
                 os.system(send_tx)
@@ -296,7 +298,7 @@ def transact(request):
                 result = os.popen(get_tx)
                 res = {"flag": 1, "content": result.read()}
             elif chain == "public":
-                send_tx = "bitcoin-cli sendtoaddress bcrt1ql5jtgq74u5kr20hltj365sdz2vzqfsvf5gwplk 1"
+                send_tx = "bitcoin-cli sendtoaddress " + address + " " + num
                 confirm_tx = "bitcoin-cli -generate 1"
                 get_tx = "bitcoin-cli listreceivedbyaddress"
                 os.system(send_tx)
