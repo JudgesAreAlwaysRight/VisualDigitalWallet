@@ -1,5 +1,6 @@
 package com.visualwallet.data;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -30,13 +31,17 @@ import cn.milkyship.zxing.android.Intents;
 
 public class ImageUtils {
 
+    @SuppressLint("DefaultLocale")
     public static boolean export(Context context, String walName, int[][][] bitImgList) {
         int index = 1;
+        @SuppressLint("SimpleDateFormat")
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         for (int[][] img : bitImgList) {
             Bitmap imgBitmap = bitMat2Bitmap(img);
             Date date = new Date(System.currentTimeMillis());
-            saveBitmap(context, imgBitmap, String.format("%s_%d_%s", walName, index, simpleDateFormat.format(date)));
+            saveBitmap(context, imgBitmap,
+                    String.format("%s_%d_%s", walName, index, simpleDateFormat.format(date))
+            );
             index++;
         }
         return true;
@@ -116,15 +121,17 @@ public class ImageUtils {
 
     }
 
-    public static int[][] encodeBitMat(String qrCodeText) throws WriterException {
-        // TODO xyk - 需要最高纠错等级H， k < 4 版本=28， k >= 4 版本=32，boxsize=1， border=0
+    public static int[][] encodeBitMat(String qrCodeText, int qrVersion) throws WriterException {
+        // 使用最高纠错等级H， k < 4 版本=28， k >= 4 版本=32，boxsize=1， border=0
         Hashtable<EncodeHintType, Object> hints = new Hashtable<EncodeHintType, Object>();
+        hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
         hints.put(EncodeHintType.MARGIN, 0);
+        hints.put(EncodeHintType.QR_VERSION, qrVersion);
+//        hints.put(EncodeHintType.DATA_MATRIX_SHAPE, 1);
 
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(qrCodeText, BarcodeFormat.QR_CODE, 25,25);
-        saveBitmap(null, bitMat2Bitmap(bitMatrix.getArray()), "test");
+        BitMatrix bitMatrix = qrCodeWriter.encode(qrCodeText, BarcodeFormat.QR_CODE, 25,25, hints);
         return bitMatrix.getArray();
     }
 

@@ -1,5 +1,7 @@
 package com.visualwallet.Algorithm;
 
+import com.visualwallet.common.Constant;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -9,13 +11,13 @@ public class Algorithm {
      * detect混合在还原里了
      * 分存用的矩阵，就是那个S0S1一串01的那个
      */
-    public static class splitMatrix {
+    public static class SplitMatrix {
         public ArrayList<ArrayList<Integer>> S0;
         public ArrayList<ArrayList<Integer>> S1;
         int thresh0;
         int thresh1;
 
-        public splitMatrix() {
+        public SplitMatrix() {
             S0 = new ArrayList<>();
             S1 = new ArrayList<>();
             thresh0 = 0;
@@ -106,8 +108,8 @@ public class Algorithm {
      * 生成分存矩阵，返回一个splitMatrix,包括01的还原阈值thresh0和thresh1
      * 这时候是转置矩阵
      */
-    public static splitMatrix makeS(int k, int n) {
-        Algorithm.splitMatrix s = new splitMatrix();
+    public static SplitMatrix makeS(int k, int n) {
+        SplitMatrix s = new SplitMatrix();
         // 各个海明重的a(t,h)的数目,h = 0,1,2,...,n-1
         int[] alpha0 = new int[n + 1];
         int[] alpha1 = new int[n + 1];
@@ -258,7 +260,7 @@ public class Algorithm {
     /**
      * 输入一个原始的像素点矩阵，返回一系列分存矩阵，做过random permute
      */
-    public static int[][][] split(int[][] origin, splitMatrix s, int n, int[][] randList) {
+    public static int[][][] split(int[][] origin, SplitMatrix s, int n, int[][] randList) {
 
         int row = s.S0.get(0).size(); // 转置后矩阵的行数, S0和S1一致
         int col0 = s.S0.size(); // 转置后S0的列数
@@ -313,7 +315,7 @@ public class Algorithm {
     /**
      * 输入一系列分存矩阵，还原像素点矩阵
      */
-    public static int[][] restore(int[][][] image, splitMatrix s, int[][] randList, int k, int n, int m, int[] order) {
+    public static int[][] restore(int[][][] image, SplitMatrix s, int[][] randList, int k, int n, int m, int[] order) {
         int l = image[0][0].length / m;
 
         int[][] recoverList = new int[randList.length][randList[0].length]; //还原用的列表
@@ -373,7 +375,7 @@ public class Algorithm {
 
     private static void test(String[] args) {
         // Algorithm al = new Algorithm();
-        Algorithm.splitMatrix s = makeS(3, 4); //生成矩阵
+        SplitMatrix s = makeS(3, 4); //生成矩阵
 
         int row = s.S0.get(0).size(); // 转置后矩阵的行数, S0和S1一致
         int col0 = s.S0.size(); // 转置后S0的列数
@@ -384,7 +386,7 @@ public class Algorithm {
         int newcol = m * m; // 膨胀为平方数
         // System.out.print("\n");
 
-        int[][] randList = randPermute(4, newcol, 928); //这个随机列表需要保存
+        int[][] randList = randPermute(4, newcol, Constant.localWalletRandomSeed); //这个随机列表需要保存
 
         // for(int i = 0; i < randList.length; i++){
         //     for(int j = 0; j < randList[i].length; j++){

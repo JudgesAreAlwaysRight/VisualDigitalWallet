@@ -11,6 +11,10 @@ public class VisualWallet implements Serializable {
     private String walName;
     private int id;
 
+    // 本地钱包专用
+    private int splitMatSize;
+    private int carrierMatSize;
+
     public VisualWallet(String address, int coeK, int coeN, int coeF, String curType, String walName) {
         this.address = address;
         this.coeK = coeK;
@@ -18,6 +22,8 @@ public class VisualWallet implements Serializable {
         this.coeF = coeF;
         this.curType = curType;
         this.walName = walName;
+        this.splitMatSize = 0;
+        this.carrierMatSize = 0;
     }
 
     public String getAddress() {
@@ -75,4 +81,21 @@ public class VisualWallet implements Serializable {
     public void setCoeF(int coeF) {
         this.coeF = coeF;
     }
+
+    public int getSplitMatSize() {
+        return splitMatSize;
+    }
+
+    public void setSplitMatSize(int splitMatSize) {
+        this.splitMatSize = splitMatSize;
+    }
+
+    public int getCarrierMatSize() {
+        return carrierMatSize;
+    }
+
+    public void setCarrierMatSize(int carrierMatSize) {
+        this.carrierMatSize = carrierMatSize;
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.visualwallet.ui;
 
+import static android.view.View.GONE;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ClipboardManager;
@@ -21,12 +23,16 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.alibaba.fastjson.JSONArray;
+import com.google.zxing.WriterException;
 import com.visualwallet.R;
 import com.visualwallet.bitcoin.BitcoinClient;
 import com.visualwallet.common.Constant;
+import com.visualwallet.common.GlobalVariable;
+import com.visualwallet.data.AlgorithmUtil;
 import com.visualwallet.data.DataUtil;
 import com.visualwallet.data.ImageUtils;
 import com.visualwallet.data.WalletQuery;
+import com.visualwallet.entity.GenerateResponse;
 import com.visualwallet.entity.VisualWallet;
 import com.visualwallet.net.DownloadRequest;
 import com.visualwallet.net.NetUtil;
@@ -78,6 +84,13 @@ public class AddNewTag extends AppCompatActivity {
         fileSelect = findViewById(R.id.ant_file);
         fileSelect.setOnClickListener(v -> onFileClick());
 
+        if (GlobalVariable.appMode == 0) {
+            findViewById(R.id.ant_address).setVisibility(GONE);
+            findViewById(R.id.imp_layout).setVisibility(GONE);
+            findViewById(R.id.ant_fa).setVisibility(GONE);
+            findViewById(R.id.ant_f).setVisibility(GONE);
+        }
+
         Button testButton = findViewById(R.id.testButton);
         testButton.setOnClickListener(v -> {
             int wid = 261;
@@ -94,6 +107,8 @@ public class AddNewTag extends AppCompatActivity {
                 e.printStackTrace();
             }
         });
+        testButton.setEnabled(false);
+        testButton.setVisibility(GONE);
 
         audioPath = "";
         audioName = "";
@@ -106,16 +121,19 @@ public class AddNewTag extends AppCompatActivity {
 
         String address = viewAddress.getText().toString();
         String keyRaw = viewKey.getText().toString();
+
         Log.i("add account", "privateKey length: " + keyRaw.length()
                 + " key is : " + keyRaw);
         String key;
         if (keyRaw.length() == 64) {
             key = NetUtil.hexKey2bin(keyRaw);
         } else {
-            key = NetUtil.hexKey2bin(
-                    BitcoinClient.getBitcoinKey(keyRaw).getPrivateKeyAsHex()
-            );
+            String keyHex = BitcoinClient.getBitcoinKey(keyRaw).getPrivateKeyAsHex();
+            Log.i("add account", keyHex);
+            key = NetUtil.hexKey2bin(keyHex);
         }
+        Log.i("add account", "got key: " + key);
+
         String name = viewName.getText().toString();
         String type = viewType.getText().toString();
         int K = Integer.parseInt(viewK.getSelectedItem().toString());
@@ -128,13 +146,24 @@ public class AddNewTag extends AppCompatActivity {
             Toast.makeText(AddNewTag.this, "私钥不合法", Toast.LENGTH_LONG).show();
             return;
         }
-        if (K > N || F > N || (N == 5 && K > 3) || fileNum > F) {
-            Toast.makeText(AddNewTag.this, "输入分存参数不合法", Toast.LENGTH_LONG).show();
-            return;
-        }
-        if (fileNum > 0 && audioName.equals("")) {
-            Toast.makeText(AddNewTag.this, "您设置了音频分存但是未上传文件或文件还在传输中", Toast.LENGTH_LONG).show();
-            return;
+        if (GlobalVariable.appMode == 0) {
+            if (F > 0 || fileNum > 0) {
+                Toast.makeText(AddNewTag.this, "随身模式不支持静态分存", Toast.LENGTH_LONG).show();
+                return;
+            }
+            if (K > N || (N == 5 && K > 3)) {
+                Toast.makeText(AddNewTag.this, "输入分存参数不合法", Toast.LENGTH_LONG).show();
+                return;
+            }
+        } else {
+            if (K > N || F > N || (N == 5 && K > 3) || fileNum > F) {
+                Toast.makeText(AddNewTag.this, "输入分存参数不合法", Toast.LENGTH_LONG).show();
+                return;
+            }
+            if (fileNum > 0 && audioName.equals("")) {
+                Toast.makeText(AddNewTag.this, "您设置了音频分存但是未上传文件或文件还在传输中", Toast.LENGTH_LONG).show();
+                return;
+            }
         }
 
         visualWallet = new VisualWallet(address, K, N, F, type, name);
@@ -142,54 +171,74 @@ public class AddNewTag extends AppCompatActivity {
         AndPermission.with(this)
                 .permission(Permission.WRITE_EXTERNAL_STORAGE)
                 .onGranted(permissions -> {
+                    Toast.makeText(AddNewTag.this, "正在生成分存图，请勿退出", Toast.LENGTH_SHORT).show();
 
-//                    // 开始等待加载动画
-//                    View view = LayoutInflater.from(AddNewTag.this).inflate(R.layout.loading_layout,null);
-//                    final PopupWindow popupWindow = new PopupWindow(
-//                            view,
-//                            100,
-//                            150,
-//                            true);
-//                    popupWindow.showAtLocation(submit, Gravity.CENTER,0,0);
-
-                    // 新建一个网络请求线程类并启动线程
-                    SplitRequest splitRequest = new SplitRequest(key, K, N, F, fileNum, audioName, ".wav", type);
-                    splitRequest.setNetCallback(res -> {
-                        String logInfo = "网络响应异常";
-                        if (res == null || !Objects.requireNonNull(res.get("code")).equals("200")) {
-                            Log.e("AddNewTag", "Net response illegal");
-                            if (res != null && res.get("code") != null) {
-                                logInfo += " " + res.get("code");
-                                Log.e("AddNewTag", "http code " + res.get("code"));
+                    if (GlobalVariable.appMode == 0) {
+                        // 本地模式
+                        new Thread(() -> {
+                            GenerateResponse res;
+                            try {
+                                res = AlgorithmUtil.generateSpilt(key, K, N, type);
+                            } catch (WriterException e) {
+                                Log.e("add account", e.toString());
+                                Looper.prepare();
+                                Toast.makeText(AddNewTag.this, "二维码生成失败", Toast.LENGTH_LONG).show();
+                                Looper.loop();
+                                return;
                             }
-                            Looper.prepare();
-                            Toast.makeText(AddNewTag.this, logInfo, Toast.LENGTH_LONG).show();
-                            Looper.loop();
-                            return;
-                        }
 
-                        int[][][] split = NetUtil.arrayJson2java((JSONArray) res.get("split"));
-                        if (split == null) {
-                            Looper.prepare();
-                            Toast.makeText(AddNewTag.this, logInfo + " 无法获取分存图", Toast.LENGTH_LONG).show();
-                            Looper.loop();
-                            return;
-                        }
+                            visualWallet.setId(walletQuery.getNewLocalId());
+                            visualWallet.setSplitMatSize(res.getSplitMatSize());
+                            visualWallet.setCarrierMatSize(res.getCarrierMatSize());
+                            walletQuery.addWallet(visualWallet);
 
-                        Integer id = (Integer) res.get("id");
-                        if (id != null) {
-                            visualWallet.setId(id);
-                            walletQuery.addWallet(visualWallet);  // 数据接口调用
-                            ImageUtils.export(AddNewTag.this, name, split, fileNum);  // 调用图像模块，直接全部保存到本地
-                            downloadAudio(); // 下载音频
-                        } else {
-                            Looper.prepare();
-                            Toast.makeText(AddNewTag.this, logInfo + " 无法获取id", Toast.LENGTH_LONG).show();
-                            Looper.loop();
-                        }
-                        runOnUiThread(this::finish);
-                    });
-                    splitRequest.start();
+                            ImageUtils.export(AddNewTag.this, name, res.getKeyMatrix(), 0);
+
+                            runOnUiThread(AddNewTag.this::finish);
+                        }).start();
+
+                    } else {
+                        // 在线模式
+
+                        // 新建一个网络请求线程类并启动线程
+                        SplitRequest splitRequest = new SplitRequest(key, K, N, F, fileNum, audioName, ".wav", type);
+                        splitRequest.setNetCallback(res -> {
+                            String logInfo = "网络响应异常";
+                            if (res == null || !Objects.requireNonNull(res.get("code")).equals("200")) {
+                                Log.e("AddNewTag", "Net response illegal");
+                                if (res != null && res.get("code") != null) {
+                                    logInfo += " " + res.get("code");
+                                    Log.e("AddNewTag", "http code " + res.get("code"));
+                                }
+                                Looper.prepare();
+                                Toast.makeText(AddNewTag.this, logInfo, Toast.LENGTH_LONG).show();
+                                Looper.loop();
+                                return;
+                            }
+
+                            int[][][] split = NetUtil.arrayJson2java((JSONArray) res.get("split"));
+                            if (split == null) {
+                                Looper.prepare();
+                                Toast.makeText(AddNewTag.this, logInfo + " 无法获取分存图", Toast.LENGTH_LONG).show();
+                                Looper.loop();
+                                return;
+                            }
+
+                            Integer id = (Integer) res.get("id");
+                            if (id != null) {
+                                visualWallet.setId(id);
+                                walletQuery.addWallet(visualWallet);  // 数据接口调用
+                                ImageUtils.export(AddNewTag.this, name, split, fileNum);  // 调用图像模块，直接全部保存到本地
+                                downloadAudio(); // 下载音频
+                            } else {
+                                Looper.prepare();
+                                Toast.makeText(AddNewTag.this, logInfo + " 无法获取id", Toast.LENGTH_LONG).show();
+                                Looper.loop();
+                            }
+                            runOnUiThread(this::finish);
+                        });
+                        splitRequest.start();
+                    }
                 })
                 .onDenied(permissions -> Toast.makeText(AddNewTag.this, "没有权限无法保存分存图片", Toast.LENGTH_LONG).show())
                 .start();
@@ -208,6 +257,13 @@ public class AddNewTag extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void onImpClick(View v) {
+        if (GlobalVariable.appMode == 0) {
+            Looper.prepare();
+            Toast.makeText(AddNewTag.this, "随身模式下不可用", Toast.LENGTH_LONG).show();
+            Looper.loop();
+            return;
+        }
+
         ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         String clipStr = (String) cm.getPrimaryClip().getItemAt(0).getText();
         Log.i("AddNewTag", "got clip string: " + clipStr);
@@ -247,6 +303,11 @@ public class AddNewTag extends AppCompatActivity {
             Toast.makeText(AddNewTag.this, "尚未选择音频文件", Toast.LENGTH_LONG).show();
             Looper.loop();
         } else {
+
+            Looper.prepare();
+            Toast.makeText(AddNewTag.this, "正在上传文件", Toast.LENGTH_SHORT).show();
+            Looper.loop();
+
             File audioFile = new File(audioPath);
             new UploadRequest(0, 0, ".wav", audioFile).setNetCallback(res -> {
                 String logInfo = "网络响应异常";

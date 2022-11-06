@@ -32,8 +32,8 @@ public class Start extends AppCompatActivity {
         androidId = Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         GlobalVariable.initAndroidId(Start.this);
         AppModeUtil.initAppMode(Start.this);
-        DataUtil.initData(Start.this);
         WalletQuery.initPrefName();
+        DataUtil.initData(Start.this);
 
         // 一段时间后跳转
         new Thread()  //子线程

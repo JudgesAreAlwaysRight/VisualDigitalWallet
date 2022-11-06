@@ -22,6 +22,7 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.visualwallet.common.GlobalVariable;
+import com.visualwallet.data.AppModeUtil;
 import com.visualwallet.entity.VisualWallet;
 import com.visualwallet.ui.Account;
 import com.visualwallet.ui.AddNewTag;
@@ -31,6 +32,7 @@ import com.visualwallet.data.DataUtil;
 import com.visualwallet.data.WalletQuery;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class NotificationsFragment extends Fragment {
 
@@ -52,9 +54,12 @@ public class NotificationsFragment extends Fragment {
         });
         modeSwitch = view.findViewById(R.id.switch1);
         modeSwitch.setChecked(GlobalVariable.appMode == 1);
-        modeSwitch.setText(GlobalVariable.appMode == 1 ? "在线模式" : "本地模式");
+        modeSwitch.setText(GlobalVariable.appMode == 1 ? "在线模式" : "随身模式");
         modeSwitch.setOnCheckedChangeListener(this::onCheckChanged);
+
+        WalletQuery.initPrefName();
         refreshScrollView();
+
         return view;
     }
 
@@ -62,7 +67,7 @@ public class NotificationsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         modeSwitch.setChecked(GlobalVariable.appMode == 1);
-        modeSwitch.setText(GlobalVariable.appMode == 1 ? "在线模式" : "本地模式");
+        modeSwitch.setText(GlobalVariable.appMode == 1 ? "在线模式" : "随身模式");
         refreshScrollView();
     }
 
@@ -127,6 +132,7 @@ public class NotificationsFragment extends Fragment {
         if (buttonView.isPressed()) {
             if ((GlobalVariable.appMode == 1) != isChecked) {
                 GlobalVariable.appMode = (isChecked ? 1 : 0);
+                AppModeUtil.setAppMode(requireActivity(), GlobalVariable.appMode);
                 modeSwitch.setText(isChecked ? "在线模式" : "本地模式");
                 WalletQuery.initPrefName();
                 refreshScrollView();

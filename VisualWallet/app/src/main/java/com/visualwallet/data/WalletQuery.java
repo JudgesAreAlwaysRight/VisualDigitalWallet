@@ -18,10 +18,25 @@ public class WalletQuery {
     private final Context context;
     public static String prefName;
 
+    private static Integer localMaxId = null;
+
     public WalletQuery(Context context) {
         this.context = context;
     }
 
+    public synchronized int getNewLocalId() {
+        SharedPreferences pref = context.getSharedPreferences("base", Context.MODE_PRIVATE);
+        // 一个小trick，本地的id从10000开始，这样能向前兼容，同时也好区分在线账号和本地账号
+        int prefLocalMaxId = pref.getInt("localMaxId", 10000);
+        localMaxId = prefLocalMaxId + 1;
+        SharedPreferences.Editor editor = context.getSharedPreferences("base", Context.MODE_PRIVATE)
+                .edit();
+        editor.putInt("localMaxId", localMaxId);
+        editor.apply();
+        return localMaxId;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public static void initPrefName() {
         if (GlobalVariable.appMode == 0)
             prefName = "offline";

@@ -8,6 +8,8 @@ public class Constant {
 
     public static final String downloadPath = "/DCIM/VisualWallet/";
 
+    public static final int localWalletRandomSeed = 215646;
+
     // 网络相关
     public static final String protocol = "http";
     public static final String domain = "vw.milkyship.cn";
