@@ -25,7 +25,7 @@ import com.visualwallet.R;
 import com.visualwallet.bitcoin.BitcoinClient;
 import com.visualwallet.common.Constant;
 import com.visualwallet.data.DataUtil;
-import com.visualwallet.data.ImageExporter;
+import com.visualwallet.data.ImageUtils;
 import com.visualwallet.data.WalletQuery;
 import com.visualwallet.entity.VisualWallet;
 import com.visualwallet.net.DownloadRequest;
@@ -180,7 +180,7 @@ public class AddNewTag extends AppCompatActivity {
                         if (id != null) {
                             visualWallet.setId(id);
                             walletQuery.addWallet(visualWallet);  // 数据接口调用
-                            ImageExporter.export(AddNewTag.this, name, split, fileNum);  // 调用图像模块，直接全部保存到本地
+                            ImageUtils.export(AddNewTag.this, name, split, fileNum);  // 调用图像模块，直接全部保存到本地
                             downloadAudio(); // 下载音频
                         } else {
                             Looper.prepare();

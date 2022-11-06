@@ -10,8 +10,8 @@ public class Algorithm {
      * 分存用的矩阵，就是那个S0S1一串01的那个
      */
     public static class splitMatrix {
-        ArrayList<ArrayList<Integer>> S0;
-        ArrayList<ArrayList<Integer>> S1;
+        public ArrayList<ArrayList<Integer>> S0;
+        public ArrayList<ArrayList<Integer>> S1;
         int thresh0;
         int thresh1;
 
