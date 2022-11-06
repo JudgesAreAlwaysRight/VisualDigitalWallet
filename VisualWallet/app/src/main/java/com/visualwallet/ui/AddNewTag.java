@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.alibaba.fastjson.JSONArray;
 import com.visualwallet.R;
+import com.visualwallet.bitcoin.BitcoinClient;
 import com.visualwallet.common.Constant;
 import com.visualwallet.data.DataUtil;
 import com.visualwallet.data.ImageExporter;
@@ -104,8 +105,17 @@ public class AddNewTag extends AppCompatActivity {
         WalletQuery walletQuery = new WalletQuery(AddNewTag.this);
 
         String address = viewAddress.getText().toString();
-        String keyHex = viewKey.getText().toString();
-        String key = NetUtil.key2bin(keyHex);
+        String keyRaw = viewKey.getText().toString();
+        Log.i("add account", "privateKey length: " + keyRaw.length()
+                + " key is : " + keyRaw);
+        String key;
+        if (keyRaw.length() == 64) {
+            key = NetUtil.hexKey2bin(keyRaw);
+        } else {
+            key = NetUtil.hexKey2bin(
+                    BitcoinClient.getBitcoinKey(keyRaw).getPrivateKeyAsHex()
+            );
+        }
         String name = viewName.getText().toString();
         String type = viewType.getText().toString();
         int K = Integer.parseInt(viewK.getSelectedItem().toString());

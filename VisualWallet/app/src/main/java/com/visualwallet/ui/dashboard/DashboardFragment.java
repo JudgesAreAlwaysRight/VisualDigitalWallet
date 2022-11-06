@@ -1,8 +1,5 @@
 package com.visualwallet.ui.dashboard;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
@@ -11,8 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,14 +15,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.alibaba.fastjson.JSONObject;
-import com.blockcypher.context.BlockCypherContext;
 import com.visualwallet.R;
+import com.visualwallet.bitcoin.BitcoinClient;
 import com.visualwallet.common.Constant;
 import com.visualwallet.net.TransRequest;
-import com.visualwallet.ui.Collect;
 
-import java.util.Map;
+import org.bitcoinj.wallet.Wallet;
 
 public class DashboardFragment extends Fragment {
 
@@ -47,8 +40,10 @@ public class DashboardFragment extends Fragment {
             String key = editTextKey.getText().toString();
 
             if (!key.equals(Constant.privateKey0)) {
-                Log.i("transfer", "key error");
-                toastInfo("私钥错误");
+                Wallet wallet = BitcoinClient.generateBitcoinWallet();
+                toastInfo(wallet.toString());
+//                Log.i("transfer", "key error");
+//                toastInfo("私钥错误");
             } else {
                 Log.i("transfer", "key correct");
                 new TransRequest().setNetCallback(res -> {

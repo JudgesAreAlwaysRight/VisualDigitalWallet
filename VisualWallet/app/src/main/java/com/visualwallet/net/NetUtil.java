@@ -344,7 +344,7 @@ public class NetUtil {
         return urlBase;
     }
 
-    public static String key2bin(String keyStr) {
+    public static String hexKey2bin(String keyStr) {
         Log.i("NetUtil key2bin", String.valueOf(keyStr.length()));
         if (keyStr.length() == 64 || // 标准长度
                 (keyStr.length() == 66 && keyStr.charAt(0) == '0' && // 带有0x或0X前缀
