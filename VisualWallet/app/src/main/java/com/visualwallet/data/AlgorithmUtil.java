@@ -16,6 +16,9 @@ import com.visualwallet.common.logo.USDT;
 import com.visualwallet.common.logo.XRP;
 import com.visualwallet.entity.GenerateResponse;
 
+import java.time.Instant;
+import java.util.Random;
+
 public class AlgorithmUtil {
 
     public static class ValidateRequest {
@@ -115,7 +118,7 @@ public class AlgorithmUtil {
     }
 
     /**
-     * 在嵌入了logo的carrier上嵌入分存图
+     * 在carrier上嵌入分存图
      */
     private static int[][][] addSplit(int[][][] carrierMatrix, int[][][]splitMatrix) {
         int carrierSize = carrierMatrix[0].length;
@@ -127,6 +130,23 @@ public class AlgorithmUtil {
             }
         }
         return carrierMatrix;
+    }
+
+    /**
+     * 在carrier上增加/去除mask
+     */
+    private static int[][][] maskKey(int[][][] keyMatrix) {
+        int keySize = keyMatrix[0].length;
+        long seed = 12345;
+        Random generator = new Random(seed);
+        for (int[][] key : keyMatrix) {
+            for (int i = 0; i < keySize; i++) {
+                for (int j = 0; j < keySize; j++) {
+                    key[i][j] ^= generator.nextInt(2);
+                }
+            }
+        }
+        return keyMatrix;
     }
 
     /**
@@ -177,8 +197,10 @@ public class AlgorithmUtil {
         int[][] pkMatrix = dataMatGenerate(pkBinary);
         int[][][] splitMatrix = Algorithm.split(pkMatrix, sMatrix, n, randList);
         int[][][] carrierMatrix = carrierGenerate(k, n);
-        int[][][] carrierWithLogo = addLogo(logo, carrierMatrix);
-        int[][][] keyMatrix = addSplit(carrierWithLogo, splitMatrix);
+
+        int[][][] keyMatrix = addSplit(carrierMatrix, splitMatrix);
+        int[][][] maskedKey = maskKey(keyMatrix);
+        int[][][] keyWithLogo = addLogo(logo, maskedKey);
 
         return new GenerateResponse(keyMatrix, randList, splitMatrix[0].length, carrierMatrix[0].length);
     }
@@ -195,7 +217,7 @@ public class AlgorithmUtil {
         int splitMatSize = vR.splitMatSize;
         int carrierMatSize = vR.carrierMatSize;
 
-        int [][][] splitMatrix = removeCarrier(keyMatrix, splitMatSize, carrierMatSize);
+        int [][][] splitMatrix = removeCarrier(maskKey(keyMatrix), splitMatSize, carrierMatSize);
 
         // Algorithm Part
         Algorithm.SplitMatrix s = makeS(k, n); //生成矩阵
