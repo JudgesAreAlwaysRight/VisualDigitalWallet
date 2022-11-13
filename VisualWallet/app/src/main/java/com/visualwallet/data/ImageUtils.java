@@ -47,11 +47,6 @@ public class ImageUtils {
         return true;
     }
 
-    public static int[][][] upsample(int[][][] bitImgList, int boxSize) {
-        // TODO xyk
-        return bitImgList;
-    }
-
     public static boolean export(Context context, String walName, int[][][] bitImgList, int audioNum) {
         int newLen = bitImgList.length - audioNum;
         if (newLen >= 0) {
@@ -117,7 +112,7 @@ public class ImageUtils {
             e.printStackTrace();
         }
         // 发送广播，通知刷新图库的显示
-        context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + fileName)));
+        // context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + fileName)));
 
     }
 

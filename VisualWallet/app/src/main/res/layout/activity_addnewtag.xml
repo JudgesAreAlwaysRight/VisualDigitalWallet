@@ -314,7 +314,6 @@
 
     </RelativeLayout>
 
-
     <RelativeLayout
         android:id="@+id/ant_fa"
         android:layout_width="match_parent"

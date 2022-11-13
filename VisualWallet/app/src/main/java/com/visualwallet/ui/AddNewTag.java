@@ -85,8 +85,6 @@ public class AddNewTag extends AppCompatActivity {
         fileSelect.setOnClickListener(v -> onFileClick());
 
         if (GlobalVariable.appMode == 0) {
-            findViewById(R.id.ant_address).setVisibility(GONE);
-            findViewById(R.id.imp_layout).setVisibility(GONE);
             findViewById(R.id.ant_fa).setVisibility(GONE);
             findViewById(R.id.ant_f).setVisibility(GONE);
         }
@@ -125,12 +123,18 @@ public class AddNewTag extends AppCompatActivity {
         Log.i("add account", "privateKey length: " + keyRaw.length()
                 + " key is : " + keyRaw);
         String key;
-        if (keyRaw.length() == 64) {
-            key = NetUtil.hexKey2bin(keyRaw);
-        } else {
-            String keyHex = BitcoinClient.getBitcoinKey(keyRaw).getPrivateKeyAsHex();
-            Log.i("add account", keyHex);
-            key = NetUtil.hexKey2bin(keyHex);
+        try {
+            if (keyRaw.length() == 64) {
+                key = NetUtil.hexKey2bin(keyRaw);
+            } else {
+                String keyHex = BitcoinClient.getBitcoinKey(keyRaw).getPrivateKeyAsHex();
+                Log.i("add account", keyHex);
+                key = NetUtil.hexKey2bin(keyHex);
+            }
+        } catch (Exception e) {
+            Log.e("add account", e.toString());
+            Toast.makeText(AddNewTag.this, "私钥不合法", Toast.LENGTH_LONG).show();
+            return;
         }
         Log.i("add account", "got key: " + key);
 
@@ -257,13 +261,6 @@ public class AddNewTag extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void onImpClick(View v) {
-        if (GlobalVariable.appMode == 0) {
-            Looper.prepare();
-            Toast.makeText(AddNewTag.this, "随身模式下不可用", Toast.LENGTH_LONG).show();
-            Looper.loop();
-            return;
-        }
-
         ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         String clipStr = (String) cm.getPrimaryClip().getItemAt(0).getText();
         Log.i("AddNewTag", "got clip string: " + clipStr);

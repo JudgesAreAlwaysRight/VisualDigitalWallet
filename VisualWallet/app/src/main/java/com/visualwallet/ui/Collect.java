@@ -291,9 +291,7 @@ public class Collect extends AppCompatActivity {
                     secretKey = NetUtil.key2hex(secretKey);
 
                     // 后台更新分存图
-                    Looper.prepare();
                     picUpdate(visualWallet.getId(), Objects.requireNonNull(res.get("secretKey")).toString());
-                    Looper.loop();
 
                     // 显示找回的私钥
                     showPrivateKey(secretKey);

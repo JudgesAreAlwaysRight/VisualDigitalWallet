@@ -138,10 +138,10 @@ public class AlgorithmUtil {
     private static int[][][] maskKey(int[][][] keyMatrix) {
         int keySize = keyMatrix[0].length;
         long seed = 12345;
-        Random generator = new Random(seed);
         for (int[][] key : keyMatrix) {
-            for (int i = 0; i < keySize; i++) {
-                for (int j = 0; j < keySize; j++) {
+            Random generator = new Random(seed);
+            for (int i = (int) (keyMatrix[0].length * 0.5); i < keySize - 10; i++) {
+                for (int j = (int) (keyMatrix[0].length * 0.5); j < keySize - 10; j++) {
                     key[i][j] ^= generator.nextInt(2);
                 }
             }
@@ -202,7 +202,7 @@ public class AlgorithmUtil {
         int[][][] maskedKey = maskKey(keyMatrix);
         int[][][] keyWithLogo = addLogo(logo, maskedKey);
 
-        return new GenerateResponse(keyMatrix, randList, splitMatrix[0].length, carrierMatrix[0].length);
+        return new GenerateResponse(keyWithLogo, randList, splitMatrix[0].length, carrierMatrix[0].length);
     }
 
     /**
