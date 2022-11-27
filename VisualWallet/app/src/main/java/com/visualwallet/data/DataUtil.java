@@ -17,6 +17,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +44,38 @@ public class DataUtil {
         editor = context.getSharedPreferences(WalletQuery.prefName, Context.MODE_PRIVATE).edit();
         editor.apply();
         Log.i("init data", "init share");
+    }
+
+    private final static char[] digits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+    private final static byte[] undigits = new byte[128];
+
+    static {
+        char[] lower = "0123456789abcdef".toCharArray();
+        char[] upper = "0123456789ABCDEF".toCharArray();
+        Arrays.fill(undigits, (byte) -1);
+        for (byte i = 0; i < 16; i++) {
+            undigits[lower[i]] = i;
+        }
+        for (byte i = 0; i < 16; i++) {
+            undigits[upper[i]] = i;
+        }
+    }
+
+    public static String bytes2Hex(byte[] bytes) {
+        char[] chars = new char[bytes.length << 1];
+        for (int i = 0; i < bytes.length; i++) {
+            chars[i << 1] = digits[(bytes[i] >> 4) & 0xF];
+            chars[(i << 1) + 1] = digits[bytes[i] & 0xF];
+        }
+        return new String(chars);
+    }
+
+    public static byte[] hex2Bytes(String hex) {
+        byte[] bytes = new byte[hex.length() >> 1];
+        for (int i = 0; i < bytes.length; i++) {
+            bytes[i] = (byte) (undigits[hex.charAt(i << 1)] << 4 | undigits[hex.charAt((i << 1) + 1)]);
+        }
+        return bytes;
     }
 
     public static String resolveAudioUri(Context context, Uri uri) {

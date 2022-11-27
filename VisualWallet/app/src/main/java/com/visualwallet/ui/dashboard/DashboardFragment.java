@@ -41,11 +41,10 @@ public class DashboardFragment extends Fragment {
         editTextAddress = root.findViewById(R.id.editTextAddress);
         editTextKey = root.findViewById(R.id.editTextKey);
         editTextValue = root.findViewById(R.id.editTextValue);
-        editTextFee = root.findViewById(R.id.editTextFee);
 
         Button transBtn = root.findViewById(R.id.button_trans);
-        transBtn.setOnClickListener(view_-> lockedEntry());
-//        transBtn.setOnClickListener(view_-> transfer());
+//        transBtn.setOnClickListener(view_-> lockedEntry());
+        transBtn.setOnClickListener(view_-> transfer());
 
         return root;
     }
@@ -60,8 +59,9 @@ public class DashboardFragment extends Fragment {
 
         String toAddress = editTextAddress.getText().toString();
         String key = editTextKey.getText().toString();
-        String value = editTextValue.getText().toString();
-        String fee = editTextFee.getText().toString();
+        String value_str = editTextValue.getText().toString();
+        long value = (long) (Double.parseDouble(value_str) * Constant.btc2sat);
+        long fee = 9000;
 
         if (key.length() != 51 && key.length() != 52) {
             toastInfo("私钥格式错误");
@@ -74,15 +74,17 @@ public class DashboardFragment extends Fragment {
             if (res != null) {
                 Integer resFlag = (Integer) res.get("flag");
                 String resContent = (String) res.get("content");
+                if (Looper.myLooper() == null) {
+                    Looper.prepare();
+                }
                 if (resFlag != null && resContent != null) {
                     // 获取到了正确的返回信息
                     resContent = resContent.replace("\\", "");
-                    if (Looper.myLooper() == null) {
-                        Looper.prepare();
-                    }
                     new AlertDialog.Builder(requireContext())
-                            .setTitle("转账成功")
-                            .setMessage("向\n" + toAddress + "\n转账 10 BTC 成功")
+                            .setTitle("已发起转账")
+                            .setMessage(String.format(
+                                    "已向 %s 转账 %s BTC，手续费0.00009BTC，正在等待网络确认",
+                                    toAddress, value_str))
                             .setPositiveButton("确定", null)
                             .show();
                     Looper.loop();
@@ -91,7 +93,6 @@ public class DashboardFragment extends Fragment {
             }
             toastInfo("转账异常");
         }).start();
-        toastInfo("转账请求已发出，等待区块链确认");
     }
 
     private void toastInfo(String str) {

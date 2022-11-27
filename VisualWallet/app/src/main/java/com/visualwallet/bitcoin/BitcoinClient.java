@@ -1,5 +1,8 @@
 package com.visualwallet.bitcoin;
 
+import static com.visualwallet.data.DataUtil.bytes2Hex;
+import static com.visualwallet.data.DataUtil.hex2Bytes;
+
 import android.util.Log;
 
 import org.bitcoinj.core.Address;
@@ -21,6 +24,7 @@ import org.bitcoinj.wallet.Wallet;
 
 import java.io.File;
 import java.math.BigInteger;
+import java.util.Arrays;
 
 public class BitcoinClient {
 
@@ -62,16 +66,18 @@ public class BitcoinClient {
         return wallet;
     }
 
-    public static ECKey getBitcoinKey(String privateKeyStr) {
-        ECKey key;
-        if (privateKeyStr.length() == 51 || privateKeyStr.length() == 52) {
-            DumpedPrivateKey dumpedPrivateKey = DumpedPrivateKey.fromBase58(params, privateKeyStr);
-            key = dumpedPrivateKey.getKey();
-        } else {
-            BigInteger privateKey = Base58.decodeToBigInteger(privateKeyStr);
-            key = ECKey.fromPrivate(privateKey);
-        }
-        return key;
+    public static String decodeBitcoinBase58ToHex(String privateKeyBase58) {
+        byte[] versionAndDataBytes = Base58.decodeChecked(privateKeyBase58);
+        byte[] keyBytes = Arrays.copyOfRange(versionAndDataBytes, 1, versionAndDataBytes.length - 1);
+        return bytes2Hex(keyBytes);
+    }
+
+    public static String encodeHexToBitcoinBase58(NetworkParameters params, String privateKeyHex) {
+        byte[] keyBytes = hex2Bytes(privateKeyHex);
+        byte[] versionAndDataBytes = new byte[33];
+        System.arraycopy(keyBytes, 0, versionAndDataBytes, 0, keyBytes.length);
+        versionAndDataBytes[32] = 1;
+        return Base58.encodeChecked(params.getDumpedPrivateKeyHeader(), versionAndDataBytes);
     }
 
     public static Wallet getBitcoinWallet(String privateKeyStr) {

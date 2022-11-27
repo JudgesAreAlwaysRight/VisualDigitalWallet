@@ -127,7 +127,7 @@ public class AddNewTag extends AppCompatActivity {
             if (keyRaw.length() == 64) {
                 key = NetUtil.hexKey2bin(keyRaw);
             } else {
-                String keyHex = BitcoinClient.getBitcoinKey(keyRaw).getPrivateKeyAsHex();
+                String keyHex = BitcoinClient.decodeBitcoinBase58ToHex(keyRaw);
                 Log.i("add account", keyHex);
                 key = NetUtil.hexKey2bin(keyHex);
             }

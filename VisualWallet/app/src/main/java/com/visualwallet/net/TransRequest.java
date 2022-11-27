@@ -12,10 +12,10 @@ public class TransRequest extends NetRequest {
     private final String chain;
     private final String address;
     private final String key;
-    private final String num;
-    private final String fee;
+    private final long num;
+    private final long fee;
 
-    public TransRequest(String address, String key, String num, String fee) {
+    public TransRequest(String address, String key, long num, long fee) {
         this.chain = "test";
         this.address = address;
         this.key = key;
@@ -23,7 +23,7 @@ public class TransRequest extends NetRequest {
         this.fee = fee;
     }
 
-    public TransRequest(String address, String key, String num, String fee, String chain) {
+    public TransRequest(String address, String key, long num, long fee, String chain) {
         this.chain = chain;
         this.address = address;
         this.key = key;
@@ -37,6 +37,7 @@ public class TransRequest extends NetRequest {
 
         args.put("reqFlag", reqFlag);
         args.put("chain", chain);
+        args.put("key", key);
         args.put("address", address);
         args.put("num", num);
         args.put("fee", fee);

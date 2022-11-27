@@ -24,7 +24,7 @@
     <LinearLayout
         android:id="@+id/trans_panel"
         android:layout_width="match_parent"
-        android:layout_height="420dp"
+        android:layout_height="340dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="70dp"
         android:layout_marginEnd="8dp"
@@ -164,55 +164,13 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/layout_fee"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:translationZ="11dp"
-        app:layout_constraintTop_toBottomOf="@+id/layout_num"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="40dp">
-
-        <TextView
-            android:id="@+id/ant_fee_tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="15dp"
-            android:text="转账小费"
-            android:textSize="18sp" />
-
-        <EditText
-            android:id="@+id/editTextFee"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_toEndOf="@id/ant_fee_tag"
-            android:autofillHints=""
-            android:background="@drawable/add_new_input"
-            android:elevation="5dp"
-            android:gravity="center_vertical"
-            android:hint="输入小费，单位BTC"
-            android:inputType="numberDecimal"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:textColor="@color/darkBlue"
-            android:textSize="16sp" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
         android:id="@+id/layout_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:gravity="center_horizontal"
         android:translationZ="11dp"
-        app:layout_constraintTop_toBottomOf="@+id/layout_fee"
+        app:layout_constraintTop_toBottomOf="@+id/layout_num"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="40dp">
 

@@ -28,8 +28,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.alibaba.fastjson.JSONArray;
 import com.google.zxing.Result;
-import com.visualwallet.Algorithm.Algorithm;
 import com.visualwallet.R;
+import com.visualwallet.bitcoin.BitcoinClient;
 import com.visualwallet.common.GlobalVariable;
 import com.visualwallet.common.WaveBallProgress;
 import com.visualwallet.cpplib.CppLib;
@@ -44,6 +44,8 @@ import com.visualwallet.net.UpdateRequest;
 import com.visualwallet.net.UploadRequest;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
+
+import org.bitcoinj.params.MainNetParams;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -262,6 +264,10 @@ public class Collect extends AppCompatActivity {
         );
         String privateKey = AlgorithmUtil.retrievePk(validateRequest);
         privateKey = NetUtil.key2hex(privateKey);
+        // 对于BTC，私钥需要base58编码才能用
+        if (visualWallet.getCurType().equalsIgnoreCase("BTC")) {
+            privateKey = BitcoinClient.encodeHexToBitcoinBase58(MainNetParams.get(), privateKey);
+        }
         showPrivateKey(privateKey);
     }
 
