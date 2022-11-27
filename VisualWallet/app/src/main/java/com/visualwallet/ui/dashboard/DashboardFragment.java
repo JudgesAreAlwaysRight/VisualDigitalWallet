@@ -69,22 +69,23 @@ public class DashboardFragment extends Fragment {
         }
 
         new TransRequest(toAddress, key, value, fee, "public").setNetCallback(res -> {
-            Log.i("transfer", "got res");
+            Log.i("transfer", "got res: " + res);
 
             if (res != null) {
                 Integer resFlag = (Integer) res.get("flag");
                 String resContent = (String) res.get("content");
-                if (Looper.myLooper() == null) {
-                    Looper.prepare();
-                }
-                if (resFlag != null && resContent != null) {
+                if (resFlag != null && resFlag == 1 &&
+                        resContent != null && !resContent.equals("")) {
                     // 获取到了正确的返回信息
-                    resContent = resContent.replace("\\", "");
+                    String msg = String.format(
+                            "已向 %s 转账 %s BTC，手续费0.00009BTC，正在等待网络确认，txId：%s",
+                            toAddress, value_str, resContent);
+                    if (Looper.myLooper() == null) {
+                        Looper.prepare();
+                    }
                     new AlertDialog.Builder(requireContext())
                             .setTitle("已发起转账")
-                            .setMessage(String.format(
-                                    "已向 %s 转账 %s BTC，手续费0.00009BTC，正在等待网络确认",
-                                    toAddress, value_str))
+                            .setMessage(msg)
                             .setPositiveButton("确定", null)
                             .show();
                     Looper.loop();
