@@ -282,30 +282,44 @@ def transact(request):
     if request.method == 'POST':
         body = request.body
         sheet = json.loads(body.decode('utf-8'))
-        flag = sheet['reqFlag']
-        chain = sheet['chain']
-        address = sheet['address']
-        num = sheet['num']
-        if flag != "testTransact":
-            res = {"flag": 0, "content": ""}
-        else:
-            if chain == "test":
-                send_tx = "bitcoin-cli -regtest sendtoaddress " + address + " " + num
-                confirm_tx = "bitcoin-cli -regtest -generate 1"
-                get_tx = "bitcoin-cli -regtest listreceivedbyaddress"
-                os.system(send_tx)
-                os.system(confirm_tx)
-                result = os.popen(get_tx)
-                res = {"flag": 1, "content": result.read()}
-            elif chain == "public":
-                send_tx = "bitcoin-cli sendtoaddress " + address + " " + num
-                confirm_tx = "bitcoin-cli -generate 1"
-                get_tx = "bitcoin-cli listreceivedbyaddress"
-                os.system(send_tx)
-                os.system(confirm_tx)
-                result = os.popen(get_tx)
-                res = {"flag": 1, "content": result.read()}
-        res = json.dumps(res)
-        return HttpResponse(res)
+
+        res = {"flag": 0, "content": ""}
+        try:
+            flag = sheet['reqFlag']
+            if flag == "testTransact":
+                chain = sheet['chain']
+                target_address = sheet['address']
+                num = sheet['num']
+                if chain == 'public' or chain == 'pubtest':
+                    private_key = sheet['key']
+                    fee = sheet['fee']
+            else:
+                return HttpResponse(json.dumps(res))
+        except KeyError:
+            return HttpResponse(json.dumps(res))
+
+        if chain == "test":
+            send_tx = "bitcoin_kit-cli -regtest sendtoaddress " + target_address + " " + num
+            confirm_tx = "bitcoin_kit-cli -regtest -generate 1"
+            get_tx = "bitcoin_kit-cli -regtest listreceivedbyaddress"
+            os.system(send_tx)
+            os.system(confirm_tx)
+            result = os.popen(get_tx)
+            res = {"flag": 1, "content": result.read()}
+        elif chain == "public":
+            try:
+                transact_response = transact(private_key, target_address, num, fee)
+                res = {"flag": 1, "content": transact_response}
+            except Exception:
+                res = {"flag": 0, "content": ""}
+        elif chain == "pubtest":
+            try:
+                transact_response = transact(private_key, target_address, num, fee, 'testnet')
+                res = {"flag": 1, "content": transact_response}
+            except Exception:
+                res = {"flag": 0, "content": ""}
+
+        res_json = json.dumps(res)
+        return HttpResponse(res_json)
     else:
         return HttpResponse("transact Request Method Error")

@@ -1,4 +1,5 @@
 opencv-python
+python-bitcoinlib
 qrcode
 pillow
 numpy
