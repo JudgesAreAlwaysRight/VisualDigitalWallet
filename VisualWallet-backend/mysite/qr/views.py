@@ -1,18 +1,17 @@
-from django.http import HttpResponseRedirect, HttpResponse, FileResponse, Http404
-from django.shortcuts import get_object_or_404, render
-from django.urls import reverse
-from django.views import generic
-from .models import SKInfo
-import hashlib
-from qr.kn.shadow_gen_kn import api1, api1_2, api2, api3, api3_2, api4, carryStore, carryFetch
-import json
-import numpy as np
-import time
 import datetime
-import cv2
+import hashlib
+import json
 import os
 import stat
-from qr.kn.global_var import *
+import time
+
+import numpy as np
+from django.http import HttpResponse, FileResponse
+from .kn.global_var import *
+from .kn.shadow_gen_kn import api1, api1_2, api2, api3, api3_2, api4, carryStore, carryFetch
+
+from .bitcoin_kit.client import transfer
+from .models import SKInfo
 
 
 def genSplit(request):
@@ -308,7 +307,7 @@ def transact(request):
             res = {"flag": 1, "content": result.read()}
         elif chain == "public":
             try:
-                transact_response = transact(private_key, target_address, num, fee)
+                transact_response = transfer(private_key, target_address, num, fee)
                 res = {"flag": 1, "content": transact_response}
             except Exception:
                 res = {"flag": 0, "content": ""}

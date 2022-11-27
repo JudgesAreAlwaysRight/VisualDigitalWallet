@@ -7,7 +7,7 @@ utxo接口来自btc.com，相关接口文档参考：https://explorer.btc.com/zh
 """
 
 
-def transact(private_key, target_address, amount, fee, network='mainnet'):
+def transfer(private_key, target_address, amount, fee, network='mainnet'):
     SelectParams(network)
 
     # 地址与密钥
