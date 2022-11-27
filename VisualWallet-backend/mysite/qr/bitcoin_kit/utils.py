@@ -1,5 +1,4 @@
 import json
-
 import requests
 from bitcoin.core import b2x, lx, COIN, COutPoint, CMutableTxOut, CMutableTxIn, CMutableTransaction
 from bitcoin.core.script import *
@@ -74,9 +73,11 @@ def get_utxo(address):
 
 
 def is_sufficient(utxo_list, total_amount):
+    if utxo_list is None or len(utxo_list) <= 0:
+        return False
     total_balance = 0
     for utxo in utxo_list:
         total_balance += utxo['value']
-    if len(utxo_list) <= 0 or total_balance < total_amount:
+    if total_balance < total_amount:
         return False
     return True
