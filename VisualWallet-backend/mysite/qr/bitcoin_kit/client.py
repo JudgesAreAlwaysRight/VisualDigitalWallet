@@ -17,8 +17,9 @@ def transfer(private_key, target_address, amount, fee, network='mainnet'):
     to_address = CBitcoinAddress(target_address)
 
     # 获取utxo
-    utxo_list = get_utxo(str(from_address))
-    if not is_sufficient(utxo_list, amount + fee):
+    all_utxo_list = get_utxo(str(from_address))
+    utxo_list, suc = get_best_uxto_sublist(all_utxo_list, amount + fee)
+    if suc is False:
         raise RuntimeError("not sufficient funds")
 
     # tx
@@ -26,7 +27,7 @@ def transfer(private_key, target_address, amount, fee, network='mainnet'):
     tx_out_script_pub_key = [OP_DUP, OP_HASH160, to_address, OP_EQUALVERIFY, OP_CHECKSIG]
 
     tx_in = create_txin((utxo_list[0]['tx_hash']), 0)
-    tx_out = create_txout(amount, tx_out_script_pub_key)
+    tx_out = create_txout(amount / 100000000, tx_out_script_pub_key)
 
     signature = create_OP_CHECKSIG_signature(tx_in, tx_out, tx_in_script_pub_key, from_private_key)
     tx_in_script_sig = [signature, from_public_key]

@@ -46,9 +46,9 @@ def broadcast_transaction(tx, network):
     response = ""
     if network == "mainnet":
         response = requests.post(
-            'https://chain.api.btc.com/v3/tools/tx-publish/',
+            'https://api.blockcypher.com/v1/btc/main/txs/push',
             headers=headers,
-            data='{"rawhex": "%s"}' % raw_transaction
+            data='{"tx": "%s"}' % raw_transaction
         )
     elif network == "testnet":
         response = requests.post(
@@ -56,13 +56,17 @@ def broadcast_transaction(tx, network):
             headers=headers,
             data='{"tx": "%s"}' % raw_transaction
         )
-    return response
+    if not response.ok:
+        raise RuntimeError("broadcast exception")
+    return response.text
 
 
 def get_utxo(address):
+    url = "https://blockchain.info/zh-cn/unspent?active=" + address
+
     url = 'https://chain.api.btc.com/v3/address/' + address + '/unspent'
     response = requests.get(url=url)
-    if response.status_code is not 200:
+    if response.status_code != 200:
         raise RuntimeError("http error: get utxo from btc.com failed")
     try:
         response_json = json.loads(response.text)
@@ -72,12 +76,26 @@ def get_utxo(address):
         raise RuntimeError("decode error: decode utxo failed")
 
 
-def is_sufficient(utxo_list, total_amount):
+def get_best_uxto_sublist(utxo_list, total_amount):
+    # 余额是否充足
     if utxo_list is None or len(utxo_list) <= 0:
-        return False
+        return [], False
     total_balance = 0
     for utxo in utxo_list:
         total_balance += utxo['value']
     if total_balance < total_amount:
-        return False
-    return True
+        return [], False
+
+    # 获取最佳的utxo列表
+    sublist = []
+
+    amount_cnt = 0
+    utxo_list = sorted(utxo_list, key=lambda x: x['value'])
+    for utxo in utxo_list:
+        if amount_cnt < total_amount:
+            sublist.append(utxo)
+            amount_cnt += utxo['value']
+        else:
+            break
+
+    return sublist, True
