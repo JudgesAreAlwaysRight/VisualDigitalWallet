@@ -58,7 +58,8 @@ def broadcast_transaction(tx, network):
         )
     if not response.ok:
         raise RuntimeError("broadcast exception")
-    return response.text
+    response_json = json.loads(response.text)
+    return response_json["tx"]["hash"]
 
 
 def get_utxo(address):
