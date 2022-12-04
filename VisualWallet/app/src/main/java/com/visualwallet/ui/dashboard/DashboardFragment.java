@@ -61,7 +61,7 @@ public class DashboardFragment extends Fragment {
         String key = editTextKey.getText().toString();
         String value_str = editTextValue.getText().toString();
         long value = (long) (Double.parseDouble(value_str) * Constant.btc2sat);
-        long fee = 9000;
+        long fee = 2000;
 
         if (key.length() != 51 && key.length() != 52) {
             toastInfo("私钥格式错误");
@@ -78,7 +78,7 @@ public class DashboardFragment extends Fragment {
                         resContent != null && !resContent.equals("")) {
                     // 获取到了正确的返回信息
                     String msg = String.format(
-                            "已向 %s 转账 %s BTC，手续费0.00009BTC，正在等待网络确认，txId：%s",
+                            "已向 %s 转账 %s BTC，手续费0.00002BTC，正在等待网络确认，txId：%s",
                             toAddress, value_str, resContent);
                     if (Looper.myLooper() == null) {
                         Looper.prepare();
