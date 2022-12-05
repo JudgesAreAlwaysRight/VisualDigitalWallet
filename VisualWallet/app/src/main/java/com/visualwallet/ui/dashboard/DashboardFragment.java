@@ -1,5 +1,6 @@
 package com.visualwallet.ui.dashboard;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -18,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.visualwallet.R;
 import com.visualwallet.bitcoin.BitcoinClient;
 import com.visualwallet.common.Constant;
+import com.visualwallet.common.GlobalVariable;
 import com.visualwallet.net.TransRequest;
 
 import org.bitcoinj.core.ECKey;
@@ -32,6 +35,7 @@ public class DashboardFragment extends Fragment {
     private EditText editTextAddress;
     private EditText editTextValue;
     private EditText editTextFee;
+    private Button transBtn;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -39,11 +43,10 @@ public class DashboardFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
         editTextAddress = root.findViewById(R.id.editTextAddress);
-        editTextKey = root.findViewById(R.id.editTextKey);
         editTextValue = root.findViewById(R.id.editTextValue);
+        editTextKey = root.findViewById(R.id.editTextKey);
 
-        Button transBtn = root.findViewById(R.id.button_trans);
-//        transBtn.setOnClickListener(view_-> lockedEntry());
+        transBtn = root.findViewById(R.id.button_trans);
         transBtn.setOnClickListener(view_-> transfer());
 
         return root;
@@ -78,7 +81,7 @@ public class DashboardFragment extends Fragment {
                         resContent != null && !resContent.equals("")) {
                     // 获取到了正确的返回信息
                     String msg = String.format(
-                            "已向 %s 转账 %s BTC，手续费0.00002BTC，正在等待网络确认，txId：%s",
+                            "已向 %s 转账 %s BTC，正在等待网络确认，txId：%s",
                             toAddress, value_str, resContent);
                     if (Looper.myLooper() == null) {
                         Looper.prepare();
@@ -102,6 +105,14 @@ public class DashboardFragment extends Fragment {
         }
         Toast.makeText(getActivity(), str, Toast.LENGTH_LONG).show();
         Looper.loop();
+    }
+
+    public void onResume() {
+        super.onResume();
+        if (GlobalVariable.privateKey != null) {
+            editTextKey.setText(GlobalVariable.privateKey);
+            GlobalVariable.privateKey = null;
+        }
     }
 
 }

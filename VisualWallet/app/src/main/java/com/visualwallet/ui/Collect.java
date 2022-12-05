@@ -16,6 +16,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -337,6 +338,8 @@ public class Collect extends AppCompatActivity {
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void showPrivateKey(String privateKey) {
+        GlobalVariable.privateKey = privateKey;
+
         if (Looper.myLooper() == null) {
             Looper.prepare();
         }
@@ -347,7 +350,7 @@ public class Collect extends AppCompatActivity {
         TextView msg= adView.findViewById(R.id.msg);
         ImageButton cfBtn = adView.findViewById(R.id.btn_comfirm);
         cfBtn.setOnClickListener(v -> finish());
-        msg.setText(String.format("私钥已找回：\n%s", privateKey));
+        msg.setText(String.format("私钥已找回：\n%s\n\n已自动填充至转账密码", privateKey));
         ImageButton copyBtn = adView.findViewById(R.id.btn_copy);
         copyBtn.setOnClickListener(v -> {
             ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
