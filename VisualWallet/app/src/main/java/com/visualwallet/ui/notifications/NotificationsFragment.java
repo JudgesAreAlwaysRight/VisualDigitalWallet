@@ -39,6 +39,8 @@ public class NotificationsFragment extends Fragment {
     private LinearLayout accountLL;
     private ImageButton wallet_add;
     private Switch modeSwitch;
+    private String onlineMode;
+    private String offlineMode;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Nullable
@@ -52,9 +54,11 @@ public class NotificationsFragment extends Fragment {
             Intent intent = new Intent(getActivity(), AddNewTag.class);
             startActivityForResult(intent, Constant.REQUEST_ADD_ACC);
         });
+        onlineMode = getResources().getString(R.string.wallet_list_title_mode_online);
+        offlineMode = getResources().getString(R.string.wallet_list_title_mode_offline);
         modeSwitch = view.findViewById(R.id.switch1);
         modeSwitch.setChecked(GlobalVariable.appMode == 1);
-        modeSwitch.setText(GlobalVariable.appMode == 1 ? "在线模式" : "随身模式");
+        modeSwitch.setText(GlobalVariable.appMode == 1 ? onlineMode : offlineMode);
         modeSwitch.setOnCheckedChangeListener(this::onCheckChanged);
 
         WalletQuery.initPrefName();
@@ -67,7 +71,7 @@ public class NotificationsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         modeSwitch.setChecked(GlobalVariable.appMode == 1);
-        modeSwitch.setText(GlobalVariable.appMode == 1 ? "在线模式" : "随身模式");
+        modeSwitch.setText(GlobalVariable.appMode == 1 ? onlineMode : offlineMode);
         refreshScrollView();
     }
 
@@ -112,9 +116,9 @@ public class NotificationsFragment extends Fragment {
             }
             if (accStr != null) {
                 ClipboardManager cm = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData mClipData = ClipData.newPlainText("Keycrux账户序列码", accStr);
+                ClipData mClipData = ClipData.newPlainText("Keycrux account sequence code", accStr);
                 cm.setPrimaryClip(mClipData);
-                Toast.makeText(getContext(), "账户序列码已复制到剪贴板", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), getResources().getString(R.string.export_success), Toast.LENGTH_LONG).show();
                 return true;
             }
             return false;
@@ -133,7 +137,7 @@ public class NotificationsFragment extends Fragment {
             if ((GlobalVariable.appMode == 1) != isChecked) {
                 GlobalVariable.appMode = (isChecked ? 1 : 0);
                 AppModeUtil.setAppMode(requireActivity(), GlobalVariable.appMode);
-                modeSwitch.setText(isChecked ? "在线模式" : "本地模式");
+                modeSwitch.setText(GlobalVariable.appMode == 1 ? onlineMode : offlineMode);
                 WalletQuery.initPrefName();
                 refreshScrollView();
             }

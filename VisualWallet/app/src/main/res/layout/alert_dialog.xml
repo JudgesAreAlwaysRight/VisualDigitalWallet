@@ -12,7 +12,7 @@
         android:background="@color/second_blue"
         android:gravity="center"
         android:padding="10dp"
-        android:text="私钥找回"
+        android:text="@string/find_back_key"
         android:textColor="@color/bkg_gray"
         android:textSize="20sp" />
 

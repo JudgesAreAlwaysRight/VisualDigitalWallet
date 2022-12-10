@@ -33,7 +33,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
             android:layout_toEndOf="@+id/ret_btn"
-            android:text="私钥找回"
+            android:text="@string/collect_title"
             android:textColor="@color/black80"
             android:textSize="34sp" />
 

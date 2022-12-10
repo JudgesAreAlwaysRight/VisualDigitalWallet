@@ -34,7 +34,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
             android:layout_toEndOf="@+id/ret_btn"
-            android:text="添加账户"
+            android:text="@string/add_new_tag_title"
             android:textColor="@color/black80"
             android:textSize="34sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -43,7 +43,7 @@
 
         <RelativeLayout
             android:id="@+id/imp_layout"
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
@@ -63,7 +63,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="5dp"
-                android:text="剪贴板\n  导入"
+                android:text="@string/import_account"
                 android:textColor="@color/main_blue"
                 android:textStyle="bold" />
         </RelativeLayout>
@@ -133,7 +133,7 @@
             android:background="@drawable/add_new_input"
             android:elevation="5dp"
             android:gravity="center_vertical"
-            android:hint="输入备注信息"
+            android:hint="@string/add_name_note"
             android:lines="1"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -168,7 +168,7 @@
             android:background="@drawable/add_new_input"
             android:elevation="5dp"
             android:gravity="center_vertical"
-            android:hint="输入私钥"
+            android:hint="@string/add_pk_note"
             android:lines="1"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -203,7 +203,7 @@
             android:background="@drawable/add_new_input"
             android:elevation="5dp"
             android:gravity="center_vertical"
-            android:hint="输入账户地址"
+            android:hint="@string/add_addr_note"
             android:lines="1"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -239,7 +239,7 @@
             android:background="@drawable/add_new_input"
             android:elevation="5dp"
             android:gravity="center_vertical"
-            android:hint="输入币种类型"
+            android:hint="@string/add_type_note"
             android:lines="1"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -263,7 +263,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="0dp"
-            android:text="分存总数："
+            android:text="@string/coeN"
             android:textSize="18sp" />
 
         <Spinner
@@ -287,12 +287,11 @@
             android:id="@+id/ant_k_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="160dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp"
-            android:layout_toEndOf="@id/ant_n_spinner"
-            android:text="门限数量："
+            android:text="@string/coeK"
             android:textSize="18sp" />
 
         <Spinner
@@ -331,7 +330,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp"
-            android:text="静态分存："
+            android:text="@string/coeF"
             android:textSize="18sp" />
 
         <Spinner
@@ -356,12 +355,11 @@
             android:id="@+id/ant_file_tag1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="160dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp"
-            android:layout_toEndOf="@id/ant_f_spinner"
-            android:text="静态音频："
+            android:text="@string/coeA"
             android:textSize="18sp" />
 
         <Spinner
@@ -403,7 +401,7 @@
             android:layout_marginTop="0dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp"
-            android:text="选择本地音频文件："
+            android:text="@string/add_choose_audio"
             android:textSize="16sp" />
 
         <ImageButton

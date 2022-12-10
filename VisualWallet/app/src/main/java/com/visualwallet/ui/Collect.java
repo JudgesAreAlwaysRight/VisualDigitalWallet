@@ -16,7 +16,6 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -133,7 +132,7 @@ public class Collect extends AppCompatActivity {
 
                     startActivity(intent);
 
-                    Toast.makeText(Collect.this, "没有权限无法扫描呦", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Collect.this, getString(R.string.no_permission_to_scan), Toast.LENGTH_LONG).show();
                 }).start();
     }
 
@@ -153,7 +152,7 @@ public class Collect extends AppCompatActivity {
                     intent.putExtra(Constant.INTENT_ZXING_CONFIG, config);
                     startActivityForResult(intent, REQUEST_CODE_SCAN);
                 })
-                .onDenied(permissions -> Toast.makeText(Collect.this, "没有权限无法扫描呦", Toast.LENGTH_LONG).show()).start();
+                .onDenied(permissions -> Toast.makeText(Collect.this, getString(R.string.no_permission_to_scan), Toast.LENGTH_LONG).show()).start();
     }
 
     public void onAudioClick(View v) {
@@ -161,7 +160,7 @@ public class Collect extends AppCompatActivity {
             if (Looper.myLooper() == null) {
                 Looper.prepare();
             }
-            Toast.makeText(Collect.this, "随身模式下不可用", Toast.LENGTH_LONG).show();
+            Toast.makeText(Collect.this, getString(R.string.not_supported_offline), Toast.LENGTH_LONG).show();
             Looper.loop();
             return;
         }
@@ -280,7 +279,7 @@ public class Collect extends AppCompatActivity {
         int hasAudio = (audioPath.equals("") ? 0 : 1);
         new CollectRequest(visualWallet.getId(), splitIndex, splitMat, hasAudio).setNetCallback(res -> {
             if (res == null || !Objects.requireNonNull(res.get("code")).equals("200")) {
-                String logInfo = "网络响应异常";
+                String logInfo = getString(R.string.network_err);
                 Log.e("Collect", "Net response illegal");
                 if (res != null && res.get("code") != null) {
                     logInfo += " " + res.get("code");
@@ -307,19 +306,19 @@ public class Collect extends AppCompatActivity {
                 case "0":
                     Log.e("Collect", "Net flag 0, pics were modified");
                     Looper.prepare();
-                    Toast.makeText(Collect.this, "分存图遭到篡改，请检查图片内容", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Collect.this, getString(R.string.cheat_detected), Toast.LENGTH_LONG).show();
                     Looper.loop();
                     break;
                 case "-1":
                     Log.e("Collect", "Net flag -1, pics were not qrcode");
                     Looper.prepare();
-                    Toast.makeText(Collect.this, "分存图无法识别", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Collect.this, getString(R.string.decode_fail), Toast.LENGTH_LONG).show();
                     Looper.loop();
                     break;
                 default:
                     Log.e("Collect", "Net flag illegal");
                     Looper.prepare();
-                    Toast.makeText(Collect.this, "服务器响应异常", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Collect.this, getString(R.string.server_err), Toast.LENGTH_LONG).show();
                     Looper.loop();
                     break;
             }
@@ -350,13 +349,13 @@ public class Collect extends AppCompatActivity {
         TextView msg= adView.findViewById(R.id.msg);
         ImageButton cfBtn = adView.findViewById(R.id.btn_comfirm);
         cfBtn.setOnClickListener(v -> finish());
-        msg.setText(String.format("私钥已找回：\n%s\n\n已自动填充至转账密码", privateKey));
+        msg.setText(String.format(getString(R.string.retrieve_suc_msg), privateKey));
         ImageButton copyBtn = adView.findViewById(R.id.btn_copy);
         copyBtn.setOnClickListener(v -> {
             ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData mClipData = ClipData.newPlainText("私钥", privateKey);
+            ClipData mClipData = ClipData.newPlainText("private_key", privateKey);
             cm.setPrimaryClip(mClipData);
-            Toast.makeText(Collect.this, "复制成功", Toast.LENGTH_LONG).show();
+            Toast.makeText(Collect.this, getString(R.string.copy_suc), Toast.LENGTH_LONG).show();
         });
         adBuilder.create().show();
         Looper.loop();
@@ -397,7 +396,7 @@ public class Collect extends AppCompatActivity {
                 if (Looper.myLooper() == null) {
                     Looper.prepare();
                 }
-                Toast.makeText(Collect.this, "分存码重复", Toast.LENGTH_LONG).show();
+                Toast.makeText(Collect.this, getString(R.string.dup), Toast.LENGTH_LONG).show();
                 Looper.loop();
                 return;
             }
@@ -454,7 +453,7 @@ public class Collect extends AppCompatActivity {
                 if (Looper.myLooper() == null) {
                     Looper.prepare();
                 }
-                Toast.makeText(Collect.this, "分存码异常", Toast.LENGTH_LONG).show();
+                Toast.makeText(Collect.this, getString(R.string.share_code_err), Toast.LENGTH_LONG).show();
                 Looper.loop();
             }
         } else if (GlobalVariable.appMode == 1) {
@@ -464,7 +463,7 @@ public class Collect extends AppCompatActivity {
                     if (Looper.myLooper() == null) {
                         Looper.prepare();
                     }
-                    Toast.makeText(Collect.this, "网络异常，无返回信息", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Collect.this, getString(R.string.server_err), Toast.LENGTH_LONG).show();
                     Looper.loop();
                     return;
                 }
@@ -473,7 +472,7 @@ public class Collect extends AppCompatActivity {
                     if (Looper.myLooper() == null) {
                         Looper.prepare();
                     }
-                    Toast.makeText(Collect.this, "网络异常，返回信息错误", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Collect.this, getString(R.string.server_err), Toast.LENGTH_LONG).show();
                     Looper.loop();
                     return;
                 }
@@ -507,7 +506,7 @@ public class Collect extends AppCompatActivity {
                     if (Looper.myLooper() == null) {
                         Looper.prepare();
                     }
-                    Toast.makeText(Collect.this, "分存码异常", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Collect.this, getString(R.string.share_code_err), Toast.LENGTH_LONG).show();
                     Looper.loop();
                 }
             }).start();
@@ -518,7 +517,7 @@ public class Collect extends AppCompatActivity {
         new UpdateRequest(id, secretKey).setNetCallback(res -> {
             if (res == null) {
                 Looper.prepare();
-                Toast.makeText(Collect.this, "网络异常，更新分存图失败", Toast.LENGTH_LONG).show();
+                Toast.makeText(Collect.this, getString(R.string.update_fail), Toast.LENGTH_LONG).show();
                 Looper.loop();
                 return;
             }
@@ -526,7 +525,7 @@ public class Collect extends AppCompatActivity {
             int[][][] updated = NetUtil.arrayJson2java((JSONArray) res.get("updated"));
             if (updateRes == null || updated == null) {
                 Looper.prepare();
-                Toast.makeText(Collect.this, "网络异常，更新分存图错误", Toast.LENGTH_LONG).show();
+                Toast.makeText(Collect.this, getString(R.string.update_fail), Toast.LENGTH_LONG).show();
                 Looper.loop();
                 return;
             }
@@ -536,7 +535,7 @@ public class Collect extends AppCompatActivity {
 
             // 提示用户新的图片已经保存
             if (updated.length > 0) {
-                String resText = "动态分存图已刷新，" + updated.length + "张图片保存到本地，请注意更新";
+                String resText = String.format(getString(R.string.update_suc_msg), updated.length);
                 Looper.prepare();
                 Toast.makeText(Collect.this, resText, Toast.LENGTH_LONG).show();
                 Looper.loop();
@@ -548,7 +547,7 @@ public class Collect extends AppCompatActivity {
         // 上传待检测的音频文件
         UploadRequest uploadRequest = new UploadRequest(visualWallet.getId(), 1, ".wav", audioFile);
         uploadRequest.setNetCallback(resUpload -> {
-            String logInfo = "网络响应异常";
+            String logInfo = getString(R.string.network_err);
             if (resUpload == null || !Objects.requireNonNull(resUpload.get("code")).equals("200")) {
                 Log.e("AddNewTag", "Net response illegal");
                 if (resUpload != null && resUpload.get("code") != null) {
@@ -566,13 +565,13 @@ public class Collect extends AppCompatActivity {
             new DetectRequest(visualWallet.getId(), 0).setNetCallback(resDetect -> {
                 if (resDetect == null || resDetect.get("flag") == null) {
                     Looper.prepare();
-                    Toast.makeText(Collect.this, "网络异常，返回信息错误", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Collect.this, getString(R.string.network_err), Toast.LENGTH_LONG).show();
                     Looper.loop();
                     return;
                 }
 
                 if (Integer.parseInt(resDetect.get("flag").toString()) == 1) {
-                    String content = "音频：" + audioFile.getName() + "\t\tType: " + visualWallet.getCurType();
+                    String content = "Audio：" + audioFile.getName() + "\t\tType: " + visualWallet.getCurType();
                     addinfo(content);
                     splitInfo.add(content);
                     audioPath = audioFile.getName();
@@ -581,9 +580,9 @@ public class Collect extends AppCompatActivity {
                         findViewById(R.id.progress_layout).setVisibility(View.VISIBLE);
                         findViewById(R.id.progress_num_layout).setVisibility(View.VISIBLE);
                         findViewById(R.id.fail_alert).setVisibility(View.INVISIBLE);
-                        int prog = (int) (splitInfo.size() / (float) visualWallet.getCoeK() * 100);
-                        progressText.setText(String.valueOf(prog + "%"));
-                        waveProgress.startProgress(prog, 300, 0);
+                        int progress = (int) (splitInfo.size() / (float) visualWallet.getCoeK() * 100);
+                        progressText.setText(String.valueOf(progress + "%"));
+                        waveProgress.startProgress(progress, 300, 0);
                     });
 
                     if (splitInfo.size() == visualWallet.getCoeK()) {
@@ -596,7 +595,7 @@ public class Collect extends AppCompatActivity {
                         findViewById(R.id.fail_alert).setVisibility(View.VISIBLE);
                     });
                     Looper.prepare();
-                    Toast.makeText(Collect.this, "分存码异常", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Collect.this, getString(R.string.share_code_err), Toast.LENGTH_LONG).show();
                     Looper.loop();
                 }
             }).start();

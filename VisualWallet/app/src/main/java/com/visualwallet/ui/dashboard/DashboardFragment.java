@@ -1,6 +1,5 @@
 package com.visualwallet.ui.dashboard;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
@@ -12,21 +11,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.visualwallet.R;
-import com.visualwallet.bitcoin.BitcoinClient;
 import com.visualwallet.common.Constant;
 import com.visualwallet.common.GlobalVariable;
 import com.visualwallet.net.TransRequest;
-
-import org.bitcoinj.core.ECKey;
-import org.bitcoinj.wallet.Wallet;
-
-import java.util.Objects;
 
 public class DashboardFragment extends Fragment {
 
@@ -67,7 +59,7 @@ public class DashboardFragment extends Fragment {
         long fee = 2000;
 
         if (key.length() != 51 && key.length() != 52) {
-            toastInfo("私钥格式错误");
+            toastInfo(getResources().getString(R.string.private_key_format_error));
             return;
         }
 
@@ -81,21 +73,21 @@ public class DashboardFragment extends Fragment {
                         resContent != null && !resContent.equals("")) {
                     // 获取到了正确的返回信息
                     String msg = String.format(
-                            "已向 %s 转账 %s BTC，正在等待网络确认，txId：%s",
-                            toAddress, value_str, resContent);
+                            getResources().getString(R.string.transfer_suc_msg),
+                            value_str, resContent);
                     if (Looper.myLooper() == null) {
                         Looper.prepare();
                     }
                     new AlertDialog.Builder(requireContext())
-                            .setTitle("已发起转账")
+                            .setTitle(getResources().getString(R.string.transfer_suc_title))
                             .setMessage(msg)
-                            .setPositiveButton("确定", null)
+                            .setPositiveButton(getResources().getString(R.string.confirm), null)
                             .show();
                     Looper.loop();
                     return;
                 }
             }
-            toastInfo("转账异常");
+            toastInfo(getResources().getString(R.string.abnormal_transfer));
         }).start();
     }
 

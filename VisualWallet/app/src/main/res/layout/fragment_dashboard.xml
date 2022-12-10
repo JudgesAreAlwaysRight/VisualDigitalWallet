@@ -13,7 +13,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="25dp"
         android:gravity="center"
-        android:text="转账"
+        android:text="@string/transact_title_transact"
         android:textAlignment="textStart"
         android:textColor="@color/black80"
         android:textSize="24sp"
@@ -55,7 +55,7 @@
             android:layout_marginTop="15dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="15dp"
-            android:text="转账地址"
+            android:text="@string/transfer_address"
             android:textSize="18sp" />
 
         <EditText
@@ -69,7 +69,7 @@
             android:elevation="5dp"
             android:gravity="center_vertical"
             android:scrollbars="vertical"
-            android:hint="输入对方地址，仅限BTC"
+            android:hint="@string/transfer_address_note"
             android:inputType="text"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -98,7 +98,7 @@
             android:layout_marginTop="15dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="15dp"
-            android:text="账户私钥"
+            android:text="@string/your_private_key"
             android:textSize="18sp" />
 
         <EditText
@@ -111,7 +111,7 @@
             android:background="@drawable/add_new_input"
             android:elevation="5dp"
             android:gravity="center_vertical"
-            android:hint="输入账户私钥，仅限BTC"
+            android:hint="@string/your_private_key_note"
             android:inputType="textPassword"
             android:minLines="3"
             android:paddingLeft="10dp"
@@ -141,7 +141,7 @@
             android:layout_marginTop="15dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="15dp"
-            android:text="转账金额"
+            android:text="@string/amount"
             android:textSize="18sp" />
 
         <EditText
@@ -154,7 +154,7 @@
             android:background="@drawable/add_new_input"
             android:elevation="5dp"
             android:gravity="center_vertical"
-            android:hint="输入金额，单位BTC"
+            android:hint="@string/amount_note"
             android:inputType="numberDecimal"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -179,7 +179,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:text="发起转账"
+            android:text="@string/transfer"
             android:translationZ="10dp" />
 
     </RelativeLayout>

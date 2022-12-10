@@ -200,7 +200,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
-            android:text="● 分存总数："
+            android:text="@string/wallet_coeN"
             android:textColor="@color/black80"
             android:textSize="18sp">
         </TextView>
@@ -229,7 +229,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
-            android:text="● 门限数："
+            android:text="@string/wallet_coeK"
             android:textColor="@color/black80"
             android:textSize="18sp">
         </TextView>
@@ -259,7 +259,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
-            android:text="● 固定分存数："
+            android:text="@string/wallet_coeF"
             android:textColor="@color/black80"
             android:textSize="18sp">
         </TextView>

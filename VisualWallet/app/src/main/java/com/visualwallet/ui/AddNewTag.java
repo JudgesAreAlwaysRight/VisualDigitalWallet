@@ -133,7 +133,7 @@ public class AddNewTag extends AppCompatActivity {
             }
         } catch (Exception e) {
             Log.e("add account", e.toString());
-            Toast.makeText(AddNewTag.this, "私钥不合法", Toast.LENGTH_LONG).show();
+            Toast.makeText(AddNewTag.this, getString(R.string.private_key_illegal), Toast.LENGTH_LONG).show();
             return;
         }
         Log.i("add account", "got key: " + key);
@@ -147,25 +147,25 @@ public class AddNewTag extends AppCompatActivity {
 
         // 参数合法性校验
         if (key == null) {
-            Toast.makeText(AddNewTag.this, "私钥不合法", Toast.LENGTH_LONG).show();
+            Toast.makeText(AddNewTag.this, getString(R.string.private_key_illegal), Toast.LENGTH_LONG).show();
             return;
         }
         if (GlobalVariable.appMode == 0) {
             if (F > 0 || fileNum > 0) {
-                Toast.makeText(AddNewTag.this, "随身模式不支持静态分存", Toast.LENGTH_LONG).show();
+                Toast.makeText(AddNewTag.this, getString(R.string.fixed_not_supported), Toast.LENGTH_LONG).show();
                 return;
             }
             if (K > N || (N == 5 && K > 3)) {
-                Toast.makeText(AddNewTag.this, "输入分存参数不合法", Toast.LENGTH_LONG).show();
+                Toast.makeText(AddNewTag.this, getString(R.string.coe_illegal), Toast.LENGTH_LONG).show();
                 return;
             }
         } else {
             if (K > N || F > N || (N == 5 && K > 3) || fileNum > F) {
-                Toast.makeText(AddNewTag.this, "输入分存参数不合法", Toast.LENGTH_LONG).show();
+                Toast.makeText(AddNewTag.this, getString(R.string.coe_illegal), Toast.LENGTH_LONG).show();
                 return;
             }
             if (fileNum > 0 && audioName.equals("")) {
-                Toast.makeText(AddNewTag.this, "您设置了音频分存但是未上传文件或文件还在传输中", Toast.LENGTH_LONG).show();
+                Toast.makeText(AddNewTag.this, getString(R.string.file_not_found), Toast.LENGTH_LONG).show();
                 return;
             }
         }
@@ -175,7 +175,7 @@ public class AddNewTag extends AppCompatActivity {
         AndPermission.with(this)
                 .permission(Permission.WRITE_EXTERNAL_STORAGE)
                 .onGranted(permissions -> {
-                    Toast.makeText(AddNewTag.this, "正在生成分存图，请勿退出", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddNewTag.this, getString(R.string.generating), Toast.LENGTH_SHORT).show();
 
                     if (GlobalVariable.appMode == 0) {
                         // 本地模式
@@ -186,7 +186,7 @@ public class AddNewTag extends AppCompatActivity {
                             } catch (WriterException e) {
                                 Log.e("add account", e.toString());
                                 Looper.prepare();
-                                Toast.makeText(AddNewTag.this, "二维码生成失败", Toast.LENGTH_LONG).show();
+                                Toast.makeText(AddNewTag.this, getString(R.string.qrcode_gen_fail), Toast.LENGTH_LONG).show();
                                 Looper.loop();
                                 return;
                             }
@@ -207,7 +207,7 @@ public class AddNewTag extends AppCompatActivity {
                         // 新建一个网络请求线程类并启动线程
                         SplitRequest splitRequest = new SplitRequest(key, K, N, F, fileNum, audioName, ".wav", type);
                         splitRequest.setNetCallback(res -> {
-                            String logInfo = "网络响应异常";
+                            String logInfo = getString(R.string.network_err);
                             if (res == null || !Objects.requireNonNull(res.get("code")).equals("200")) {
                                 Log.e("AddNewTag", "Net response illegal");
                                 if (res != null && res.get("code") != null) {
@@ -223,7 +223,7 @@ public class AddNewTag extends AppCompatActivity {
                             int[][][] split = NetUtil.arrayJson2java((JSONArray) res.get("split"));
                             if (split == null) {
                                 Looper.prepare();
-                                Toast.makeText(AddNewTag.this, logInfo + " 无法获取分存图", Toast.LENGTH_LONG).show();
+                                Toast.makeText(AddNewTag.this, logInfo + " " + getString(R.string.fail_get_share), Toast.LENGTH_LONG).show();
                                 Looper.loop();
                                 return;
                             }
@@ -236,7 +236,7 @@ public class AddNewTag extends AppCompatActivity {
                                 downloadAudio(); // 下载音频
                             } else {
                                 Looper.prepare();
-                                Toast.makeText(AddNewTag.this, logInfo + " 无法获取id", Toast.LENGTH_LONG).show();
+                                Toast.makeText(AddNewTag.this, logInfo + " " + getString(R.string.fail_get_id), Toast.LENGTH_LONG).show();
                                 Looper.loop();
                             }
                             runOnUiThread(this::finish);
@@ -244,7 +244,7 @@ public class AddNewTag extends AppCompatActivity {
                         splitRequest.start();
                     }
                 })
-                .onDenied(permissions -> Toast.makeText(AddNewTag.this, "没有权限无法保存分存图片", Toast.LENGTH_LONG).show())
+                .onDenied(permissions -> Toast.makeText(AddNewTag.this, getString(R.string.no_permission_to_save), Toast.LENGTH_LONG).show())
                 .start();
     }
 
@@ -274,10 +274,10 @@ public class AddNewTag extends AppCompatActivity {
         if (impW != null) {
             WalletQuery wQuery = new WalletQuery(AddNewTag.this);
             wQuery.addWallet(impW);
-            Toast.makeText(AddNewTag.this,"导入成功，账户：" + impW.getWalName(), Toast.LENGTH_LONG).show();
+            Toast.makeText(AddNewTag.this,getString(R.string.import_suc_msg) + impW.getWalName(), Toast.LENGTH_LONG).show();
             finish();
         } else {
-            Toast.makeText(AddNewTag.this,"导入失败，剪贴板数据无法识别", Toast.LENGTH_LONG).show();
+            Toast.makeText(AddNewTag.this,getString(R.string.import_fail_msg), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -297,17 +297,17 @@ public class AddNewTag extends AppCompatActivity {
     private void uploadAudio() {
         if (audioPath.equals("")) {
             Looper.prepare();
-            Toast.makeText(AddNewTag.this, "尚未选择音频文件", Toast.LENGTH_LONG).show();
+            Toast.makeText(AddNewTag.this, getString(R.string.audio_not_set), Toast.LENGTH_LONG).show();
             Looper.loop();
         } else {
 
             Looper.prepare();
-            Toast.makeText(AddNewTag.this, "正在上传文件", Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddNewTag.this, getString(R.string.uploading), Toast.LENGTH_SHORT).show();
             Looper.loop();
 
             File audioFile = new File(audioPath);
             new UploadRequest(0, 0, ".wav", audioFile).setNetCallback(res -> {
-                String logInfo = "网络响应异常";
+                String logInfo = getString(R.string.network_err);
                 if (res == null || !Objects.requireNonNull(res.get("code")).equals("200") || res.get("file_name") == null) {
                     Log.e("AddNewTag", "Net response illegal");
                     if (res != null && res.get("code") != null) {
@@ -321,7 +321,7 @@ public class AddNewTag extends AppCompatActivity {
                 }
                 audioName = Objects.requireNonNull(res.get("file_name")).toString();
                 Looper.prepare();
-                Toast.makeText(AddNewTag.this, "音频已上传成功", Toast.LENGTH_LONG).show();
+                Toast.makeText(AddNewTag.this, getString(R.string.upload_suc), Toast.LENGTH_LONG).show();
                 Looper.loop();
             }).start();
         }
@@ -345,7 +345,7 @@ public class AddNewTag extends AppCompatActivity {
             DownloadRequest downloadRequest = new DownloadRequest(wid, ".wav");
             downloadRequest.setNetCallback(res -> {
                 Looper.prepare();
-                Toast.makeText(AddNewTag.this, fileNum + "份编码音频已下载成功，保存位置" + Constant.downloadPath, Toast.LENGTH_LONG).show();
+                Toast.makeText(AddNewTag.this, fileNum + " " + getString(R.string.download_suc) + " " + Constant.downloadPath, Toast.LENGTH_LONG).show();
                 Looper.loop();
             }).start();
             try {
